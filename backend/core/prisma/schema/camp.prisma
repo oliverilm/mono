@@ -1,0 +1,8 @@
+model Camp {
+    id      String @id @default(cuid())
+    name    String
+    slug    String @unique
+
+    connectedCompetition Competition? @relation(fields: [connectedCompetitionId], references: [id])
+    connectedCompetitionId String? @unique
+}

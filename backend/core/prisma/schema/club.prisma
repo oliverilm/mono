@@ -1,0 +1,27 @@
+model Club {
+    id      String @id @default(cuid())
+    
+    name    String @unique
+    slug    String // derived from the name
+
+    description String
+    country     String
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    clubMetadata ClubMetadata?
+    userProfiles UserProfile[]
+}
+
+model ClubMetadata {
+    id      String @id @default(cuid())
+
+    club Club @relation(fields: [clubId], references: [id])
+    clubId String @unique
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+

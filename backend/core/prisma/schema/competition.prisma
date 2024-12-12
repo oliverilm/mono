@@ -1,0 +1,97 @@
+model Competition {
+    id      String @id @default(cuid())
+    name    String @unique
+    slug    String @unique // calculated from name
+
+    clubName    String
+    isPublished Boolean @default(false)
+    isArchived  Boolean @default(false)
+
+    description String?
+    startingAt  DateTime? @db.Date
+    location    String?
+
+    additionalInfo Json?
+
+    categories CompetitionCategory[]
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    camp Camp?
+    
+    @@unique([id, name, slug])
+
+    @@index([isPublished, isArchived, slug])
+    @@index(clubName)
+    @@index(name)
+    @@index(slug)
+}
+
+model Category {
+    id      Int @id @default(autoincrement())
+
+    value   String
+
+    competitionCategories CompetitionCategory[]
+    @@unique([id, value])
+}
+
+enum CompetitionCategorySex {
+    Male
+    Female
+    Unisex
+}
+
+model CompetitionCategory {
+    id      Int @id @default(autoincrement())
+
+    weights String[]
+    largestYearAllowed Int
+    smallestYearAllowed Int
+    sex CompetitionCategorySex
+
+    competition Competition? @relation(fields: [competitionId, competitionName, competitionSlug], references: [id, name, slug]) 
+    competitionId String
+    competitionName String
+    competitionSlug String
+    
+    category Category @relation(fields: [categoryId, categoryName], references: [id, value])
+    categoryId Int 
+    categoryName String
+
+    competitors Competitor[]
+
+    @@unique([id, competitionId, competitionName, competitionSlug])
+    @@index(competitionId)
+    @@index(categoryId)
+}
+
+model Competitor {
+    id      Int @id @default(autoincrement())
+
+    clubName    String
+
+    profile     UserProfile @relation(fields: [profileId, firstName, lastName], references: [id, firstName, lastName])
+    profileId   String
+    firstName   String
+    lastName    String
+
+    competitionCategory CompetitionCategory @relation(fields: [competitionCategoryId, competitionId, competitionName, competitionSlug], references: [id, competitionId, competitionName, competitionSlug])
+    competitionCategoryId Int
+    competitionId String 
+    competitionName String
+    competitionSlug String
+
+    weight String
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime? @updatedAt
+
+
+    @@index(competitionId)
+    @@index(weight)
+    @@index(profileId)
+    @@index(clubName)
+
+}
