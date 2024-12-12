@@ -1,12 +1,11 @@
-import { PrismaClient } from "@prisma/client"
 import { testServer } from "../../../integration-init"
 import { slugifyString } from "../../../../src/app/utils/string"
 import { describe, test, expect } from "vitest"
+import { prisma } from "../../../../src/app/utils/db"
 
 describe("Public auth", () => {
 
     test("Should fetch the list of clubs", async () => {
-        const prisma = new PrismaClient()
 
         await prisma.club.createMany({
             data: [

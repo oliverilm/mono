@@ -1,16 +1,14 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import { app } from '../src/app/app';
-import { PrismaClient } from '@prisma/client';
 import { UserService, AuthenticationPayload } from '../src/app/services/user';
 import { ClubService } from '../src/app/services/club';
 import { beforeEach } from "vitest"
+import { prisma } from '../src/app/utils/db';
 
 export let testServer: FastifyInstance;
 
 async function cleanDb() {
-    const client = new PrismaClient()
-
-    const tables = await client.$queryRaw`
+    const tables = await prisma.$queryRaw`
         SELECT table_name
         FROM
         information_schema.tables
@@ -23,14 +21,14 @@ async function cleanDb() {
         return [...acc, table.table_name]
     }, [] as string[]) 
 
-    return await client.$executeRawUnsafe(`TRUNCATE ${tableNames.map((name) => `public."${name}"`).join(", ")} CASCADE`)
+    return prisma.$executeRawUnsafe(`TRUNCATE ${tableNames.map((name) => `public."${name}"`).join(", ")} CASCADE`)
 }
 
 
 
 beforeEach(async () => {
     await sleep(1000)
-    return cleanDb().then(() => {
+    await cleanDb().then(() => {
         testServer = Fastify();
         testServer.register(app);
     })

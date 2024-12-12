@@ -1,9 +1,10 @@
-import { PrismaClient, UserProfile } from "@prisma/client"
+import { UserProfile } from "@prisma/client"
 import { slugifyString } from "../utils/string"
 import { convertSkipTake } from "../utils/object"
 import { tryHandleKnownErrors } from "../utils/error"
 import { Search, SkipTake } from "../schemas/common"
 import { CreateCompetition } from "../schemas/competition"
+import { prisma } from "../utils/db"
 
 
 
@@ -12,8 +13,6 @@ export interface UpdateCompetition {
     isPublished?: boolean,
     isArchived?: boolean
 }
-
-const prisma = new PrismaClient()
 
 async function createCompetition({data, userProfile}: { data: CreateCompetition, userProfile: UserProfile}) {
     const slug = slugifyString(data.name)

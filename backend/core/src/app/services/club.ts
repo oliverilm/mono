@@ -1,11 +1,10 @@
-import { Club, PrismaClient } from "@prisma/client";
+import { Club } from "@prisma/client";
 import { slugifyString } from "../utils/string";
 import { SkipTake } from "../schemas/common";
 import { ClubCreate } from "../schemas/club";
 import { UserIdObject } from "../schemas/auth";
-import { get } from "http";
+import { prisma } from "../utils/db";
 
-const prisma = new PrismaClient()
 
 export type SlugOrId = {
     id: string

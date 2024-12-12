@@ -1,12 +1,11 @@
-import { PrismaClient, Session,  UserProfile } from "@prisma/client"
+import { Session, UserProfile } from "@prisma/client"
 import securify from "./securify"
 import session from "./session"
 import { NationalId, NationalIDUtils } from "@monorepo/utils";
 import { capitalizeFirstLetter } from "../utils/string"
 import { tryHandleKnownErrors } from "../utils/error"
 import { LoginCredentials, UserPatch } from "../schemas/auth";
-
-const prisma = new PrismaClient()
+import { prisma } from "../utils/db";
 
 export interface AuthenticationPayload {
     profile: UserProfile,

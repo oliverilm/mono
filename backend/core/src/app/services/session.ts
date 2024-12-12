@@ -1,8 +1,8 @@
-import { PrismaClient, Session } from "@prisma/client";
+import { Session } from "@prisma/client";
 import dayjs from "dayjs";
 import crypto from "crypto";
+import { prisma } from "../utils/db";
 
-const prisma = new PrismaClient()
 
 class SessionService {
     createSession(userId: string): Promise<Session> {
