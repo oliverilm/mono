@@ -7,7 +7,7 @@
     "prestart": "tsc",
     "test": "vitest",
     "build": "tsc",
-    "start": "tsx ./src/main.ts",
+    "start": "tsx watch src/main.ts",
     "prepare": "ts-patch install && typia patch"
   },
   "keywords": [],
@@ -24,8 +24,10 @@
     "fastify": "^5.1.0",
     "fastify-plugin": "^5.0.1",
     "prisma": "^6.0.1",
+    "ts-node": "^10.9.2",
     "typia": "^7.2.0",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "ts-patch": "^3.3.0",

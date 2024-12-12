@@ -4,28 +4,14 @@ import session from "./session"
 import { NationalId, NationalIDUtils } from "@monorepo/utils";
 import { capitalizeFirstLetter } from "../utils/string"
 import { tryHandleKnownErrors } from "../utils/error"
+import { LoginCredentials, UserPatch } from "../schemas/auth";
 
 const prisma = new PrismaClient()
-
-export interface LoginCredentials {
-    email: string,
-    password: string
-}
 
 export interface AuthenticationPayload {
     profile: UserProfile,
     token: Session["token"]
 }
-
-export interface UserPatchPayload {
-    userId: string;
-    firstName: string;
-    lastName: string;
-    nationalIdType: NationalId;
-    nationalId: string;
-    dateOfBirth: string;
-}
-
 
 async function login({ email, password }: LoginCredentials): Promise<AuthenticationPayload> {
     const user = await prisma.user.findFirst({
@@ -101,7 +87,7 @@ async function createUser({ email, password }: LoginCredentials): Promise<Authen
     }
 }
 
-async function updateUserProfile(payload: UserPatchPayload): Promise<UserProfile | null> {
+async function updateUserProfile(payload: UserPatch): Promise<UserProfile | null> {
     const { userId, ...rest } = payload
 
     // validate national id with its type and b-day

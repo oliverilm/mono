@@ -1,7 +1,7 @@
 import { FastifyRequest } from "fastify";
 import typia from "typia";
+import { userIdSchema } from "../schemas/auth";
 
 export function getAssertedUserIdFromRequest(request: FastifyRequest): string {
-    const req = typia.assert<{userId: string}>(request)
-    return req.userId
+    return userIdSchema.parse({userId: request.userId}).userId
 }

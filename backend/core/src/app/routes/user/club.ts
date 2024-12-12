@@ -1,24 +1,13 @@
 import { FastifyInstance } from 'fastify';
-import club, { ClubCreate } from '../../services/club';
-import typia from "typia"
+import { ClubService } from '../../services/club';
 import { getAssertedUserIdFromRequest } from '../../utils/request';
+import { clubCreateSchema } from 'src/app/schemas/club';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
-    fastify.post("/club/create", {
-        schema: {
-            body: {
-                type: 'object',
-                required: ['name', 'country'],
-                properties: {
-                    name: { type: 'string' },
-                    country: { type: 'string' }
-                }
-            }
-        }
-    }, (request) => {
-        const payload = typia.assert<ClubCreate>(request.body)
-        return club.create({...payload, userId: getAssertedUserIdFromRequest(request)})
+    fastify.post("/club/create", (request) => {
+        const payload = clubCreateSchema.parse(request.body)
+        return ClubService.create({...payload, userId: getAssertedUserIdFromRequest(request)})
     })
 }
 

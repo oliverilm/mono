@@ -1,14 +1,13 @@
 import { FastifyInstance } from 'fastify';
-import club from '../../services/club';
-import typia from 'typia';
-import { SkipTake } from '../../utils/types';
+import { ClubService } from '../../services/club';
+import { skipTakeSchema } from 'src/app/schemas/common';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {
-    fastify.get("/club", 
+    fastify.get("/clubs", 
      (request) => {
-        const payload = typia.assert<SkipTake>(request.query)
-        return club.getClubList(payload)
+        const skipTake = skipTakeSchema.parse(request.query)
+        return ClubService.getClubList(skipTake)
     })
 
     fastify.get("/club/:slug", (request) => {

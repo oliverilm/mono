@@ -1,7 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import typia from "typia"
-import { CompetitionService, CreateCompetition } from '../../services/competition';
+import { CompetitionService } from '../../services/competition';
 import { getUserProfileFromRequest } from '../../utils/db';
+import { createCompetitionSchema } from 'src/app/schemas/competition';
+import { slugSchema } from 'src/app/schemas/common';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
@@ -12,14 +13,12 @@ export default async function (fastify: FastifyInstance) {
             throw new Error("User profile not found")
         }
         
-        const data = typia.assert<CreateCompetition>(request.body)
-        return CompetitionService.createCompetition({ data , userProfile})
+        const data = createCompetitionSchema.parse(request.body)
+        return CompetitionService.createCompetition({ data, userProfile})
     })
 
     fastify.patch("/competitions/:slug", (request) => {
-        // implement this
-        const params = typia.assert<{slug: string}>(request.params)
-        // TODO: implement this
+        const params = slugSchema.parse(request.params)
         return CompetitionService.updateCompetition(params.slug, {})
     })
 }

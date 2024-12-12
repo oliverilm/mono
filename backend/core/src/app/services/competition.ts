@@ -1,12 +1,11 @@
 import { PrismaClient, UserProfile } from "@prisma/client"
 import { slugifyString } from "../utils/string"
-import { SearchQueryParam, SkipTake } from "../utils/types"
 import { convertSkipTake } from "../utils/object"
 import { tryHandleKnownErrors } from "../utils/error"
+import { Search, SkipTake } from "../schemas/common"
+import { CreateCompetition } from "../schemas/competition"
 
-export interface CreateCompetition {
-    name: string,
-}
+
 
 export interface UpdateCompetition {
     name?: string
@@ -74,7 +73,7 @@ async function updateCompetition(competitionSlug: string, data: UpdateCompetitio
     
 }
 
-async function list({search, ...skipTake}: SkipTake & SearchQueryParam) {
+async function list({search, ...skipTake}: SkipTake & Search) {
     return prisma.competition.findMany({
        ...(search ? { where: {
             name: {

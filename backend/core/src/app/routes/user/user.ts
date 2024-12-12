@@ -1,7 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import { UserService, UserPatchPayload } from '../../services/user';
+import { UserService } from '../../services/user';
 import typia from 'typia';
 import { getAssertedUserIdFromRequest } from '../../utils/request';
+import { userPatchSchema } from 'src/app/schemas/auth';
 
 
 // PRIVATE ENDPOINTS
@@ -13,7 +14,7 @@ export default async function (fastify: FastifyInstance) {
     })
 
     fastify.patch("/profile", (request) => {
-        const payload = typia.assert<Omit<UserPatchPayload, "userId">>(request.body)
+        const payload = userPatchSchema.parse(request.body)
         return UserService.updateUserProfile({
             ...payload, 
             userId: getAssertedUserIdFromRequest(request)

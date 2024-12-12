@@ -2,7 +2,7 @@ import Fastify, { FastifyInstance } from 'fastify';
 import { app } from '../src/app/app';
 import { PrismaClient } from '@prisma/client';
 import { UserService, AuthenticationPayload } from '../src/app/services/user';
-import club from '../src/app/services/club';
+import { ClubService } from '../src/app/services/club';
 import { beforeEach } from "vitest"
 
 export let testServer: FastifyInstance;
@@ -49,7 +49,7 @@ type AddonFunction = "withClub"
 const addonFunctions: Record<AddonFunction, (createdUserResponseWithToken: AuthenticationPayload) => Promise<void>> = {
     withClub: async (createdUserResponseWithToken: AuthenticationPayload) => {
         if (createdUserResponseWithToken.profile.userId) {
-            await club.create({country: "EE", name: TEST_CLUB_NAME, userId: createdUserResponseWithToken.profile.userId})
+            await ClubService.create({country: "EE", name: TEST_CLUB_NAME, userId: createdUserResponseWithToken.profile.userId})
         }
     }
 }

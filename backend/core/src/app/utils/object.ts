@@ -1,4 +1,4 @@
-import { SkipTake } from "./types";
+import { SkipTake } from "../schemas/common"
 
 export function exclude<T extends Record<string, unknown>, Key extends keyof T>(
     user: T,
