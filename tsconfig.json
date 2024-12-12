@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "strict": true,
+        "declaration": true,
+        "strictNullChecks": true,
+        "target": "ES2022",
+        "plugins": [
+            {
+                "transform": "typia/lib/transform"
+            }
+        ],
+    },
+    "exclude": ["**/node_modules", "**/dist", "**/.*/"]
+}
