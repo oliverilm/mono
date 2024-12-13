@@ -1,4 +1,4 @@
-import { CreateCompetition } from '../../../../src/app/services/competition';
+import { CreateCompetition } from '../../../../src/app/schemas/competition';
 import {
   registerTestUserAndRetrieveToken,
   testServer,

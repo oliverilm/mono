@@ -27,7 +27,6 @@ async function cleanDb() {
 
 
 beforeEach(async () => {
-    await sleep(1000)
     await cleanDb().then(() => {
         testServer = Fastify();
         testServer.register(app);

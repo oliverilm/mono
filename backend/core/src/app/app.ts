@@ -7,6 +7,8 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 import { FastifyInstance } from 'fastify';
 import AutoLoad from '@fastify/autoload';
 import cors from "@fastify/cors"
+import sensible from '@fastify/sensible';
+
 /* eslint-disable-next-line */
 export interface AppOptions {}
 
@@ -18,6 +20,7 @@ export async function app(fastify: FastifyInstance, opts: AppOptions) {
   // This loads all plugins defined in plugins
   // those should be support plugins that are reused
   // through your application
+  fastify.register(sensible);
   fastify.register(cors, {
     origin: true,
     methods: ['GET', 'PUT', 'POST', 'DELETE'],
@@ -28,18 +31,6 @@ export async function app(fastify: FastifyInstance, opts: AppOptions) {
       'authorization'
     ],
   })
-
-
-  // TODO: add custom error handling 
-
-  fastify.register(AutoLoad, {
-    dir: path.join(__dirname, 'plugins'),
-    options: { ...opts },
-  });
-
-  // This loads all plugins defined in routes
-  // define your routes in one of these
-  
   
   // register public routes
   fastify.register(AutoLoad, {

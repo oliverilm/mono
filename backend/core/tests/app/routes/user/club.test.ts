@@ -9,7 +9,6 @@ describe('User Club related actions', () => {
   test('should be able to create a club with a unique name', async () => {
     const token = await registerTestUserAndRetrieveToken();
 
-    console.log({token})
     const response = await testServer.inject({
       method: 'POST',
       url: '/user/club/create',
