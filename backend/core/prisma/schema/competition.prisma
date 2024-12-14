@@ -19,6 +19,8 @@ model Competition {
     updatedAt   DateTime @updatedAt
 
     camp Camp?
+
+    competitionAdmins CompetitionAdmin[]
     
     @@unique([id, name, slug])
 
@@ -26,6 +28,26 @@ model Competition {
     @@index(clubName)
     @@index(name)
     @@index(slug)
+}
+
+enum CompetitionRole {
+    OWNER
+    MANAGER
+}
+
+model CompetitionAdmin {
+    id Int @id @default(autoincrement())
+
+    competition Competition @relation(fields: [competitionId], references: [id])
+    competitionId String
+
+    user User @relation(fields: [userId], references: [id])
+    userId String
+
+    role CompetitionRole
+
+    @@unique([competitionId, userId])
+    @@index([competitionId, userId])
 }
 
 model Category {
