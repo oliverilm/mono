@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Layout } from "../pages/layout/Layout";
 import { LoginPage } from "../pages/login/LoginPage";
 import { RegisterPage } from "../pages/register/RegisterPage";
+import { HomePage } from "../pages/home/HomePage";
 
 const routes = createBrowserRouter([
     { // layout of the app 
@@ -10,7 +11,7 @@ const routes = createBrowserRouter([
         children: [
             {
                 path: '/',
-                element: <div>Home</div>
+                element: <HomePage />
             },
             {
                 path: '/login',
@@ -19,6 +20,15 @@ const routes = createBrowserRouter([
             {
                 path: '/register',
                 element: <RegisterPage />
+            },
+            {
+                path: "/competitions",
+                children: [
+                    {
+                        path: ":slug",
+                        element: <h1>Competition</h1>
+                    }
+                ]
             }
         ]
     },

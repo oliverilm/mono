@@ -7,6 +7,7 @@ import '@mantine/core/styles.css';
 import { SystemAuth } from './system/SystemAuth.tsx';
 import { ThemeProvider } from './providers/ThemeProvider.tsx';
 
+import '@mantine/carousel/styles.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

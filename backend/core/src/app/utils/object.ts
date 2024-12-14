@@ -1,4 +1,4 @@
-import { SkipTake } from "../schemas/common"
+import { SkipTake } from "@monorepo/utils"
 
 export function exclude<T extends Record<string, unknown>, Key extends keyof T>(
     user: T,

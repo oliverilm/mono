@@ -13,6 +13,7 @@ export default async function (fastify: FastifyInstance) {
     })
 
     fastify.patch("/profile", (request) => {
+
         const payload = userPatchSchema.parse(request.body)
         return UserService.updateUserProfile({
             ...payload, 

@@ -1,6 +1,6 @@
 import { useSystemAuth } from "../hooks/useSystemAuth";
 
-import { UserProfileForm } from "../components/user/UserProfileForm";
+import { UserProfileForm } from "../components/user/profile/form/UserProfileForm";
 import { useAuthStore } from "../stores/auth";
 import { Modal } from "@mantine/core";
 

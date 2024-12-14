@@ -25,12 +25,13 @@ export function Layout() {
     }
     const { isAuthenticated, logout } = useAuthStore()
 
+    // const Chevron = () => <IconChevronRight size="0.8rem" stroke={1.5} className="mantine-rotate-rtl" />
     return (
-        <AppShell header={{ height: 50 }} navbar={{ width:  isAuthenticated ? 120 : 0, breakpoint: "md"}}>
+        <AppShell header={{ height: 50 }} >
         <AppShell.Header w={"100%"} >
             <Flex maw={1520} className={header} px={"xl"}>
                 <Button variant='transparent' color='gray' >Logo</Button>
-                
+
                 <Flex gap="sm">
                 {isAuthenticated ? (
                     <Button variant='transparent' onClick={logout}>Logout</Button>
@@ -45,16 +46,19 @@ export function Layout() {
             </Flex>
         </AppShell.Header>
 
-        {isAuthenticated && (
-            <AppShell.Navbar w={120} >
-                <div>sidebar</div>
+        {/* {isAuthenticated && (
+            <AppShell.Navbar >
+               <NavLink label="Account" leftSection={<IconUser />} rightSection={<Chevron />}>
+                    <NavLink label="Profile" leftSection={<IconUser />} onClick={to("/profile")} rightSection={<Chevron />} />
+                    <NavLink label="Settings" leftSection={<IconSettings />} onClick={to("/settings")} rightSection={<Chevron />} />
+               </NavLink>
+               <NavLink label="Settings" leftSection={<IconSettings />} rightSection={<Chevron />} />
             </AppShell.Navbar>
-        )}
+        )} */}
 
-        <AppShell.Main ml={isAuthenticated ? 120 : 0} maw={1260} m={"auto"} p={"lg"} pt={"xl"}>
+        <AppShell.Main  maw={1260} m={"lg"} mx="auto" p={"xl"}>
             <Outlet />
-        <Notifications />
-
+            <Notifications />
         </AppShell.Main>
 
         </AppShell>

@@ -107,7 +107,7 @@ async function updateUserProfile(payload: UserPatch): Promise<UserProfile | null
 
         if (!(
             fullBirthYear === dateOfBirth.getFullYear() 
-            && Number(birthMonth) === dateOfBirth.getMonth() 
+            && Number(birthMonth) === dateOfBirth.getMonth() +1
             && Number(birthDay) === dateOfBirth.getDate()
         )) {
             throw new Error("Date of birth does not match the national id code")

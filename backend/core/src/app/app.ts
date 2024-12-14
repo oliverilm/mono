@@ -23,7 +23,7 @@ export async function app(fastify: FastifyInstance, opts: AppOptions) {
   fastify.register(sensible);
   fastify.register(cors, {
     origin: true,
-    methods: ['GET', 'PUT', 'POST', 'DELETE'],
+    methods: ['GET', 'PUT', 'POST', 'DELETE', "PATCH"],
     allowedHeaders: [
       'content-type',
       'accept',
