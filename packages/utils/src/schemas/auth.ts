@@ -13,6 +13,7 @@ export type UserIdObject = z.infer<typeof userIdSchema>
 export type LoginCredentials = z.infer<typeof loginCredentialSchema>
 
 const nationalIds = ["finid", "estid"] as const
+
 export const userPatchSchema = z.object({
     userId: userIdSchema.shape.userId.optional(),
     firstName: z.string(),

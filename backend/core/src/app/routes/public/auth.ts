@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { UserService } from '../../services/user';
-import typia from 'typia';
-import { LoginCredentials, loginCredentialSchema,  } from '../../schemas/auth';
+import { loginCredentialSchema } from '@monorepo/utils';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {

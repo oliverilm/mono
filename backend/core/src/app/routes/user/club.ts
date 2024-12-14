@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { ClubService } from '../../services/club';
 import { getAssertedUserIdFromRequest } from '../../utils/request';
-import { clubCreateSchema } from 'src/app/schemas/club';
+import { clubCreateSchema } from '@monorepo/utils';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {

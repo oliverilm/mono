@@ -1,9 +1,7 @@
 import { Club } from "@prisma/client";
 import { slugifyString } from "../utils/string";
-import { SkipTake } from "../schemas/common";
-import { ClubCreate } from "../schemas/club";
-import { UserIdObject } from "../schemas/auth";
 import { prisma } from "../utils/db";
+import { ClubCreate, SkipTake, UserIdObject } from "@monorepo/utils";
 
 
 export type SlugOrId = {

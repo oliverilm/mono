@@ -1,11 +1,16 @@
 import { useForm } from "@mantine/form"
-import { createUser, LoginCreateData } from "../../api/auth"
+import { createUser } from "../../api/auth"
 import { useAuthStore } from "../../stores/auth"
 import { Button, TextInput } from "@mantine/core"
+import { useAuthenticatedRedirectToHome } from "../../hooks/useAuthenticatedRedirectToHome"
+import { LS_TOKEN_KEY } from "../../constants"
+import { LoginCredentials } from "@monorepo/utils"
 
 export function RegisterPage() {
+    useAuthenticatedRedirectToHome()
+
     const authStore = useAuthStore()
-    const form = useForm<LoginCreateData>({
+    const form = useForm<LoginCredentials>({
         initialValues: {
             email: '',
             password: ''
@@ -17,7 +22,9 @@ export function RegisterPage() {
         // TODO. this is an inconsistency. login response will contain a token and a profile
         // token should not go to the profile data
         if (loginReponse) {
-            authStore.setProfile(loginReponse.data)
+            authStore.setProfile(loginReponse.data.profile)
+            localStorage.setItem(LS_TOKEN_KEY, loginReponse.data.token)
+            
         }
     }
     return (

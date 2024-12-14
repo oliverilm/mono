@@ -2,9 +2,8 @@ import { UserProfile } from "@prisma/client"
 import { slugifyString } from "../utils/string"
 import { convertSkipTake } from "../utils/object"
 import { tryHandleKnownErrors } from "../utils/error"
-import { Search, SkipTake } from "../schemas/common"
-import { CreateCompetition } from "../schemas/competition"
 import { prisma } from "../utils/db"
+import { CreateCompetition, Search, SkipTake } from "@monorepo/utils"
 
 export interface UpdateCompetition {
     name?: string

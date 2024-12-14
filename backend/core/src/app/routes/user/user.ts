@@ -1,8 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { UserService } from '../../services/user';
-import typia from 'typia';
 import { getAssertedUserIdFromRequest } from '../../utils/request';
-import { userPatchSchema } from 'src/app/schemas/auth';
+import { userPatchSchema } from '@monorepo/utils';
 
 
 // PRIVATE ENDPOINTS

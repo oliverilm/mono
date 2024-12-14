@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { ClubService } from '../../services/club';
-import { skipTakeSchema } from 'src/app/schemas/common';
+import { skipTakeSchema } from '@monorepo/utils';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {

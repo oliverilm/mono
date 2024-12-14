@@ -1,8 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { CompetitionService } from '../../services/competition';
 import { getUserProfileFromRequest } from '../../utils/db';
-import { createCompetitionSchema } from 'src/app/schemas/competition';
-import { slugSchema } from 'src/app/schemas/common';
+import { createCompetitionSchema, slugSchema } from '@monorepo/utils';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
