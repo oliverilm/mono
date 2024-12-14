@@ -18,10 +18,10 @@ const competitions = [{
     address: "Viimsi vabaõhumuuseum",
     slug: "tallinn-judo-cup"
 },{
-    name: "Test competition4",
-    url: "https://t3.ftcdn.net/jpg/01/33/07/34/360_F_133073492_eRHEmxyShXrDRpW4NeiQrP8r1mnBzj6U.jpg",
-    address: "test",
-    slug: "test-competition-4"
+    name: "Tartu jõuluturniir",
+    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTSFu-K1S5ziq2hu0M129dCQVDc4D2YjQP2w&s",
+    address: "Tartu, a le coq arena",
+    slug: "tartu-jouluturniir"
 },{
     name: "Test competition5",
     url: "https://t3.ftcdn.net/jpg/01/33/07/34/360_F_133073492_eRHEmxyShXrDRpW4NeiQrP8r1mnBzj6U.jpg",

@@ -23,11 +23,13 @@ client.interceptors.response.use((data) => data, (error) => {
 
 export function addSkipTakeSearch(url: string, query: SkipTake & Search) {
     const { skip, take, search } = query
-    let str = "?"
-    if (skip) str += `skip=${skip}&`
-    if (take) str += `take=${take}&`
-    if (search) str += `search=${search}`
-
-    if (skip || take || search) return url + str
+    const parts = []
+    if (skip !== undefined) parts.push(`skip=${skip}`)
+    if (take !== undefined) parts.push(`take=${take}`)
+    if (search  !== undefined) parts.push(`search=${search}`)
+    if (parts.length > 0) {
+        url += `?${parts.join("&")}`
+        return url
+    }
     return url
 }

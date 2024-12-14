@@ -48,11 +48,13 @@ export const CompetitionService = {
     },
     list: async function ({search, ...skipTake}: SkipTake & Search) {
         return prisma.competition.findMany({
-           ...(search ? { where: {
-                name: {
+            where: {
+                isArchived: false,
+                isPublished: true,
+                ...(search ? { name: {
                     contains: search
-                }
-            }} : {}),
+                }} : {})
+            },
             ...convertSkipTake(skipTake)
         })
     },

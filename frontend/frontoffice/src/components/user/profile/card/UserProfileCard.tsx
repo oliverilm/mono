@@ -1,7 +1,12 @@
-import { Avatar, Flex, Paper, Text } from "@mantine/core";
+import { Avatar, Button, Flex, Modal, Paper, Text } from "@mantine/core";
 import { useAuthStore } from "../../../../stores/auth";
+import { useDisclosure } from "@mantine/hooks";
+import { CompetitionFrom } from "../../../competition/form/CompetitionForm";
+import { ClubForm } from "../../../club/form/ClubForm";
 
 export function UserProfileCard() {
+    const [competitionFormOpened, { toggle: toggleCompetitionForm }] = useDisclosure()
+    const [clubFormOpened, { toggle: toggleClubForm }] = useDisclosure()
 
     const authStore = useAuthStore()
 
@@ -19,8 +24,19 @@ export function UserProfileCard() {
                         <Text size="sm">{authStore.profile?.firstName || "--"}</Text>
                         <Text size="sm">{authStore.profile?.lastName || "--"}</Text>
                     </Flex>
-
                 </Flex>
+
+                <Button onClick={toggleCompetitionForm}>Create competition</Button>
+                <Button onClick={toggleClubForm}>Create club</Button>
+
+                <Modal opened={competitionFormOpened} onClose={toggleCompetitionForm} title={"Create competition"}>
+                    <CompetitionFrom />
+                </Modal>
+
+
+                <Modal opened={clubFormOpened} onClose={toggleClubForm} title={"Create club"}>
+                    <ClubForm />
+                </Modal>
             </Flex>
         </Paper>
     )

@@ -8,14 +8,19 @@ import { SystemAuth } from './system/SystemAuth.tsx';
 import { ThemeProvider } from './providers/ThemeProvider.tsx';
 
 import '@mantine/carousel/styles.css';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const client = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider>
-      {/* TODO: investigate, if this is slower */}
-      <SystemAuth /> 
+    <QueryClientProvider client={client}>
+      <ThemeProvider>
+        {/* TODO: investigate, if this is slower */}
+        <SystemAuth /> 
 
-      <AppRouter />
-    </ThemeProvider>
+        <AppRouter />
+      </ThemeProvider>
+    </QueryClientProvider>
   </StrictMode>,
 )

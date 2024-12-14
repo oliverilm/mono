@@ -1,5 +1,5 @@
-import { card, slide } from "./CompetitionCarouselCard.css";
-import { Card, Divider, Image, Text, Title } from "@mantine/core";
+import { card, cardContent, cardSection, slide } from "./CompetitionCarouselCard.css";
+import { Card, Divider, Flex, Image, Text, Title } from "@mantine/core";
 import { Carousel } from "@mantine/carousel"
 import { useLayoutEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -57,20 +57,20 @@ export function CompetitionCarouselCard({ competition}: Props) {
             <Card shadow="sm" padding="lg" radius="md" withBorder ref={ref} className={card} onClick={() => {
                 navigate(`/competitions/${competition.slug}`)
             }}>
-                <Card.Section>
+                <Card.Section className={cardSection}>
                     <Image
                         style={{
                             backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url(${competition.url})`,
                         }}
                         src={competition.url}
-                        height={200}
+                        height={250}
                         alt="Norway"
                     />
-                </Card.Section>
-                <Card.Section p={"sm"}>
-                    <Title  size={"h3"}>{competition.name}</Title>
-                    <Divider my={5} />
-                    <Text p={0}>{competition.address}</Text>
+                    <Flex className={cardContent}>
+                        <Title  size={"h3"}>{competition.name}</Title>
+                        <Divider my={5} />
+                        <Text p={0}>{competition.address}</Text>
+                    </Flex>
                 </Card.Section>
                 
             </Card>
