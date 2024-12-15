@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { CompetitionService } from '../../services/competition';
 import { skipTakeSchema, slugSchema } from '@monorepo/utils';
+import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {
@@ -16,6 +17,8 @@ export default async function (fastify: FastifyInstance) {
 
     fastify.get("/competitions/:slug/metadata", (request) => {
         const params = slugSchema.parse(request.params)
+
+        console.log({params, userId: request.userId})
         return CompetitionService.getMetadata(params.slug, request.userId)
     })
 }

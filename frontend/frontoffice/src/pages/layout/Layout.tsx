@@ -29,7 +29,7 @@ export function Layout() {
         <AppShell header={{ height: 50 }} >
             <AppShell.Header w={"100%"} >
                 <Flex maw={1520} className={header} px={"xl"}>
-                    <Button variant='transparent' color='gray' >Logo</Button>
+                    <Button variant='transparent' color='gray' onClick={to("/")}>Logo</Button>
 
                     <Flex gap="sm">
                     {isAuthenticated ? (

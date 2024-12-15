@@ -3,6 +3,7 @@ import { Layout } from "../pages/layout/Layout";
 import { LoginPage } from "../pages/login/LoginPage";
 import { RegisterPage } from "../pages/register/RegisterPage";
 import { HomePage } from "../pages/home/HomePage";
+import { CompetitionPage } from "../pages/competition/CompetitionPage";
 
 const routes = createBrowserRouter([
     { // layout of the app 
@@ -26,7 +27,7 @@ const routes = createBrowserRouter([
                 children: [
                     {
                         path: ":slug",
-                        element: <h1>Competition</h1>
+                        element: <CompetitionPage />
                     }
                 ]
             }

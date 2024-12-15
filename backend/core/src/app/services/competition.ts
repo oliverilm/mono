@@ -80,7 +80,7 @@ export const CompetitionService = {
 
         const competitionId = await this.getCompetitionIdFromSlug(competitionSlug)
         const isAdmin = await this.isAdmin(competitionId, userId)
-
+        console.log({ isAdmin })
         if (isAdmin) {
             const admins = await prisma.competitionAdmin.findMany({
                 where: {

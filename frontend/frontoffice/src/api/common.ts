@@ -36,3 +36,13 @@ export function createCompetition(data: CreateCompetition): Promise<AxiosRespons
 export function getPublicCamps(query: SkipTake & Search) {
     return client.get(addSkipTakeSearch("/public/camps", query))
 }
+
+export function getCompetition(competitionSlug?: string) {
+    if (!competitionSlug) return Promise.resolve(null)
+    return client.get(`/public/competitions/${competitionSlug}`)
+}
+
+export function getCompetitionMetadata(competitionSlug?: string) {
+    if (!competitionSlug) return Promise.resolve(null)
+    return client.get(`/public/competitions/${competitionSlug}/metadata`)
+}

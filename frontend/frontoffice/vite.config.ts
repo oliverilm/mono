@@ -5,6 +5,7 @@ import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
+  mode: "production",
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
