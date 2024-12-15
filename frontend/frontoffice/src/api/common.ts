@@ -2,7 +2,7 @@ import { CreateCompetition, Search, SkipTake, ClubCreate } from "@monorepo/utils
 import { addSkipTakeSearch, client } from "./client";
 import { AxiosResponse } from "axios";
 
-export function getPublicClubs(query: SkipTake & Search) {
+export function getPublicClubs(query: SkipTake & Search): Promise<AxiosResponse<unknown[]>> {
     return client.get(addSkipTakeSearch("/public/clubs", query))
 }
 

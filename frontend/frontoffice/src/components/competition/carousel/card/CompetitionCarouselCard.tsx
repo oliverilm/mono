@@ -3,14 +3,11 @@ import { Card, Divider, Flex, Image, Text, Title } from "@mantine/core";
 import { Carousel } from "@mantine/carousel"
 import { useLayoutEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { CompetitionListItem } from "../../../../api/common";
+import { TEST_COMPETITION_IMAGES } from "../../../../constants";
 
 interface Props {
-    competition: {
-        name: string,
-        url: string,
-        address: string
-        slug: string
-    }
+    competition: CompetitionListItem
 }
 
 export function CompetitionCarouselCard({ competition}: Props) {
@@ -52,6 +49,8 @@ export function CompetitionCarouselCard({ competition}: Props) {
         });
     }, [])
 
+    const url = TEST_COMPETITION_IMAGES[Math.floor(Math.random() * TEST_COMPETITION_IMAGES.length)]
+
     return (
         <Carousel.Slide className={slide}>
             <Card shadow="sm" padding="lg" radius="md" withBorder ref={ref} className={card} onClick={() => {
@@ -60,16 +59,16 @@ export function CompetitionCarouselCard({ competition}: Props) {
                 <Card.Section className={cardSection}>
                     <Image
                         style={{
-                            backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url(${competition.url})`,
+                            backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url(${url})`,
                         }}
-                        src={competition.url}
+                        src={url}
                         height={250}
                         alt="Norway"
                     />
                     <Flex className={cardContent}>
                         <Title  size={"h3"}>{competition.name}</Title>
                         <Divider my={5} />
-                        <Text p={0}>{competition.address}</Text>
+                        <Text p={0}>{"Address"}</Text>
                     </Flex>
                 </Card.Section>
                 

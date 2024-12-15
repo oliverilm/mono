@@ -7,9 +7,14 @@ const clubs = [{
 
 export function ClubList() {
 
+    // const {data: clubs} = useQuery({
+    //     queryKey: ["homepage-clubs"],
+    //     queryFn: () => getPublicClubs({skip: 0, take: 25})
+    // })
+
     return (
         <div>
-            {clubs.map((club) => (
+            {(clubs ?? [])?.map((club) => (
                 <div key={club.name}>
                     <h2>{club.name}</h2>
                     <p>{club.description}</p>
