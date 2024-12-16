@@ -13,11 +13,11 @@ export function CompetitionImageOverlay({ competition}: { competition: Competiti
             <Flex direction={"column"} gap="sm">
                 <Flex align={"center"} gap={"sm"}>
                     <IconCalendar /> 
-                    <Text>{dayjs().add(2, "day").format("DD.MM YYYY")}</Text>
+                    <Text>{dayjs(competition.startingAt).format("DD.MM YYYY")}</Text>
                 </Flex>
                 <Flex align={"center"} gap={"sm"}>
                     <IconPin />
-                    <Text>example location</Text>
+                    <Text>{competition.location ?? "unset"}</Text>
                 </Flex>
             </Flex>
         </Flex>

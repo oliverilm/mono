@@ -3,19 +3,14 @@ import { slugifyString } from "../utils/string"
 import { convertSkipTake } from "../utils/object"
 import { tryHandleKnownErrors } from "../utils/error"
 import { prisma } from "../utils/db"
-import { CreateCompetition, Search, SkipTake } from "@monorepo/utils"
+import { CreateCompetition, Search, SkipTake, UpdateCompetition } from "@monorepo/utils"
 import { LRUCache } from "lru-cache"
+import competition from "../routes/public/competition"
 
 const cache = new LRUCache({ 
     ttl: 1000 * 60 * 60, 
     max: 1000
 })
-
-export interface UpdateCompetition {
-    name?: string
-    isPublished?: boolean,
-    isArchived?: boolean
-}
 
 export const CompetitionService = {
 
@@ -198,31 +193,30 @@ export const CompetitionService = {
         })
     },
 
-    updateCompetition: async function ({ competitionSlug, data, userId}: {competitionSlug: string, data: UpdateCompetition, userId: string} ) {
-        const updatableData: UpdateCompetition & { slug?: string } = {}
+    updateCompetition: async function ({ data, userId}: { data: UpdateCompetition, userId: string} ) {
 
-        const competitionId = await this.getCompetitionIdFromSlug(competitionSlug)
-        const isAdmin = this.isAdmin(competitionId, userId)
+        const isAdmin = this.isAdmin(data.id, userId)
 
         if (!isAdmin) {
             throw new Error("You are not an admin of this competition")
         }
-        
-        Object.entries(data).forEach(([key, value]) => {
-            if (key === "name") {
-                updatableData["slug"] = slugifyString(value)
-            }
-    
-            updatableData[key as keyof UpdateCompetition] = value
-        })
+
+
+        if (data.name) {
+            Object.assign(data, { slug: slugifyString(data.name)})
+        }
+        if (data.startingAt) {
+            Object.assign(data, { startingAt: new Date(data.startingAt)})
+        }
     
         try {
             return prisma.competition.update({
                 where: {
-                    slug: competitionSlug
+                    id: data.id
                 },
-                data: updatableData
+                data
             })
+            
         } catch (error) {
             tryHandleKnownErrors(error as Error)
         }

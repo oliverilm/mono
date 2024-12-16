@@ -8,6 +8,8 @@ import { SystemAuth } from './system/SystemAuth.tsx';
 import { ThemeProvider } from './providers/ThemeProvider.tsx';
 
 import '@mantine/carousel/styles.css';
+import '@mantine/tiptap/styles.css';
+
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const client = new QueryClient()

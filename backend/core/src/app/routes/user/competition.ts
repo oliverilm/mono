@@ -1,12 +1,12 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequest } from 'fastify';
 import { CompetitionService } from '../../services/competition';
 import { getUserProfileFromRequest } from '../../utils/db';
-import { createCompetitionSchema, slugSchema } from '@monorepo/utils';
+import { createCompetitionSchema, updateCompetitionSchema } from '@monorepo/utils';
 import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
-    fastify.post("/competition/create", async (request) => {
+    fastify.post("/competitions", async (request) => {
         const userProfile = await getUserProfileFromRequest(request)
         
         if (!userProfile) {
@@ -17,11 +17,11 @@ export default async function (fastify: FastifyInstance) {
         return CompetitionService.createCompetition({ data, userProfile})
     })
 
-    fastify.patch("/competitions/:slug", (request) => {
-        const params = slugSchema.parse(request.params)
+    fastify.patch("/competitions", (request: FastifyRequest) => {
+        const data = updateCompetitionSchema.parse(request.body)
 
         const userId = getAssertedUserIdFromRequest(request)
-        return CompetitionService.updateCompetition({competitionSlug: params.slug, userId, data: {} })
+        return CompetitionService.updateCompetition({ userId, data })
     })
 
     fastify.get("/competitions/private", (request) => {

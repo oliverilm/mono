@@ -1,7 +1,7 @@
 import { Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { ClubCreate } from "@monorepo/utils";
-import { createClub } from "../../../api/common";
+import { ClubAPI } from "../../../api/common";
 
 export function ClubForm() {
     const form = useForm<ClubCreate>({
@@ -13,7 +13,7 @@ export function ClubForm() {
 
     const onSubmit = async (values: typeof form.values) => {
         console.log(values)
-        const club = await createClub(values)
+        const club = await ClubAPI.createClub(values)
 
         if (club) {
             console.log(club)

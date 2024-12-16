@@ -1,14 +1,14 @@
 import { Carousel } from "@mantine/carousel"
 import { CompetitionCarouselCard } from "./card/CompetitionCarouselCard";
 import { useMatches } from "@mantine/core";
-import { getPublicCompetitions } from "../../../api/common";
+import { CompetitionAPI } from "../../../api/common";
 import { useQuery } from "react-query";
 
 export function CompetitionCarousel() {
 
     const {data: competitions} = useQuery({
         queryKey: ["homepage-competitions"],
-        queryFn: () => getPublicCompetitions({skip: 0, take: 25})
+        queryFn: () => CompetitionAPI.getPublicCompetitions({skip: 0, take: 25})
     })
 
     const slideSize = useMatches({

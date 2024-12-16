@@ -1,7 +1,7 @@
 import { Avatar, Button, Flex, Modal, Paper, Text } from "@mantine/core";
 import { useAuthStore } from "../../../../stores/auth";
 import { useDisclosure } from "@mantine/hooks";
-import { CompetitionFrom } from "../../../competition/form/CompetitionForm";
+import { CompetitionFrom } from "../../../competition/create/form/CompetitionForm";
 import { ClubForm } from "../../../club/form/ClubForm";
 
 export function UserProfileCard() {
