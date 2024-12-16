@@ -19,6 +19,23 @@ export interface UpdateCompetition {
 
 export const CompetitionService = {
 
+    privateCompetitions: async function (userId: string) {
+        const adminInCompetitions = await prisma.competitionAdmin.findMany({
+            where: {
+                userId,
+                competition: {
+                    isArchived: false,
+                    isPublished: false
+                }
+            },
+            select: {
+                competition: true
+            }
+        })
+
+        return adminInCompetitions.map(({ competition }) => competition)
+    },
+
     createCompetitionAdmin: async function ( data: {competitionId: string, userId: string, role: CompetitionRole}, competitionAdminId: string) {
         const admin = await prisma.competitionAdmin.findFirst({
             where: {
@@ -181,8 +198,16 @@ export const CompetitionService = {
         })
     },
 
-    updateCompetition: async function (competitionSlug: string, data: UpdateCompetition ) {
+    updateCompetition: async function ({ competitionSlug, data, userId}: {competitionSlug: string, data: UpdateCompetition, userId: string} ) {
         const updatableData: UpdateCompetition & { slug?: string } = {}
+
+        const competitionId = await this.getCompetitionIdFromSlug(competitionSlug)
+        const isAdmin = this.isAdmin(competitionId, userId)
+
+        if (!isAdmin) {
+            throw new Error("You are not an admin of this competition")
+        }
+        
         Object.entries(data).forEach(([key, value]) => {
             if (key === "name") {
                 updatableData["slug"] = slugifyString(value)

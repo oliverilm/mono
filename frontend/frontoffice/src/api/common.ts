@@ -1,4 +1,4 @@
-import { CreateCompetition, Search, SkipTake, ClubCreate } from "@monorepo/utils";
+import { CreateCompetition, Search, SkipTake, ClubCreate, UpdateCompetition } from "@monorepo/utils";
 import { addSkipTakeSearch, client } from "./client";
 import { AxiosResponse } from "axios";
 
@@ -31,6 +31,14 @@ export function getPublicCompetitions(query: SkipTake & Search): Promise<AxiosRe
 
 export function createCompetition(data: CreateCompetition): Promise<AxiosResponse<CompetitionListItem>> {
     return client.post("/user/competition/create", data)
+}
+
+export function updateCompetition(slug: string, data: UpdateCompetition): Promise<AxiosResponse<CompetitionListItem>> {
+    return client.patch(`/user/competitions/${slug}`, data)
+}
+
+export function getPrivateCompetitions(): Promise<AxiosResponse<CompetitionListItem[]>> {
+    return client.get("/user/competitions/private")
 }
 
 export function getPublicCamps(query: SkipTake & Search) {

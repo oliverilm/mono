@@ -22,14 +22,13 @@ const routes = createBrowserRouter([
                 path: '/register',
                 element: <RegisterPage />
             },
-            
+            {
+                path: "/competitions/:slug",
+                element: <CompetitionPage />
+            }
         ]
     },
-    {
-        path: "/competitions/:slug",
-        element: <CompetitionPage />
-
-    }
+    
 ])
 
 export function AppRouter() {

@@ -26,6 +26,7 @@ export function CompetitionCarousel() {
             slideGap="md"
             includeGapInSize
             align="start"
+            withIndicators
             slidesToScroll={slideSize} >
             {(competitions?.data ?? []).map((competition) => (
                 <CompetitionCarouselCard key={competition.name} competition={competition} />

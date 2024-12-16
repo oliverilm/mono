@@ -1,15 +1,15 @@
-import { AppShell, Button, Flex, useMantineColorScheme } from '@mantine/core'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { AppShell, Box, useMantineColorScheme } from '@mantine/core'
+import { Outlet } from 'react-router-dom'
 import { Notifications } from '@mantine/notifications';
-import { header } from './Layout.css.ts';
-import { useAuthStore } from '../../stores/auth.ts';
-import { ThemeToggle } from '../../components/theme-toggle/ThemeToggle.tsx';
 import { useEffect } from 'react';
+import { LayoutHeader } from './header/LayoutHeader.tsx';
+import { useAuthStore } from '../../stores/auth.ts';
+import { useDisclosure } from '@mantine/hooks';
+import { LayoutNavbar } from './navbar/LayoutNavbar.tsx';
 
 export function Layout() {
-    const navigate = useNavigate()
     const {setColorScheme, colorScheme, } = useMantineColorScheme()
-    const { isAuthenticated, logout } = useAuthStore()
+    const [opened, { toggle }] = useDisclosure(false)
     
     useEffect(() => {
         const scheme = localStorage.getItem("color-scheme")
@@ -21,32 +21,22 @@ export function Layout() {
         localStorage.setItem("color-scheme", colorScheme)
     }, [colorScheme])
 
-    const to = (path: string) => () => {
-        navigate(path)
-    }
+   
+    const authStore = useAuthStore()
 
+    const navbarProps = authStore.isAuthenticated ? { navbar: { width: 220, breakpoint: 'sm', collapsed: { mobile: !opened, desktop: opened } }} : {}
     return (
-        <AppShell header={{ height: 50 }} >
+        <AppShell header={{ height: 60 }} {...navbarProps}>
             <AppShell.Header w={"100%"} >
-                <Flex maw={1520} className={header} px={"xl"}>
-                    <Button variant='transparent' color='gray' onClick={to("/")}>Logo</Button>
-
-                    <Flex gap="sm">
-                    {isAuthenticated ? (
-                        <Button variant='transparent' onClick={logout}>Logout</Button>
-                    ) : (
-                        <>
-                            <Button variant='transparent' onClick={to("/login")}>Login</Button>
-                            <Button  onClick={to("/register")}>Sign up</Button>
-                        </>
-                    )}
-                        <ThemeToggle />
-                    </Flex>
-                </Flex>
+                <LayoutHeader onNavbarToggle={toggle} isNavMenuOpen={opened} />
             </AppShell.Header>
 
-        <AppShell.Main  maw={1260} m={"lg"} mx="auto" p={"xl"}>
-            <Outlet />
+        {authStore.isAuthenticated && <LayoutNavbar />}
+
+        <AppShell.Main>
+            <Box maw={1260} mx="auto" p={"lg"}>
+                <Outlet />
+            </Box>
             <Notifications />
         </AppShell.Main>
 
