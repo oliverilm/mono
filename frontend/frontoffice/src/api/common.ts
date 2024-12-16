@@ -42,7 +42,16 @@ export function getCompetition(competitionSlug?: string) {
     return client.get(`/public/competitions/${competitionSlug}`)
 }
 
-export function getCompetitionMetadata(competitionSlug?: string) {
+export interface CompetitionMetadata {
+    competitionAdmins: {
+        id: number,
+        userId: string,
+        email: string
+        role: string
+    }[]
+}
+
+export function getCompetitionMetadata(competitionSlug?: string): Promise<AxiosResponse<CompetitionMetadata> | null> {
     if (!competitionSlug) return Promise.resolve(null)
     return client.get(`/public/competitions/${competitionSlug}/metadata`)
 }

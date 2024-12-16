@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { getCompetition, getCompetitionMetadata } from "../../api/common";
+import { CompetitionListItem, getCompetition, getCompetitionMetadata } from "../../api/common";
 import { useAuthStore } from "../../stores/auth";
 import { Flex, Text, Title } from "@mantine/core";
 import { getRandomTestCompetitionImage } from "../../constants";
@@ -8,6 +8,9 @@ import { AppTabs } from "../../components/shared/tabs/AppTabs";
 import { ImageWithOverlay } from "../../components/shared/image-with-text/ImageWithText";
 import { IconCalendar, IconPin } from "@tabler/icons-react";
 import dayjs from "dayjs"
+import { CompetitionImageOverlay } from "../../components/competition/image-overlay/CompetitionImageOverlay";
+
+
 export function CompetitionPage() {
     const {slug} = useParams<"slug">()
 
@@ -23,41 +26,27 @@ export function CompetitionPage() {
         queryFn: () => getCompetitionMetadata(slug)
     })
 
+    const myRole = competitionMetadata?.data.competitionAdmins.some(({ userId }) => authStore.profile?.userId === userId)
+
+    // TODO: use this later
+    const isMember = myRole !== undefined
+
     // TODO somehow handle error scenario
 
 
-    if (!slug) {
+    if (!slug || !competition?.data) {
         return <div>Competition not found</div>
     }
 
     return (
        <Flex direction={"column"}>
-           <ImageWithOverlay src={getRandomTestCompetitionImage()} imageHeight={500} imageWidth={"100vw"} overlay={
-                <Flex justify={"space-between"} w={"100%"} align={"center"}>
-                    <Flex direction={"column"} gap={"xs"}>
-                        <Title>{competition?.data.name}</Title>
-                        <Text>{competition?.data.clubName}</Text>
-                    </Flex>
-                    <Flex display={{
-                        xl: "flex",
-                        lg: "flex",
-                        md: "flex",
-                        sm: "none",
-                        xs: "none",
-                        xxs: "none"
-                    }} direction={"column"} gap="sm">
-                        <Flex align={"center"} gap={"sm"}>
-                           <IconCalendar /> 
-                           <Text>{dayjs().add(2, "day").format("DD.MM YYYY")}</Text>
-                        </Flex>
-                        <Flex align={"center"} gap={"sm"}>
-                            <IconPin />
-                            <Text>example location</Text>
-                        </Flex>
-                    </Flex>
-                </Flex>
-           }
-           gradientTo="bottom"
+           <ImageWithOverlay 
+                src={getRandomTestCompetitionImage()} 
+                imageHeight={500} 
+                imageWidth={"100vw"} 
+                overlay={
+                    <CompetitionImageOverlay competition={competition.data} />
+                }
            />
 
             <Flex justify={"center"}>
@@ -69,6 +58,7 @@ export function CompetitionPage() {
                             <div>
                                 <h1>{competition?.data.name}</h1>
                                 <p>{JSON.stringify(competition?.data, null, 2)}</p>
+                                <p>{JSON.stringify(competitionMetadata?.data)}</p>
                             </div>
                         )
                     },
@@ -87,3 +77,4 @@ export function CompetitionPage() {
        </Flex>
     )
 }
+

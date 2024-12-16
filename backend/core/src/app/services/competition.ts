@@ -80,15 +80,17 @@ export const CompetitionService = {
 
         const competitionId = await this.getCompetitionIdFromSlug(competitionSlug)
         const isAdmin = await this.isAdmin(competitionId, userId)
-        console.log({ isAdmin })
+
         if (isAdmin) {
             const admins = await prisma.competitionAdmin.findMany({
                 where: {
                     competitionId
                 },
                 select: {
+                    id: true,
                     user: {
                         select: {
+                            id: true,
                             email: true,
                         }
                     },
@@ -98,6 +100,8 @@ export const CompetitionService = {
             return {
                 competitionAdmins: admins.map(admin => {
                     return {
+                        id: admin.id,
+                        userId: admin.user.id,
                         email: admin.user.email,
                         role: admin.role
                     }
