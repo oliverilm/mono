@@ -1,10 +1,11 @@
 import { card, cardContent, cardSection, slide } from "./CompetitionCarouselCard.css";
-import { Card, Divider, Flex, Image, Text, Title } from "@mantine/core";
+import { Card, Divider, Flex, Text, Title } from "@mantine/core";
 import { Carousel } from "@mantine/carousel"
 import { useLayoutEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { CompetitionListItem } from "../../../../api/common";
 import { TEST_COMPETITION_IMAGES } from "../../../../constants";
+import { ImageWithOverlay } from "../../../shared/image-with-text/ImageWithText";
 
 interface Props {
     competition: CompetitionListItem
@@ -57,19 +58,13 @@ export function CompetitionCarouselCard({ competition}: Props) {
                 navigate(`/competitions/${competition.slug}`)
             }}>
                 <Card.Section className={cardSection}>
-                    <Image
-                        style={{
-                            backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url(${url})`,
-                        }}
-                        src={url}
-                        height={250}
-                        alt="Norway"
-                    />
-                    <Flex className={cardContent}>
-                        <Title  size={"h3"}>{competition.name}</Title>
-                        <Divider my={5} />
-                        <Text p={0}>{"Address"}</Text>
-                    </Flex>
+                    <ImageWithOverlay src={url} imageHeight={250} overlay={
+                        <Flex className={cardContent}>
+                            <Title  size={"h3"}>{competition.name}</Title>
+                            <Divider my={5} />
+                            <Text p={0}>{"Address"}</Text>
+                        </Flex>
+                    } />
                 </Card.Section>
                 
             </Card>

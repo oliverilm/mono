@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { client } from "./client";
+import { addSkipTakeSearch, client } from "./client";
 import { LoginCredentials, NationalId, UserPatch } from "@monorepo/utils"
 
 export interface AuthResponse {
@@ -38,3 +38,7 @@ export async function getProfile(): Promise<AxiosResponse<Profile>> {
 export async function updateUser(data: UserPatch): Promise<AxiosResponse<Profile>> {
     return client.patch("/user/profile", data)
 }
+
+export async function getUserByEmail(email: string): Promise<AxiosResponse<Profile>> {
+    return client.get(addSkipTakeSearch("/user/get-by-email", { search: email }))
+}   

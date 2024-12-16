@@ -1,7 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { UserService } from '../../services/user';
 import { getAssertedUserIdFromRequest } from '../../utils/request';
-import { userPatchSchema } from '@monorepo/utils';
+import { searchSchema, userPatchSchema } from '@monorepo/utils';
+import { request } from 'http';
 
 
 // PRIVATE ENDPOINTS
@@ -19,6 +20,15 @@ export default async function (fastify: FastifyInstance) {
             ...payload, 
             userId: getAssertedUserIdFromRequest(request)
         })
+    })
+
+    fastify.get("/user-by-email", (request) => {
+        const searchParam = searchSchema.parse(request.query)
+        if (!searchParam.search) {
+            return;
+        }
+        return UserService.searchByEmailExactMatch(searchParam.search)
+
     })
 }
 
