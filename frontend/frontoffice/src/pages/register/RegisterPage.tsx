@@ -5,6 +5,7 @@ import { Button, TextInput } from '@mantine/core';
 import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedirectToHome';
 import { LS_TOKEN_KEY } from '../../constants';
 import { LoginCredentials } from '@monorepo/utils';
+import { LayoutPage } from '../layout/page/LayoutPage';
 
 export function RegisterPage() {
 	useAuthenticatedRedirectToHome();
@@ -27,16 +28,18 @@ export function RegisterPage() {
 		}
 	};
 	return (
-		<form onSubmit={form.onSubmit(onSubmit)}>
-			<h1>Register Page</h1>
-			<TextInput {...form.getInputProps('email')} label="email" />
-			<TextInput
-				{...form.getInputProps('password')}
-				label="password"
-				type="password"
-			/>
-			{/* TODO add password step 2 aswell */}
-			<Button type="submit">register</Button>
-		</form>
+		<LayoutPage>
+			<form onSubmit={form.onSubmit(onSubmit)}>
+				<h1>Register Page</h1>
+				<TextInput {...form.getInputProps('email')} label="email" />
+				<TextInput
+					{...form.getInputProps('password')}
+					label="password"
+					type="password"
+				/>
+				{/* TODO add password step 2 aswell */}
+				<Button type="submit">register</Button>
+			</form>
+		</LayoutPage>
 	);
 }

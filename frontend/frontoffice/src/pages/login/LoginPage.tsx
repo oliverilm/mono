@@ -5,6 +5,7 @@ import { Button, TextInput } from '@mantine/core';
 import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedirectToHome';
 import { LS_TOKEN_KEY } from '../../constants';
 import { LoginCredentials } from '@monorepo/utils';
+import { LayoutPage } from '../layout/page/LayoutPage';
 
 export function LoginPage() {
 	useAuthenticatedRedirectToHome();
@@ -26,16 +27,18 @@ export function LoginPage() {
 		}
 	};
 	return (
-		<form onSubmit={form.onSubmit(onSubmit)}>
-			<h1>Login Page</h1>
-			<TextInput {...form.getInputProps('email')} label="email" />
-			<TextInput
-				{...form.getInputProps('password')}
-				label="password"
-				type="password"
-			/>
+		<LayoutPage>
+			<form onSubmit={form.onSubmit(onSubmit)}>
+				<h1>Login Page</h1>
+				<TextInput {...form.getInputProps('email')} label="email" />
+				<TextInput
+					{...form.getInputProps('password')}
+					label="password"
+					type="password"
+				/>
 
-			<Button type="submit">Log in</Button>
-		</form>
+				<Button type="submit">Log in</Button>
+			</form>
+		</LayoutPage>
 	);
 }

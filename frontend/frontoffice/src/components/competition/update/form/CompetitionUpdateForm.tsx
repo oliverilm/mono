@@ -1,11 +1,11 @@
 import { useForm } from '@mantine/form';
 import { CompetitionAPI, CompetitionListItem } from '../../../../api/common';
 import { UpdateCompetition } from '@monorepo/utils';
-import dayjs from 'dayjs';
 import { Button, Flex, Switch, TextInput } from '@mantine/core';
 import { useQueryClient } from 'react-query';
 import { useAuthStore } from '../../../../stores/auth';
 import { useNavigate } from 'react-router-dom';
+import { RichText } from '../../../shared/rich-text/RichText';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -16,23 +16,23 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 	const authStore = useAuthStore();
 	const navigate = useNavigate();
 
-	const form = useForm<
-		Omit<UpdateCompetition, 'startingAt'> & { startingAt: Date }
-	>({
+	const form = useForm<UpdateCompetition>({
 		initialValues: {
 			id: competition.id,
 			description: competition.description ?? '',
 			isPublished: competition.isPublished || false,
 			location: competition.location ?? '',
 			name: competition.name ?? '',
-			startingAt: competition.startingAt ?? dayjs().add(1, 'month').toDate(),
+			startingAt:
+				new Date(competition.startingAt).toISOString() ??
+				new Date().toISOString(),
 		},
 	});
 
 	const onSubmit = async (values: typeof form.values) => {
 		const response = await CompetitionAPI.updateCompetition({
 			...values,
-			startingAt: new Date(values.startingAt).toISOString(),
+			startingAt: new Date(values?.startingAt ?? new Date()).toISOString(),
 		});
 
 		if (response.data) {
@@ -54,8 +54,16 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 	return (
 		<form onSubmit={form.onSubmit(onSubmit)}>
 			<Flex direction={'column'} gap={'sm'}>
-				<TextInput label="name" {...form.getInputProps('name')} />
-				<TextInput label="description" {...form.getInputProps('description')} />
+				<TextInput
+					variant="filled"
+					label="name"
+					{...form.getInputProps('name')}
+				/>
+				<RichText
+					onChange={form.getInputProps('description').onChange}
+					value={form.getInputProps('description').value}
+				/>
+
 				<TextInput label="location" {...form.getInputProps('location')} />
 				<TextInput
 					type="date"
@@ -72,4 +80,11 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 			</Flex>
 		</form>
 	);
+}
+
+interface RendererProps {
+	value: string;
+}
+export function RichTextRenderer({ value }: RendererProps) {
+	return <div dangerouslySetInnerHTML={{ __html: value }}></div>;
 }

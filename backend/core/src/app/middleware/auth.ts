@@ -43,6 +43,6 @@ export async function optionalSessionAuth(request: FastifyRequest) {
 	if (!activeSession) {
 		return;
 	}
-	
+
 	request.userId = activeSession.userId;
 }

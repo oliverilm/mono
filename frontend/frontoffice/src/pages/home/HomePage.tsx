@@ -1,6 +1,6 @@
 import { ClubList } from '../../components/club/list/ClubList';
 import { CompetitionCarousel } from '../../components/competition/carousel/CompetitionCarousel';
-import { UserProfileCard } from '../../components/user/profile/card/UserProfileCard';
+import { LayoutPage } from '../layout/page/LayoutPage';
 
 export function HomePage() {
 	// const {data: camps} = useQuery({
@@ -9,10 +9,9 @@ export function HomePage() {
 	// })
 
 	return (
-		<div>
-			<UserProfileCard />
+		<LayoutPage>
 			<CompetitionCarousel />
 			<ClubList />
-		</div>
+		</LayoutPage>
 	);
 }

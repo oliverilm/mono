@@ -18,6 +18,9 @@ export function CompetitionCarousel() {
 		base: 1,
 	});
 
+	// TODO: instead of null, maybe return some sort of disclaimer
+	if (competitions?.data.length === 0) return null;
+
 	return (
 		<Carousel
 			slideSize={`${(1 / slideSize) * 100}%`}

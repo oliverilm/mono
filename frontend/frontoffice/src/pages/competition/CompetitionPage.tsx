@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { CompetitionAPI } from '../../api/common';
 import { useAuthStore } from '../../stores/auth';
-import { Button, Flex, Modal, Text } from '@mantine/core';
+import { Box, Button, Flex, Modal, Text } from '@mantine/core';
 import { getRandomTestCompetitionImage } from '../../constants';
 import { AppTabs } from '../../components/shared/tabs/AppTabs';
 import { ImageWithOverlay } from '../../components/shared/image-with-text/ImageWithText';
@@ -11,6 +11,7 @@ import { CompetitionDetailInfo } from '../../components/competition/detail/info/
 import { CompetitionDetailRegistration } from '../../components/competition/detail/registration/CompetitionDetailRegistration';
 import { useDisclosure } from '@mantine/hooks';
 import { CompetitionUpdateForm } from '../../components/competition/update/form/CompetitionUpdateForm';
+import { LayoutPage } from '../layout/page/LayoutPage';
 
 export function CompetitionPage() {
 	const { slug } = useParams<'slug'>();
@@ -40,46 +41,54 @@ export function CompetitionPage() {
 	}
 
 	return (
-		<Flex direction={'column'} p={0} w={'100%'}>
-			<ImageWithOverlay
-				src={getRandomTestCompetitionImage()}
-				imageHeight={500}
-				imageWidth={'100%'}
-				overlay={<CompetitionImageOverlay competition={competition.data} />}
-			/>
-			{isAdministrator && myRole && (
-				<Flex>
-					<Text>{myRole?.role}</Text>
-
-					<Button onClick={toggle}>edit</Button>
-
-					<Modal opened={opened} onClose={toggle}>
-						<CompetitionUpdateForm
-							competition={competition.data}
-							onSubmitSuccess={toggle}
-						/>
-					</Modal>
-				</Flex>
-			)}
-
-			<Flex justify={'center'}>
-				<AppTabs
-					tabs={[
-						{
-							value: 'info',
-							label: 'Info',
-							element: <CompetitionDetailInfo competition={competition.data} />,
-						},
-						{
-							value: 'Registration',
-							label: 'Registration',
-							element: (
-								<CompetitionDetailRegistration competition={competition.data} />
-							),
-						},
-					]}
+		<LayoutPage width="full">
+			<Flex direction={'column'} p={0} w={'100%'}>
+				<ImageWithOverlay
+					src={getRandomTestCompetitionImage()}
+					imageHeight={500}
+					imageWidth={'100%'}
+					overlay={<CompetitionImageOverlay competition={competition.data} />}
 				/>
+
+				<Box w={1200} m={'auto'}>
+					{isAdministrator && myRole && (
+						<Flex align={'center'} bg={'gray.0'} gap={'md'} p={'sm'} my={'sm'}>
+							<Text>{myRole?.role}</Text>
+
+							<Button onClick={toggle}>edit</Button>
+
+							<Modal size={'lg'} opened={opened} onClose={toggle}>
+								<CompetitionUpdateForm
+									competition={competition.data}
+									onSubmitSuccess={toggle}
+								/>
+							</Modal>
+						</Flex>
+					)}
+					<Flex justify={'center'}>
+						<AppTabs
+							tabs={[
+								{
+									value: 'info',
+									label: 'Info',
+									element: (
+										<CompetitionDetailInfo competition={competition.data} />
+									),
+								},
+								{
+									value: 'Registration',
+									label: 'Registration',
+									element: (
+										<CompetitionDetailRegistration
+											competition={competition.data}
+										/>
+									),
+								},
+							]}
+						/>
+					</Flex>
+				</Box>
 			</Flex>
-		</Flex>
+		</LayoutPage>
 	);
 }

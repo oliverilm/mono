@@ -1,16 +1,24 @@
-import { AppShell, NavLink } from '@mantine/core';
+import { AppShell, Modal, NavLink } from '@mantine/core';
 import {
 	IconChevronRight,
 	IconCup,
 	IconHome,
 	IconLogout,
+	IconPassword,
 } from '@tabler/icons-react';
 import { useAuthStore } from '../../../stores/auth';
 import { useQuery } from 'react-query';
 import { CompetitionAPI } from '../../../api/common';
 import { useNavigate } from 'react-router-dom';
+import { useDisclosure } from '@mantine/hooks';
+import { CompetitionFrom } from '../../../components/competition/create/form/CompetitionForm';
+import { ClubForm } from '../../../components/club/form/ClubForm';
 
 export function LayoutNavbar() {
+	const [competitionFormOpened, { toggle: toggleCompetitionForm }] =
+		useDisclosure();
+	const [clubFormOpened, { toggle: toggleClubForm }] = useDisclosure();
+
 	const authStore = useAuthStore();
 	const navigate = useNavigate();
 
@@ -39,16 +47,41 @@ export function LayoutNavbar() {
 						label="Unpublished events"
 						leftSection={<IconCup {...iconProps} />}
 					>
-						{data?.data?.map((competition) => (
+						{data?.data?.map((competition, index) => (
 							<NavLink
 								key={competition.id}
 								label={competition.name}
+								leftSection={index + 1}
 								rightSection={<Chevron />}
 								onClick={() => navigate(`/competitions/${competition.slug}`)}
 							/>
 						))}
 					</NavLink>
 				)}
+
+				<NavLink
+					label="admin actions"
+					leftSection={<IconPassword {...iconProps} />}
+				>
+					<NavLink label="Create competition" onClick={toggleCompetitionForm} />
+					<NavLink label="Create club" onClick={toggleClubForm} />
+				</NavLink>
+
+				<Modal
+					opened={competitionFormOpened}
+					onClose={toggleCompetitionForm}
+					title={'Create competition'}
+				>
+					<CompetitionFrom />
+				</Modal>
+
+				<Modal
+					opened={clubFormOpened}
+					onClose={toggleClubForm}
+					title={'Create club'}
+				>
+					<ClubForm />
+				</Modal>
 			</AppShell.Section>
 			<AppShell.Section>
 				<NavLink

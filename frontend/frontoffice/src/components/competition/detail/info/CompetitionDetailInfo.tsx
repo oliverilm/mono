@@ -1,4 +1,5 @@
 import { CompetitionListItem } from '../../../../api/common';
+import { RichTextRenderer } from '../../update/form/CompetitionUpdateForm';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -7,7 +8,7 @@ interface Props {
 export function CompetitionDetailInfo({ competition }: Props) {
 	return (
 		<div>
-			<p>{competition.name}</p>
+			<RichTextRenderer value={competition.description ?? ''} />
 		</div>
 	);
 }

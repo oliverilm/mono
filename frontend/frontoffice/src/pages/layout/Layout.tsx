@@ -41,9 +41,7 @@ export function Layout() {
 			{authStore.isAuthenticated && <LayoutNavbar />}
 
 			<AppShell.Main>
-				<Box maw={1260} mx="auto" p={'lg'}>
-					<Outlet />
-				</Box>
+				<Outlet />
 				<Notifications />
 			</AppShell.Main>
 		</AppShell>
