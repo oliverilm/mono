@@ -3,9 +3,13 @@ import { IconCalendar, IconPin } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { CompetitionListItem } from '../../../api/common';
 
+interface Props { 
+    competition: CompetitionListItem
+}
+
 export function CompetitionImageOverlay({
 	competition,
-}: { competition: CompetitionListItem }) {
+}: Props) {
 	return (
 		<Flex justify={'space-between'} w={'100%'} align={'center'}>
 			<Flex direction={'column'} gap={'xs'}>
