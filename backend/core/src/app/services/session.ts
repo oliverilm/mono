@@ -25,6 +25,19 @@ class SessionService {
 		});
 	}
 
+	async getUserSessionFromToken(token: string): Promise<Session | null> {
+		const session = await prisma.session.findFirst({
+			where: {
+				token,
+				expiresAt: {
+					gt: new Date(),
+				},
+			},
+		});
+
+		return session;
+	}
+
 	async getUserIdFromToken(token: string): Promise<string | null> {
 		const session = await prisma.session.findFirst({
 			select: {
