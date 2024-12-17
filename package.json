@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build:packages": "cd packages/utils && pnpm build",
     "start:core": "cd backend/core && pnpm start",
+    "start:fo": "cd frontend/frontoffice && pnpm start",
     "lint": "pnpm biome format --write"
   },
   "keywords": [],
