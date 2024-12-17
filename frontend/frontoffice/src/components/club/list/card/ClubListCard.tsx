@@ -1,9 +1,9 @@
 interface Props {
-    club: {
-        name: string
-    }
+	club: {
+		name: string;
+	};
 }
 
-export function ClubListCard({club}: Props) {
-    return club.name
+export function ClubListCard({ club }: Props) {
+	return club.name;
 }

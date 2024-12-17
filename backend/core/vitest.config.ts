@@ -17,7 +17,7 @@ export default defineConfig({
         },
         restoreMocks: true,
         sequence: { hooks: 'stack' },
-        include: [`**/*.test.${extensions}`],
+        include: [`tests/**/*.test.ts`],
   },
 
 })

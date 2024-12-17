@@ -1,5 +1,5 @@
-import { AppShell, Box, useMantineColorScheme } from '@mantine/core'
-import { Outlet } from 'react-router-dom'
+import { AppShell, Box, useMantineColorScheme } from '@mantine/core';
+import { Outlet } from 'react-router-dom';
 import { Notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
 import { LayoutHeader } from './header/LayoutHeader.tsx';
@@ -8,39 +8,44 @@ import { useDisclosure } from '@mantine/hooks';
 import { LayoutNavbar } from './navbar/LayoutNavbar.tsx';
 
 export function Layout() {
-    const {setColorScheme, colorScheme, } = useMantineColorScheme()
-    const [opened, { toggle }] = useDisclosure(false)
-    
-    useEffect(() => {
-        const scheme = localStorage.getItem("color-scheme")
-        setColorScheme(scheme as typeof colorScheme || "light")
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+	const { setColorScheme, colorScheme } = useMantineColorScheme();
+	const [opened, { toggle }] = useDisclosure(false);
 
-    useEffect(() => {
-        localStorage.setItem("color-scheme", colorScheme)
-    }, [colorScheme])
+	useEffect(() => {
+		const scheme = localStorage.getItem('color-scheme');
+		setColorScheme((scheme as typeof colorScheme) || 'light');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-   
-    const authStore = useAuthStore()
+	useEffect(() => {
+		localStorage.setItem('color-scheme', colorScheme);
+	}, [colorScheme]);
 
-    const navbarProps = authStore.isAuthenticated ? { navbar: { width: 220, breakpoint: 'sm', collapsed: { mobile: !opened, desktop: opened } }} : {}
-    return (
-        <AppShell header={{ height: 60 }} {...navbarProps}>
-            <AppShell.Header w={"100%"} >
-                <LayoutHeader onNavbarToggle={toggle} isNavMenuOpen={opened} />
-            </AppShell.Header>
+	const authStore = useAuthStore();
 
-        {authStore.isAuthenticated && <LayoutNavbar />}
+	const navbarProps = authStore.isAuthenticated
+		? {
+				navbar: {
+					width: 220,
+					breakpoint: 'sm',
+					collapsed: { mobile: !opened, desktop: opened },
+				},
+			}
+		: {};
+	return (
+		<AppShell header={{ height: 60 }} {...navbarProps}>
+			<AppShell.Header w={'100%'}>
+				<LayoutHeader onNavbarToggle={toggle} isNavMenuOpen={opened} />
+			</AppShell.Header>
 
-        <AppShell.Main>
-            <Box maw={1260} mx="auto" p={"lg"}>
-                <Outlet />
-            </Box>
-            <Notifications />
-        </AppShell.Main>
+			{authStore.isAuthenticated && <LayoutNavbar />}
 
-        </AppShell>
-    )
+			<AppShell.Main>
+				<Box maw={1260} mx="auto" p={'lg'}>
+					<Outlet />
+				</Box>
+				<Notifications />
+			</AppShell.Main>
+		</AppShell>
+	);
 }
-

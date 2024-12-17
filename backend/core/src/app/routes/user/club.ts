@@ -5,9 +5,11 @@ import { clubCreateSchema } from '@monorepo/utils';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
-    fastify.post("/club/create", (request) => {
-        const payload = clubCreateSchema.parse(request.body)
-        return ClubService.create({...payload, userId: getAssertedUserIdFromRequest(request)})
-    })
+	fastify.post('/club/create', (request) => {
+		const payload = clubCreateSchema.parse(request.body);
+		return ClubService.create({
+			...payload,
+			userId: getAssertedUserIdFromRequest(request),
+		});
+	});
 }
-
