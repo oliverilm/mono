@@ -10,10 +10,9 @@ import {
 	UpdateCompetition,
 } from '@monorepo/utils';
 import { LRUCache } from 'lru-cache';
-import competition from '../routes/public/competition';
 
 const cache = new LRUCache({
-	ttl: 1000 * 60 * 60,
+	ttl: 1000 * 60 * 60, // 1 hour
 	max: 1000,
 });
 
@@ -59,18 +58,22 @@ export const CompetitionService = {
 	},
 
 	isAdmin: async function (competitionId: string, userId: string) {
-		if (cache.get(`${competitionId}-${userId}`)) {
-			return true;
+		const cacheKey = `${competitionId}-${userId}`;
+		const cachedResult = cache.get(cacheKey);
+		
+		if (cachedResult !== undefined) {
+			return cachedResult as boolean;
 		}
-
-		return (
-			(await prisma.competitionAdmin.count({
-				where: {
-					competitionId,
-					userId,
-				},
-			})) > 0
-		);
+	
+		const isAdmin = (await prisma.competitionAdmin.count({
+			where: {
+				competitionId,
+				userId,
+			},
+		})) > 0;
+	
+		cache.set(cacheKey, isAdmin);
+		return isAdmin;
 	},
 
 	getCompetitionIdFromSlug: async function (competitionSlug: string) {
@@ -133,6 +136,7 @@ export const CompetitionService = {
 		};
 	},
 	get: async function (competitionSlug: string) {
+		// TODO: could add caching here aswell
 		return prisma.competition.findUnique({
 			where: {
 				slug: competitionSlug,
@@ -186,6 +190,7 @@ export const CompetitionService = {
 			throw new Error('Something went wrong');
 		}
 
+		cache.set(competition.slug, competition.id);
 		return competition;
 	},
 
@@ -224,12 +229,16 @@ export const CompetitionService = {
 		}
 
 		try {
-			return prisma.competition.update({
+
+			const competition = await prisma.competition.update({
 				where: {
 					id: data.id,
 				},
 				data,
 			});
+
+			cache.set(competition.slug, competition.id);
+			return competition
 		} catch (error) {
 			tryHandleKnownErrors(error as Error);
 		}
