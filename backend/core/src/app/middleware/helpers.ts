@@ -2,7 +2,7 @@ import { Session } from '@prisma/client';
 import dayjs from 'dayjs';
 import { FastifyRequest } from 'fastify';
 import { LRUCache } from 'lru-cache';
-import session from '../services/session';
+import { SessionService } from '../services/session';
 
 const sessionCache = new LRUCache<string, Session>({
 	max: 1000,
@@ -27,15 +27,14 @@ export async function getValidSessionAndSaveToCache(token: string) {
 			return null;
 		}
 		return cachedSession;
-	} else {
-		const userSession = await session.getUserSessionFromToken(token);
-
-		if (!userSession) {
-			return null;
-		}
-
-		sessionCache.set(token, userSession);
-
-		return userSession;
 	}
+
+	const userSession = await SessionService.getUserSessionFromToken(token);
+
+	if (!userSession) {
+		return null;
+	}
+
+	sessionCache.set(token, userSession);
+	return userSession;
 }

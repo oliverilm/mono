@@ -1,6 +1,6 @@
 import { Session, UserProfile } from '@prisma/client';
 import securify from './securify';
-import session from './session';
+import { SessionService } from './session';
 import {
 	LoginCredentials,
 	NationalId,
@@ -39,7 +39,7 @@ export const UserService = {
 						userId: user.id,
 					},
 				}),
-				session.createSession(user.id),
+				SessionService.createSession(user.id),
 			]);
 
 			return {
@@ -79,7 +79,7 @@ export const UserService = {
 
 		if (!profile) throw new Error('aaa');
 
-		const token = (await session.createSession(user.id)).token;
+		const token = (await SessionService.createSession(user.id)).token;
 
 		return {
 			profile,
