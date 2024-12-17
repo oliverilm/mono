@@ -6,7 +6,7 @@ import session from "../services/session";
 
 const sessionCache = new LRUCache<string, Session>({
 	max: 1000,
-	ttl: 1000 * 60,
+	ttl: 1000 * 60 * 5,
 	updateAgeOnGet: true,
 })
 
@@ -30,7 +30,7 @@ export async function getValidSessionAndSaveToCache(token: string) {
 
 	} else {
 		const userSession = await session.getUserSessionFromToken(token);
-        
+
 		if (!userSession) {
 			return null;
 		}
