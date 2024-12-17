@@ -60,18 +60,19 @@ export const CompetitionService = {
 	isAdmin: async function (competitionId: string, userId: string) {
 		const cacheKey = `${competitionId}-${userId}`;
 		const cachedResult = cache.get(cacheKey);
-		
+
 		if (cachedResult !== undefined) {
 			return cachedResult as boolean;
 		}
-	
-		const isAdmin = (await prisma.competitionAdmin.count({
-			where: {
-				competitionId,
-				userId,
-			},
-		})) > 0;
-	
+
+		const isAdmin =
+			(await prisma.competitionAdmin.count({
+				where: {
+					competitionId,
+					userId,
+				},
+			})) > 0;
+
 		cache.set(cacheKey, isAdmin);
 		return isAdmin;
 	},
@@ -229,7 +230,6 @@ export const CompetitionService = {
 		}
 
 		try {
-
 			const competition = await prisma.competition.update({
 				where: {
 					id: data.id,
@@ -238,7 +238,7 @@ export const CompetitionService = {
 			});
 
 			cache.set(competition.slug, competition.id);
-			return competition
+			return competition;
 		} catch (error) {
 			tryHandleKnownErrors(error as Error);
 		}

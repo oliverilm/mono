@@ -154,7 +154,6 @@ export const UserService = {
 	},
 
 	searchByEmailExactMatch: async function (email: string) {
-
 		// perhaps can add caching here but maybe not important
 		return prisma.user.findUnique({
 			where: {

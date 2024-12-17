@@ -1,5 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { extractTokenFromHeader, getValidSessionAndSaveToCache } from './helpers';
+import {
+	extractTokenFromHeader,
+	getValidSessionAndSaveToCache,
+} from './helpers';
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -18,7 +21,7 @@ export async function sessionAuth(
 		return;
 	}
 
-	const activeSession = await getValidSessionAndSaveToCache(token)
+	const activeSession = await getValidSessionAndSaveToCache(token);
 
 	if (!activeSession) {
 		reply.unauthorized('Unauthorized');
@@ -28,17 +31,14 @@ export async function sessionAuth(
 	request.userId = activeSession.userId;
 }
 
-
-export async function optionalSessionAuth(
-	request: FastifyRequest,
-) {
+export async function optionalSessionAuth(request: FastifyRequest) {
 	const token = extractTokenFromHeader(request);
 
 	if (!token) {
 		return;
 	}
 
-	const activeSession = await getValidSessionAndSaveToCache(token)
+	const activeSession = await getValidSessionAndSaveToCache(token);
 
 	if (!activeSession) {
 		return;
