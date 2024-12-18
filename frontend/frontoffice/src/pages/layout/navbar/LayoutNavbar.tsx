@@ -72,7 +72,7 @@ export function LayoutNavbar() {
 					onClose={toggleCompetitionForm}
 					title={'Create competition'}
 				>
-					<CompetitionFrom />
+					<CompetitionFrom onSubmit={toggleCompetitionForm} />
 				</Modal>
 
 				<Modal
