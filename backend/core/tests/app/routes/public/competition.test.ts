@@ -20,24 +20,15 @@ describe('Competition related actions', () => {
       },
     });
 
-    const commonCompetitionData = {
-      clubName: TEST_CLUB_NAME,
-      id: expect.any(String),
-      isArchived: false,
-      isPublished: false,
-      additionalInfo: null,
-      createdAt: expectToBeIsoTimestamp(),
-      updatedAt: expectToBeIsoTimestamp(),
-    };
-
     const common = {
       createdAt: expectToBeIsoTimestamp(),
       updatedAt: expectToBeIsoTimestamp(),
       id: expectAnyString(),
       additionalInfo: null,
-      clubName: "test_club",
+      clubName: TEST_CLUB_NAME,
       description: null,
       isArchived: false,
+      registrationEndAt: null,
       isPublished: true,
       location: null,
       startingAt: null,
@@ -46,26 +37,27 @@ describe('Competition related actions', () => {
     expect(response.json()).toStrictEqual(
       [
         {
-          ...common,
           "name": "first competition",
           "slug": "first-competition",
         },
         {
-          ...common,
           "name": "second competition",
           "slug": "second-competition",
         },
         {
-          ...common,
           "name": "third competition",
           "slug": "third-competition",
         },
         {
-          ...common,
           "name": "fourth competition",
           "slug": "fourth-competition",
         },
-      ]
+      ].map((competition) => {
+        return {
+          ...competition,
+          ...common
+        }
+      })
     );
   });
 
