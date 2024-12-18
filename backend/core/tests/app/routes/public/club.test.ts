@@ -26,7 +26,7 @@ describe("Public auth", () => {
         { // regular request without any pagination
             const response = await testServer.inject({
                 method: 'GET',
-                url: '/public/club',
+                url: '/public/clubs',
             })
 
             expect(response.json().length).toBe(2)
@@ -35,7 +35,7 @@ describe("Public auth", () => {
         { // only skip parameter
             const response = await testServer.inject({
                 method: 'GET',
-                url: '/public/club',
+                url: '/public/clubs',
                 query: {
                     skip: "1",
                 }
@@ -48,7 +48,7 @@ describe("Public auth", () => {
         { // only take parameter
             const response = await testServer.inject({
                 method: 'GET',
-                url: '/public/club',
+                url: '/public/clubs',
                 query: {
                     take: "1",
                 }

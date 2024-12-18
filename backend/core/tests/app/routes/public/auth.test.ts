@@ -1,8 +1,10 @@
 import { registerTestUserAndRetrieveToken, TEST_EMAIL, TEST_PASSWORD, testServer } from '../../../integration-init';
-import { describe, test, expect } from "vitest"
+import { describe, it, expect } from "vitest"
+import { expectAnyString, expectToBeIsoTimestamp } from '../../../utils/helpers';
+import { Sex } from '@prisma/client';
 
 describe('Public auth related endpoints', () => {
-  test('should respond with error if user is not registered', async () => {
+  it('should respond with error if user is not registered', async () => {
     const response = await testServer.inject({
       method: 'POST',
       url: '/public/auth/login',
@@ -19,7 +21,7 @@ describe('Public auth related endpoints', () => {
     });
   });
 
-  test('Should create a new user', async () => {
+  it('Should create a new user', async () => {
     const email = `${new Date().getTime()}@email.com`;
     const response = await testServer.inject({
       url: '/public/auth/register',
@@ -30,23 +32,28 @@ describe('Public auth related endpoints', () => {
       },
     });
 
-    expect(response.json()).toStrictEqual({
-      profile: {
-        belt: null,
-        clubId: null,
-        createdAt: expect.any(String),
-        dateOfBirth: null,
-        id: expect.any(String),
-        nationalId: null,
-        nationalIdType: null,
-        updatedAt: expect.any(String),
-        userId: expect.any(String),
-      },
-      token: expect.any(String),
-    });
+    expect(response.json()).toStrictEqual(
+      {
+        "profile": {
+          "belt": null,
+          "clubId": null,
+          "createdAt": expectToBeIsoTimestamp(),
+          "dateOfBirth": null,
+          "firstName": null,
+          "id": expectAnyString(),
+          "lastName": null,
+          "nationalId": null,
+          "nationalIdType": null,
+          "sex": Sex.Male,
+          "updatedAt": expectToBeIsoTimestamp(),
+          "userId": expectAnyString(),
+        },
+        "token": expectAnyString(),
+      }
+    );
   });
 
-  test('should not allow duplicate email user to register', async () => {
+  it('should not allow duplicate email user to register', async () => {
     await registerTestUserAndRetrieveToken()
     const response = await testServer.inject({
       url: '/public/auth/register',
@@ -66,7 +73,7 @@ describe('Public auth related endpoints', () => {
     });
   });
 
-  test('should be able to log in with a valid user', async () => {
+  it('should be able to log in with a valid user', async () => {
     await registerTestUserAndRetrieveToken()
     const response = await testServer.inject({
       url: '/public/auth/login',
@@ -79,20 +86,21 @@ describe('Public auth related endpoints', () => {
 
     expect(response.json()).toStrictEqual(
       {
-        profile: {
-          belt: null,
-          clubId: null,
-          createdAt: expect.any(String),
-          dateOfBirth: null,
-          id: expect.any(String),
-          nationalId: null,
-          nationalIdType: null,
-          updatedAt: expect.any(String),
-          userId: expect.any(String),
+        "profile": {
+          "belt": null,
+          "clubId": null,
+          "createdAt": expectToBeIsoTimestamp(),
+          "dateOfBirth": null,
+          "firstName": null,
+          "id": expectAnyString(),
+          "lastName": null,
+          "nationalId": null,
+          "nationalIdType": null,
+          "sex": Sex.Male,
+          "updatedAt": expectToBeIsoTimestamp(),
+          "userId": expectAnyString(),
         },
-        token: expect.any(String),
-      },
-      
-    );
+        "token": expectAnyString(),
+      });
   });
 });

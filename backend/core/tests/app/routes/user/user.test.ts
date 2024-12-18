@@ -3,6 +3,8 @@ import {
   testServer,
 } from '../../../integration-init';
 import { describe, test, expect } from "vitest"
+import { expectAnyString, expectToBeIsoTimestamp } from '../../../utils/helpers';
+import { Sex } from '@prisma/client';
 
 describe('user routes', () => {
   test('should be able to fetch user profile with authenticated session', async () => {
@@ -18,15 +20,16 @@ describe('user routes', () => {
     expect(response.json()).toStrictEqual({
       belt: null,
       clubId: null,
-      createdAt: expect.any(String),
+      createdAt: expectToBeIsoTimestamp(),
       dateOfBirth: null,
       firstName: null,
-      id: expect.any(String),
+      id: expectAnyString(),
       lastName: null,
       nationalId: null,
       nationalIdType: null,
-      updatedAt: expect.any(String),
-      userId: expect.any(String),
+      sex: Sex.Male,
+      updatedAt: expectToBeIsoTimestamp(),
+      userId: expectAnyString(),
     });
   });
 
@@ -39,7 +42,7 @@ describe('user routes', () => {
         Authorization: `Bearer ${token}`,
       },
       payload: {
-        dateOfBirth: new Date(1995, 9, 7).toISOString(),
+        dateOfBirth: new Date(1995, 8, 7).toISOString(),
         nationalId: '39509071411',
         nationalIdType: 'estid',
         firstName: 'oliver',
@@ -47,19 +50,22 @@ describe('user routes', () => {
       },
     });
 
-    expect(response.json()).toStrictEqual({
-      belt: null,
-      clubId: null,
-      createdAt: expect.any(String),
-      dateOfBirth: '1995-10-06T22:00:00.000Z',
-      firstName: 'Oliver',
-      id: expect.any(String),
-      lastName: 'Smith',
-      nationalId: '39509071411',
-      nationalIdType: 'estid',
-      updatedAt: expect.any(String),
-      userId: expect.any(String),
-    });
+    expect(response.json()).toStrictEqual(
+      {
+        "belt": null,
+        "clubId": null,
+        "createdAt": expectToBeIsoTimestamp(),
+        "dateOfBirth": "1995-09-06T00:00:00.000Z",
+        "firstName": "Oliver",
+        "id": expectAnyString(),
+        "lastName": "Smith",
+        "nationalId": "39509071411",
+        "nationalIdType": "estid",
+        "sex": Sex.Male,
+        "updatedAt": expectToBeIsoTimestamp(),
+        "userId": expectAnyString(),
+      }
+    );
   });
 
   test('should not be able to update user profile with an incorrect birth day', async () => {
@@ -71,7 +77,7 @@ describe('user routes', () => {
         Authorization: `Bearer ${token}`,
       },
       payload: {
-        dateOfBirth: new Date(1995, 8, 7).toISOString(),
+        dateOfBirth: new Date(1995, 1, 7).toISOString(),
         nationalId: '39509071411',
         nationalIdType: 'estid',
         firstName: 'oliver',
@@ -145,10 +151,12 @@ describe('user routes', () => {
       },
     });
 
+    console.log(import.meta.env.DATABASE_URL)
+
     expect(response.json()).toStrictEqual(
       {
         "error": "Internal Server Error",
-        "message": "Unique constraint failed",
+        "message": "Date of birth does not match the national id code",
         "statusCode": 500,
       }
     );

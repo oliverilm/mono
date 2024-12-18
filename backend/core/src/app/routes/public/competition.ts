@@ -17,8 +17,6 @@ export default async function (fastify: FastifyInstance) {
 
 	fastify.get('/competitions/:slug/metadata', (request) => {
 		const params = slugSchema.parse(request.params);
-
-		console.log({ params, userId: request.userId });
 		return CompetitionService.getMetadata(params.slug, request.userId);
 	});
 }

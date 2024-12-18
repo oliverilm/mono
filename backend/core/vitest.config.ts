@@ -2,7 +2,11 @@ import { defineConfig } from 'vitest/config'
 export const extensions = '{js,mjs,ts,mts}';
 
 export default defineConfig({
+  
   test: {
+    env: {
+      DATABASE_URL: "postgresql://postgresUser:postgresPW@localhost:5455/postgresDB?shema=test"
+    },
     allowOnly: true,
         globals: true,
         pool: 'forks',

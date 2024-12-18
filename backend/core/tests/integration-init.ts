@@ -33,9 +33,6 @@ beforeEach(async () => {
     })
 });
 
-async function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
-}
 
 export const TEST_EMAIL = "testing@testing.com"
 export const TEST_PASSWORD = "testPassword"

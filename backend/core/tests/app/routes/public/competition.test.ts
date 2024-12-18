@@ -1,9 +1,10 @@
 import { createManyCompetitionsWithNames } from '../../../utils/competition';
 import { TEST_CLUB_NAME, testServer } from '../../../integration-init';
-import { describe, test, expect } from "vitest"
+import { describe, it, expect } from "vitest"
+import { expectAnyString, expectToBeIsoTimestamp } from '../../../utils/helpers';
 
 describe('Competition related actions', () => {
-  test('should retrieve a list of competitions', async () => {
+  it('should retrieve a list of competitions', async () => {
     await createManyCompetitionsWithNames([
       'first competition',
       'second competition',
@@ -12,7 +13,7 @@ describe('Competition related actions', () => {
     ]);
     const response = await testServer.inject({
       method: 'GET',
-      url: '/public/competition/list',
+      url: '/public/competitions',
       query: {
         skip: '0',
         take: '25',
@@ -25,45 +26,61 @@ describe('Competition related actions', () => {
       isArchived: false,
       isPublished: false,
       additionalInfo: null,
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
+      createdAt: expectToBeIsoTimestamp(),
+      updatedAt: expectToBeIsoTimestamp(),
     };
 
-    expect(response.json()).toStrictEqual([
-      {
-        ...commonCompetitionData,
-        name: 'first competition',
-        slug: 'first-competition',
-      },
-      {
-        ...commonCompetitionData,
-        name: 'second competition',
-        slug: 'second-competition',
-      },
-      {
-        ...commonCompetitionData,
-        name: 'third competition',
-        slug: 'third-competition',
-      },
-      {
-        ...commonCompetitionData,
-        name: 'fourth competition',
-        slug: 'fourth-competition',
-      },
-     
-    ]);
+    const common = {
+      createdAt: expectToBeIsoTimestamp(),
+      updatedAt: expectToBeIsoTimestamp(),
+      id: expectAnyString(),
+      additionalInfo: null,
+      clubName: "test_club",
+      description: null,
+      isArchived: false,
+      isPublished: true,
+      location: null,
+      startingAt: null,
+
+    }
+    expect(response.json()).toStrictEqual(
+      [
+        {
+          ...common,
+          "name": "first competition",
+          "slug": "first-competition",
+        },
+        {
+          ...common,
+          "name": "second competition",
+          "slug": "second-competition",
+        },
+        {
+          ...common,
+          "name": "third competition",
+          "slug": "third-competition",
+        },
+        {
+          ...common,
+          "name": "fourth competition",
+          "slug": "fourth-competition",
+        },
+      ]
+    );
   });
 
-  test('should apply skip and take with competitions list', async () => {
+  it('should apply skip and take with competitions list', async () => {
     await createManyCompetitionsWithNames([
       'first competition',
       'second competition',
       'third competition',
       'fourth competition',
     ]);
+
+
     const response = await testServer.inject({
       method: 'GET',
-      url: '/public/competition/list',
+      url: '/public/competitions',
       query: {
         skip: '0',
         take: '1',
@@ -72,4 +89,19 @@ describe('Competition related actions', () => {
 
     expect(response.json().length).toBe(1);
   });
+
+  it("should not fetch competition metadata when not authenticated", async () => {
+    await createManyCompetitionsWithNames([
+      'first competition',
+    ]);
+
+    const response = await testServer.inject({
+      method: 'GET',
+      url: '/public/competitions/first-competition/metadata',
+    });
+
+    expect(response.json()).toMatchInlineSnapshot(`{}`)
+
+
+  })
 });

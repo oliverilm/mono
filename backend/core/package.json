@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
+  "prisma": {
+    "seed": "tsx prisma/seed/index.ts"
+  },
   "scripts": {
     "prestart": "tsc",
     "test": "vitest",

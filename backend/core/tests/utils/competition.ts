@@ -36,6 +36,7 @@ export async function createManyCompetitionsWithNames(names: string[]): Promise<
         const competition = await prisma.competition.create({
             data: {
                 clubName: testClub?.name,
+                isPublished: true,
                 slug: slugifyString(name),
                 name: name
             }

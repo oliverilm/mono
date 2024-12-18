@@ -8,6 +8,8 @@ import { FastifyInstance } from 'fastify';
 import AutoLoad from '@fastify/autoload';
 import cors from '@fastify/cors';
 import sensible from '@fastify/sensible';
+import publicRouter from './routes/public/publicRouter';
+import userRouter from './routes/user/userRouter';
 
 /* eslint-disable-next-line */
 export interface AppOptions {}
@@ -27,11 +29,7 @@ export async function app(fastify: FastifyInstance, opts: AppOptions) {
 		allowedHeaders: ['content-type', 'accept', 'content-type', 'authorization'],
 	});
 
-	// register public routes
-	fastify.register(AutoLoad, {
-		dir: path.join(__dirname, 'routes'),
-		dirNameRoutePrefix: true,
-		options: { ...opts },
-		autoHooks: true,
-	});
+	// register routers
+	fastify.register(publicRouter, { prefix: "/public" });
+	fastify.register(userRouter, { prefix: "/user" });
 }
