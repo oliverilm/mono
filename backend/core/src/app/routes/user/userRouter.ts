@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 
-// PUBLIC ENDPOINTS
+// USER ENDPOINTS
 export default async function (fastify: FastifyInstance) {
 	fastify.register(import('./autohooks'));
 	fastify.register(import('./user'));
