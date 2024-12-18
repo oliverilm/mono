@@ -30,6 +30,6 @@ export async function app(fastify: FastifyInstance, opts: AppOptions) {
 	});
 
 	// register routers
-	fastify.register(publicRouter, { prefix: "/public" });
-	fastify.register(userRouter, { prefix: "/user" });
+	fastify.register(publicRouter, { prefix: '/public' });
+	fastify.register(userRouter, { prefix: '/user' });
 }
