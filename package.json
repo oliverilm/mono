@@ -6,6 +6,9 @@
     "build:packages": "cd packages/utils && pnpm build",
     "start:core": "cd backend/core && pnpm start",
     "start:fo": "cd frontend/frontoffice && pnpm start",
+
+    "test:core": "cd backend/core && pnpm run test",
+    "coverage:core": "cd backend/core && pnpm run coverage",
     "lint": "pnpm biome format --write"
   },
   "keywords": [],
