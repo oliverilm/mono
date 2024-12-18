@@ -20,21 +20,25 @@ export function CompetitionPage() {
 
 	const [opened, { toggle }] = useDisclosure();
 	const [categoriesOpen, { toggle: toggleCategories }] = useDisclosure();
-	
+
 	const { data: competition } = useQuery({
 		queryKey: [StaticQueryKey.CompetitionDetail, slug],
 		queryFn: () => CompetitionAPI.getCompetition(slug),
 	});
 
 	const { data: competitionMetadata } = useQuery({
-		queryKey: [StaticQueryKey.CompetitionMetadata, slug, authStore.isAuthenticated],
+		queryKey: [
+			StaticQueryKey.CompetitionMetadata,
+			slug,
+			authStore.isAuthenticated,
+		],
 		queryFn: () => CompetitionAPI.getCompetitionMetadata(slug),
 	});
 
 	const { data: competitionCategories } = useQuery({
 		queryKey: [StaticQueryKey.CompetitionCategories, slug],
 		queryFn: () => CompetitionAPI.getCompetitionCategories(slug!),
-		enabled: Boolean(slug)
+		enabled: Boolean(slug),
 	});
 
 	const myRole = competitionMetadata?.data?.competitionAdmins?.find(
@@ -73,7 +77,11 @@ export function CompetitionPage() {
 								/>
 							</Modal>
 
-							<Modal size={'lg'} opened={categoriesOpen} onClose={toggleCategories}>
+							<Modal
+								size={'lg'}
+								opened={categoriesOpen}
+								onClose={toggleCategories}
+							>
 								<CompetitionUpdateForm
 									competition={competition.data}
 									onSubmitSuccess={toggleCategories}

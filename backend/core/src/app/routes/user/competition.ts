@@ -30,12 +30,12 @@ export default async function (fastify: FastifyInstance) {
 	});
 
 	fastify.post('/competitions/:slug/competitors', (request) => {
-			const params = slugSchema.parse(request.params); // TODO: not sure what to do with this
-			const userId = getAssertedUserIdFromRequest(request);
-			const data = createCompetitorSchema.parse(request.body);
+		const params = slugSchema.parse(request.params); // TODO: not sure what to do with this
+		const userId = getAssertedUserIdFromRequest(request);
+		const data = createCompetitorSchema.parse(request.body);
 
-			return CompetitionService.createCompetitor(data, userId);
-		});
+		return CompetitionService.createCompetitor(data, userId);
+	});
 
 	fastify.get('/competitions/private', (request) => {
 		const userId = getAssertedUserIdFromRequest(request);

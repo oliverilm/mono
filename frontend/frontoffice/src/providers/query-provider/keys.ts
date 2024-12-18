@@ -7,6 +7,6 @@ export enum StaticQueryKey {
 	CampDetails = 'camp-detail',
 	ClubDetails = 'club-detail',
 
-    CompetitionMetadata = "competition-metadata",
-    CompetitionCategories = "competition-categories"
+	CompetitionMetadata = 'competition-metadata',
+	CompetitionCategories = 'competition-categories',
 }

@@ -7,12 +7,7 @@ interface Props {
 
 export function CompetitionImageOverlay({ competition }: Props) {
 	return (
-		<Flex
-			justify={'space-between'}
-			w={'100%'}
-			pb={'lg'}
-			align={'center'}
-		>
+		<Flex justify={'space-between'} w={'100%'} pb={'lg'} align={'center'}>
 			<Flex direction={'column'} gap={'xs'}>
 				<Title>{competition?.name}</Title>
 				<Text>{competition?.clubName}</Text>

@@ -21,7 +21,6 @@ const cache = new LRUCache({
 });
 
 export const CompetitionService = {
-
 	getCompetitionCategories: async function (slug: string) {
 		return prisma.competitionCategory.findMany({
 			where: {
@@ -33,9 +32,8 @@ export const CompetitionService = {
 		data: CreateCompetitor,
 		userId: string,
 	): Promise<null | Competitor> {
-
 		// TODO: throw everything from here to a transaction maybe
-		const userProfile = await UserService.getUserProfile(userId)
+		const userProfile = await UserService.getUserProfile(userId);
 
 		if (!userProfile) {
 			throw new Error('User profile not found');
@@ -53,43 +51,50 @@ export const CompetitionService = {
 			select: {
 				name: true,
 				slug: true,
-			}
-		})
+			},
+		});
 
 		if (!competition) {
 			throw new Error('Competition not found');
 		}
 
-
 		if (userProfile?.userId === userId) {
 			// person registers themselves to the competition
 			// TODO: handle this
-			return null
+			return null;
 		}
 
 		if (!userProfile.clubId) {
-			throw new Error('Insufficent permissions, user does not belong to a club');
+			throw new Error(
+				'Insufficent permissions, user does not belong to a club',
+			);
 		}
 
+		const potentialCompetitor = await UserService.getUserProfileByProfileId(
+			data.competitorId,
+		);
 
-		const potentialCompetitor = await UserService.getUserProfileByProfileId(data.competitorId)
-		
 		if (!potentialCompetitor) {
 			throw new Error('Competitor not found');
 		}
 
 		if (userProfile.clubId !== potentialCompetitor.clubId) {
-			throw new Error('Insufficent permissions, competitor does not belong to the same club as the user');
+			throw new Error(
+				'Insufficent permissions, competitor does not belong to the same club as the user',
+			);
 		}
 
 		// check user club role
-		const isClubAdmin = await ClubService.isClubAdmin(userId, userProfile.clubId)
+		const isClubAdmin = await ClubService.isClubAdmin(
+			userId,
+			userProfile.clubId,
+		);
 
 		if (!isClubAdmin) {
 			throw new Error('Insufficent permissions, user is not a club admin');
 		}
 
-		// check if competitor is already registred in the competition with 
+		// check if competitor is already registred in the competition with
 
 		const club = await prisma.club.findUnique({
 			where: {
@@ -97,36 +102,34 @@ export const CompetitionService = {
 			},
 			select: {
 				name: true,
-			}
-		})
+			},
+		});
 
 		if (!club) {
 			// impossible scenario
 			throw new Error('Club not found');
 		}
-		
+
 		try {
 			const competitor = await prisma.competitor.create({
 				data: {
 					competitionId: data.competitionId,
 					profileId: data.competitorId,
-					weight: "",
-					clubName: club.name ?? "individual",
+					weight: '',
+					clubName: club.name ?? 'individual',
 					competitionCategoryId: data.competitionCategoryId,
-					firstName: potentialCompetitor.firstName ?? "unknown",
-					lastName: potentialCompetitor.lastName ?? "unknown",
+					firstName: potentialCompetitor.firstName ?? 'unknown',
+					lastName: potentialCompetitor.lastName ?? 'unknown',
 					competitionSlug: competition.slug,
-					competitionName: competition.name
+					competitionName: competition.name,
 				},
 			});
 			return competitor;
 		} catch (error) {
 			tryHandleKnownErrors(error as Error);
 
-			throw error
+			throw error;
 		}
-
-
 	},
 	listCompetitors: async function (slug: string, skipTake: SkipTake) {
 		// TODO: add more searching fields here

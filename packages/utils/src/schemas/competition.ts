@@ -20,6 +20,6 @@ export const createCompetitorSchema = z.object({
 	competitionId: z.string(),
 	competitorId: z.string(),
 	competitionCategoryId: z.number(),
-	weight: z.string()
-})
+	weight: z.string(),
+});
 export type CreateCompetitor = z.infer<typeof createCompetitorSchema>;

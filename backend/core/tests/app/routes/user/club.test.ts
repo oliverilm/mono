@@ -76,7 +76,68 @@ describe('User Club related actions', () => {
     );
   });
 
-  test.todo('should not be able to create a club with a duplicate name');
-  test.todo('should not be able to create a club if user is already in a club');
+  test('should not be able to create a club with a duplicate name', async () => {
+    const token1 = await registerTestUserAndRetrieveToken({ email: "uff@ee.ee" })
+    await testServer.inject({
+      method: 'POST',
+      url: '/user/club/create',
+      payload: {
+        name: 'unique club',
+        country: 'EE',
+      },
+      headers: {
+        authorization: `Bearer ${token1}`,
+      },
+    });
+
+    const token2 = await registerTestUserAndRetrieveToken({ email: "uf2f@ee.ee" })
+    const response =  await testServer.inject({
+      method: 'POST',
+      url: '/user/club/create',
+      payload: {
+        name: 'unique club',
+        country: 'FI',
+      },
+      headers: {
+        authorization: `Bearer ${token2}`,
+      },
+    });
+
+    expect(response.json()).toStrictEqual(
+      {
+        "error": "Internal Server Error",
+        "message": "Unique constraint failed",
+        "statusCode": 500,
+      }
+    );
+
+  });
+
+  
+  test('should not be able to create a club if user is already in a club', async () => {
+    const token = await registerTestUserAndRetrieveToken({ addons: {
+       withClub: true
+    }});
+
+    const response = await testServer.inject({
+      method: 'POST',
+      url: '/user/club/create',
+      payload: {
+        name: 'unique club',
+        country: 'EE',
+      },
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    expect(response.json()).toStrictEqual(
+      {
+        "error": "Internal Server Error",
+        "message": "User already belongs to a club",
+        "statusCode": 500,
+      }
+    );
+  });
 
 });

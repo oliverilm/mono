@@ -2,6 +2,7 @@ import { Club, ClubRole } from '@prisma/client';
 import { slugifyString } from '../utils/string';
 import { prisma } from '../utils/db';
 import { ClubCreate, SkipTake, UserIdObject } from '@monorepo/utils';
+import { tryHandleKnownErrors } from '../utils/error';
 
 export type SlugOrId =
 	| {
@@ -10,13 +11,18 @@ export type SlugOrId =
 	| { slug: string };
 
 export const ClubService = {
-	isClubAdmin: async function (userId: string, clubId: string): Promise<boolean> {
-		return (await prisma.clubAdmin.count({
-			where: {
-				userId,
-				clubId,
-			},
-		})) > 0;
+	isClubAdmin: async function (
+		userId: string,
+		clubId: string,
+	): Promise<boolean> {
+		return (
+			(await prisma.clubAdmin.count({
+				where: {
+					userId,
+					clubId,
+				},
+			})) > 0
+		);
 	},
 	getClubByIdOrSlug: function (
 		slugOrId: SlugOrId,
@@ -87,16 +93,20 @@ export const ClubService = {
 				clubMetadata: { create: {} },
 			},
 		});
-		if (club) {
-			await prisma.userProfile.update({
-				where: {
-					userId,
-				},
-				data: {
-					clubId: club.id,
-				},
-			});
+
+		if (!club) {
+			throw new Error('Failed to create club');
 		}
+
+		await prisma.userProfile.update({
+			where: {
+				userId,
+			},
+			data: {
+				clubId: club.id,
+			},
+		});
+
 		return club || null;
 	},
 };
