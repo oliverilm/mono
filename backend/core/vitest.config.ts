@@ -4,6 +4,12 @@ export const extensions = '{js,mjs,ts,mts}';
 export default defineConfig({
   
   test: {
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.ts"],
+      exclude: ["src/main.ts", "src/app/app.ts"],
+      reporter: ["text", "json", "html"],
+    },
     env: {
       DATABASE_URL: "postgresql://postgresUser:postgresPW@localhost:5455/postgresDB?shema=test"
     },

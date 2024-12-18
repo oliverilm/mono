@@ -4,14 +4,14 @@ import {
   TEST_EMAIL,
   testServer,
 } from '../../../integration-init';
-import { describe, test, expect } from "vitest"
+import { describe, it, expect } from "vitest"
 import { expectAnyString, expectToBeIsoTimestamp } from '../../../utils/helpers';
 import { CreateCompetition } from '@monorepo/utils';
-import { prisma } from '../../../../src/app/utils/db';
 import { CompetitionRole } from '@prisma/client';
+import { createCompetitionWithName, createManyCompetitionsWithNames } from '../../../utils/competition';
 
 describe('Competition related actions', () => {
-  test('should be able to create a competition', async () => {
+  it('should be able to create a competition', async () => {
     const token = await registerTestUserAndRetrieveToken({
       addons: { withClub: true },
     });
@@ -68,4 +68,41 @@ describe('Competition related actions', () => {
     );
     
   });
+
+  it("should fetch only private competitions", async () => {
+    const token = await registerTestUserAndRetrieveToken({
+      addons: { withClub: true },
+    });
+
+
+    await createManyCompetitionsWithNames(["test 1", "test 2"])
+    await createCompetitionWithName("test 3")
+
+    const response = await testServer.inject({
+      method: 'GET',
+      url: `/user/competitions/private`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    expect(response.json()).toStrictEqual(
+      [
+        {
+          "additionalInfo": null,
+          "clubName": "test_club",
+          "createdAt": expectToBeIsoTimestamp(),
+          "description": null,
+          "id": expectAnyString(),
+          "isArchived": false,
+          "isPublished": false,
+          "location": null,
+          "name": "test 3",
+          "slug": "test-3",
+          "startingAt": null,
+          "updatedAt":expectToBeIsoTimestamp(),
+        },
+      ]
+    )
+  })
 });

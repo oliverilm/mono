@@ -27,9 +27,12 @@ async function cleanDb() {
 
 
 beforeEach(async () => {
-    await cleanDb()
-    testServer = Fastify();
-    testServer.register(app);
+    await cleanDb().then(() => {
+        vitest.clearAllMocks()
+        testServer = Fastify();
+        testServer.register(app);
+    })
+   
 });
 
 
