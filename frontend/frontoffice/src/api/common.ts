@@ -8,9 +8,15 @@ import {
 import { addSkipTakeSearch, client } from './client';
 import { AxiosResponse } from 'axios';
 
+export interface Club {
+	id: string;
+	name: string;
+	slug: string;
+}
+
 function getPublicClubs(
 	query: SkipTake & Search,
-): Promise<AxiosResponse<unknown[]>> {
+): Promise<AxiosResponse<Club[]>> {
 	return client.get(addSkipTakeSearch('/public/clubs', query));
 }
 

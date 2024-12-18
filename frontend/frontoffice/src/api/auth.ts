@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { addSkipTakeSearch, client } from './client';
 import { LoginCredentials, NationalId, UserPatch } from '@monorepo/utils';
 

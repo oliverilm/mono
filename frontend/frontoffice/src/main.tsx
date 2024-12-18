@@ -9,20 +9,17 @@ import { ThemeProvider } from './providers/ThemeProvider.tsx';
 
 import '@mantine/carousel/styles.css';
 import '@mantine/tiptap/styles.css';
-
-import { QueryClient, QueryClientProvider } from 'react-query';
-
-const client = new QueryClient();
+import { QueryProvider } from './providers/query-provider/QueryProvider.js';
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
-		<QueryClientProvider client={client}>
+		<QueryProvider>
 			<ThemeProvider>
 				{/* TODO: investigate, if this is slower */}
 				<SystemAuth />
 
 				<AppRouter />
 			</ThemeProvider>
-		</QueryClientProvider>
+		</QueryProvider>
 	</StrictMode>,
 );

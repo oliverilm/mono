@@ -24,8 +24,6 @@ async function cleanDb() {
     return prisma.$executeRawUnsafe(`TRUNCATE ${tableNames.map((name) => `public."${name}"`).join(", ")} CASCADE`)
 }
 
-
-
 beforeEach(async () => {
     await cleanDb().then(() => {
         vitest.clearAllMocks()

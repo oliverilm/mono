@@ -6,6 +6,8 @@ import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedi
 import { LS_TOKEN_KEY } from '../../constants';
 import { LoginCredentials } from '@monorepo/utils';
 import { LayoutPage } from '../layout/page/LayoutPage';
+import { useMutation } from 'react-query';
+import { notifications } from '@mantine/notifications';
 
 export function LoginPage() {
 	useAuthenticatedRedirectToHome();
@@ -17,14 +19,23 @@ export function LoginPage() {
 		},
 	});
 
-	const onSubmit = async (data: typeof form.values) => {
-		const loginReponse = await login(data);
-		// TODO. this is an inconsistency. login response will contain a token and a profile
-		// token should not go to the profile data
-		if (loginReponse) {
-			authStore.setProfile(loginReponse.data.profile);
-			localStorage.setItem(LS_TOKEN_KEY, loginReponse.data.token);
+	const { mutate } = useMutation(login, {
+		onSuccess: (data) => {
+			authStore.setProfile(data.data.profile);
+			localStorage.setItem(LS_TOKEN_KEY, data.data.token);
+		},
+		onError: (error) => {
+			notifications.show({
+				title: 'Error',
+				// @ts-expect-error
+				message: error?.response?.data?.message,
+				color: 'red',
+			})
 		}
+	})
+
+	const onSubmit = async (data: typeof form.values) => {
+		await mutate(data);
 	};
 	return (
 		<LayoutPage>

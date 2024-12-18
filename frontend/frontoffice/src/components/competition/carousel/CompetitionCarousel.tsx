@@ -3,10 +3,11 @@ import { CompetitionCarouselCard } from './card/CompetitionCarouselCard';
 import { useMatches } from '@mantine/core';
 import { CompetitionAPI } from '../../../api/common';
 import { useQuery } from 'react-query';
+import { StaticQueryKey } from '../../../providers/query-provider/keys';
 
 export function CompetitionCarousel() {
 	const { data: competitions } = useQuery({
-		queryKey: ['homepage-competitions'],
+		queryKey: [StaticQueryKey.HomeCompetitions],
 		queryFn: () => CompetitionAPI.getPublicCompetitions({ skip: 0, take: 25 }),
 	});
 
