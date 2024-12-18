@@ -153,6 +153,17 @@ export const UserService = {
 		}
 	},
 
+	getUserProfileByProfileId: async function (
+		profileId: string,
+	): Promise<UserProfile | null> {
+		return prisma.userProfile.findUnique({
+			where: {
+				id: profileId,
+			},
+		});
+	},
+		
+
 	searchByEmailExactMatch: async function (email: string) {
 		// perhaps can add caching here but maybe not important
 		return prisma.user.findUnique({

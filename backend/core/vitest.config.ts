@@ -11,7 +11,7 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
     },
     env: {
-      DATABASE_URL: "postgresql://postgresUser:postgresPW@localhost:5455/testDb"
+      DATABASE_URL: "postgresql://postgresUser:postgresPW@localhost:5455/postgresDB"
     },
     allowOnly: true,
         globals: true,

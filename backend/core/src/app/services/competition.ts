@@ -1,16 +1,19 @@
-import { CompetitionRole, UserProfile } from '@prisma/client';
+import { CompetitionRole, Competitor, UserProfile } from '@prisma/client';
 import { slugifyString } from '../utils/string';
 import { convertSkipTake } from '../utils/object';
 import { tryHandleKnownErrors } from '../utils/error';
 import { prisma } from '../utils/db';
 import {
 	CreateCompetition,
+	CreateCompetitor,
 	Search,
 	SkipTake,
 	Slug,
 	UpdateCompetition,
 } from '@monorepo/utils';
 import { LRUCache } from 'lru-cache';
+import { UserService } from './user';
+import { ClubService } from './club';
 
 const cache = new LRUCache({
 	ttl: 1000 * 60 * 60, // 1 hour
@@ -18,20 +21,112 @@ const cache = new LRUCache({
 });
 
 export const CompetitionService = {
+
+	getCompetitionCategories: async function (slug: string) {
+		return prisma.competitionCategory.findMany({
+			where: {
+				competitionSlug: slug,
+			},
+		});
+	},
 	createCompetitor: async function (
-		data: { competitionId: string; competitorId: string },
+		data: CreateCompetitor,
 		userId: string,
-	) {
-		// checks needed to be done
-		// schenario 1:
-		// if competitor id is not users profile id
-		// check if user is in a club and club admin or something like that
-		// if not, fail this operation
-		// if yes, create the competitor with the user id as the competitor id
-		// scenario 2:
-		// if competitor id is users profile id
-		// if yes, create the competitor with the user id as the competitor id
-		// return prisma.competitor.create({ data });
+	): Promise<null | Competitor> {
+
+		// TODO: throw everything from here to a transaction maybe
+		const userProfile = await UserService.getUserProfile(userId)
+
+		if (!userProfile) {
+			throw new Error('User profile not found');
+		}
+
+		const competition = await prisma.competition.findUnique({
+			where: {
+				id: data.competitionId,
+				isPublished: true,
+				isArchived: false,
+				registrationEndAt: {
+					gt: new Date(),
+				},
+			},
+			select: {
+				name: true,
+				slug: true,
+			}
+		})
+
+		if (!competition) {
+			throw new Error('Competition not found');
+		}
+
+
+		if (userProfile?.userId === userId) {
+			// person registers themselves to the competition
+			// TODO: handle this
+			return null
+		}
+
+		if (!userProfile.clubId) {
+			throw new Error('Insufficent permissions, user does not belong to a club');
+		}
+
+
+		const potentialCompetitor = await UserService.getUserProfileByProfileId(data.competitorId)
+		
+		if (!potentialCompetitor) {
+			throw new Error('Competitor not found');
+		}
+
+		if (userProfile.clubId !== potentialCompetitor.clubId) {
+			throw new Error('Insufficent permissions, competitor does not belong to the same club as the user');
+		}
+
+		// check user club role
+		const isClubAdmin = await ClubService.isClubAdmin(userId, userProfile.clubId)
+
+		if (!isClubAdmin) {
+			throw new Error('Insufficent permissions, user is not a club admin');
+		}
+
+		// check if competitor is already registred in the competition with 
+
+		const club = await prisma.club.findUnique({
+			where: {
+				id: userProfile.clubId,
+			},
+			select: {
+				name: true,
+			}
+		})
+
+		if (!club) {
+			// impossible scenario
+			throw new Error('Club not found');
+		}
+		
+		try {
+			const competitor = await prisma.competitor.create({
+				data: {
+					competitionId: data.competitionId,
+					profileId: data.competitorId,
+					weight: "",
+					clubName: club.name ?? "individual",
+					competitionCategoryId: data.competitionCategoryId,
+					firstName: potentialCompetitor.firstName ?? "unknown",
+					lastName: potentialCompetitor.lastName ?? "unknown",
+					competitionSlug: competition.slug,
+					competitionName: competition.name
+				},
+			});
+			return competitor;
+		} catch (error) {
+			tryHandleKnownErrors(error as Error);
+
+			throw error
+		}
+
+
 	},
 	listCompetitors: async function (slug: string, skipTake: SkipTake) {
 		// TODO: add more searching fields here

@@ -7,9 +7,11 @@ model User {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
-    competitionAdmins CompetitionAdmin[]
-    userProfile UserProfile?
-    sessions    Session[]
+    competitionAdmins   CompetitionAdmin[]
+    clubAdmin           ClubAdmin?
+    userProfile         UserProfile?
+    sessions            Session[]
+
 }
 
 enum Sex {

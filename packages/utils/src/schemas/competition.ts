@@ -14,5 +14,12 @@ export const updateCompetitionSchema = z.object({
 	startingAt: z.string().optional(),
 	location: z.string().optional(),
 });
-
 export type UpdateCompetition = z.infer<typeof updateCompetitionSchema>;
+
+export const createCompetitorSchema = z.object({
+	competitionId: z.string(),
+	competitorId: z.string(),
+	competitionCategoryId: z.number(),
+	weight: z.string()
+})
+export type CreateCompetitor = z.infer<typeof createCompetitorSchema>;

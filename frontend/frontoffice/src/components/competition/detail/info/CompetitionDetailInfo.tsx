@@ -1,4 +1,4 @@
-import { Box, Flex, Spoiler } from '@mantine/core';
+import { Box, Flex, Text } from '@mantine/core';
 import { CompetitionListItem } from '../../../../api/common';
 import { RichTextRenderer } from '../../update/form/CompetitionUpdateForm';
 
@@ -18,7 +18,7 @@ export function CompetitionDetailInfo({ competition }: Props) {
 				<RichTextRenderer value={competition.description ?? ''} />
 			</Box>
 			<Box {...boxProps}>
-				<RichTextRenderer value={competition.description ?? ''} />
+				<Text>Show competition categories and associated weights</Text>
 			</Box>
 		</Flex>
 	);

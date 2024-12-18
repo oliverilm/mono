@@ -106,6 +106,12 @@ export const CompetitionAPI = {
 	getCompetition,
 	getCompetitionMetadata,
 
+	getCompetitionCategories: (slug: string) => {},
+	createCompetitionCategory: () => {},
+	updateCompetitionCategory: () => {},
+	deleteCompetitionCategory: () => {},
+
+	getCompetitors: () => {},
 	createCompetitor: () => {},
 };
 

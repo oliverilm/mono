@@ -3,6 +3,8 @@ import { CompetitionService } from '../../services/competition';
 import { getUserProfileFromRequest } from '../../utils/db';
 import {
 	createCompetitionSchema,
+	createCompetitorSchema,
+	slugSchema,
 	updateCompetitionSchema,
 } from '@monorepo/utils';
 import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
@@ -26,6 +28,14 @@ export default async function (fastify: FastifyInstance) {
 		const userId = getAssertedUserIdFromRequest(request);
 		return CompetitionService.updateCompetition({ userId, data });
 	});
+
+	fastify.post('/competitions/:slug/competitors', (request) => {
+			const params = slugSchema.parse(request.params); // TODO: not sure what to do with this
+			const userId = getAssertedUserIdFromRequest(request);
+			const data = createCompetitorSchema.parse(request.body);
+
+			return CompetitionService.createCompetitor(data, userId);
+		});
 
 	fastify.get('/competitions/private', (request) => {
 		const userId = getAssertedUserIdFromRequest(request);

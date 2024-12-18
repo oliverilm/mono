@@ -11,7 +11,26 @@ model Club {
     updatedAt   DateTime @updatedAt
 
     clubMetadata ClubMetadata?
+    clubAdmins  ClubAdmin[]
     userProfiles UserProfile[]
+}
+
+
+enum ClubRole {
+    OWNER
+    ADMIN
+}
+
+model ClubAdmin {
+    id      Int @id @default(autoincrement())
+
+    club  Club @relation(fields: [clubId], references: [id])
+    clubId  String
+
+    user User @relation(fields: [userId], references: [id])
+    userId String @unique
+
+    role ClubRole
 }
 
 model ClubMetadata {

@@ -3,23 +3,22 @@ model Competition {
     name    String @unique
     slug    String @unique // calculated from name
 
-    clubName    String
     isPublished Boolean @default(false)
     isArchived  Boolean @default(false)
-
+    
+    clubName    String
     description String?
-    startingAt  DateTime? @db.Date
     location    String?
-
     additionalInfo Json?
 
-    categories CompetitionCategory[]
+    registrationEndAt DateTime? @db.Date
+    startingAt  DateTime? @db.Date
 
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
     camp Camp?
-
+    categories CompetitionCategory[]
     competitionAdmins CompetitionAdmin[]
     
     @@unique([id, name, slug])
@@ -110,7 +109,9 @@ model Competitor {
     createdAt   DateTime @default(now())
     updatedAt   DateTime? @updatedAt
 
+    @@unique([profileId, competitionCategoryId, weight])
 
+    // todo: monitor this object requests and possibli make index changes here
     @@index(competitionId)
     @@index(weight)
     @@index(profileId)

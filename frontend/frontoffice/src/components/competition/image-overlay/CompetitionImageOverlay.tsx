@@ -10,7 +10,6 @@ export function CompetitionImageOverlay({ competition }: Props) {
 		<Flex
 			justify={'space-between'}
 			w={'100%'}
-			px={'5rem'}
 			pb={'lg'}
 			align={'center'}
 		>

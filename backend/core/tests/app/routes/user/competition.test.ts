@@ -105,4 +105,24 @@ describe('Competition related actions', () => {
       ]
     )
   })
+
+  describe("Competitor creation flows", () => {
+    it.todo("should be able to create a competitor successfully", () => {
+      expect(true).toBe(true)
+    })
+
+    it.todo("should not be able to create a competitor if the competition is not published", () => {
+      expect(true).toBe(true)
+    })
+
+    it.todo("should not be able to create a competitor if the competition is archived", () => {
+      expect(true).toBe(true)
+    })
+
+    it.todo("should not be able to create a competitor if the competition registration end date has surpassed", () => {
+      expect(true).toBe(true)
+    })
+
+    
+  })
 });

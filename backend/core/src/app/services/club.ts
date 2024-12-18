@@ -1,4 +1,4 @@
-import { Club } from '@prisma/client';
+import { Club, ClubRole } from '@prisma/client';
 import { slugifyString } from '../utils/string';
 import { prisma } from '../utils/db';
 import { ClubCreate, SkipTake, UserIdObject } from '@monorepo/utils';
@@ -10,6 +10,14 @@ export type SlugOrId =
 	| { slug: string };
 
 export const ClubService = {
+	isClubAdmin: async function (userId: string, clubId: string): Promise<boolean> {
+		return (await prisma.clubAdmin.count({
+			where: {
+				userId,
+				clubId,
+			},
+		})) > 0;
+	},
 	getClubByIdOrSlug: function (
 		slugOrId: SlugOrId,
 	): Promise<Club | null> | null {
@@ -70,6 +78,12 @@ export const ClubService = {
 				country,
 				slug,
 				description: '',
+				clubAdmins: {
+					create: {
+						userId,
+						role: ClubRole.OWNER,
+					},
+				},
 				clubMetadata: { create: {} },
 			},
 		});

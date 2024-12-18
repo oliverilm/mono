@@ -12,21 +12,29 @@ import { CompetitionDetailRegistration } from '../../components/competition/deta
 import { useDisclosure } from '@mantine/hooks';
 import { CompetitionUpdateForm } from '../../components/competition/update/form/CompetitionUpdateForm';
 import { LayoutPage } from '../layout/page/LayoutPage';
+import { StaticQueryKey } from '../../providers/query-provider/keys';
 
 export function CompetitionPage() {
 	const { slug } = useParams<'slug'>();
 	const authStore = useAuthStore();
 
 	const [opened, { toggle }] = useDisclosure();
+	const [categoriesOpen, { toggle: toggleCategories }] = useDisclosure();
+	
 	const { data: competition } = useQuery({
-		queryKey: ['competition', slug],
+		queryKey: [StaticQueryKey.CompetitionDetail, slug],
 		queryFn: () => CompetitionAPI.getCompetition(slug),
 	});
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { data: competitionMetadata } = useQuery({
-		queryKey: ['competition-metadata', slug, authStore.isAuthenticated],
+		queryKey: [StaticQueryKey.CompetitionMetadata, slug, authStore.isAuthenticated],
 		queryFn: () => CompetitionAPI.getCompetitionMetadata(slug),
+	});
+
+	const { data: competitionCategories } = useQuery({
+		queryKey: [StaticQueryKey.CompetitionCategories, slug],
+		queryFn: () => CompetitionAPI.getCompetitionCategories(slug!),
+		enabled: Boolean(slug)
 	});
 
 	const myRole = competitionMetadata?.data?.competitionAdmins?.find(
@@ -55,12 +63,20 @@ export function CompetitionPage() {
 						<Flex align={'center'} bg={'gray.0'} gap={'md'} p={'sm'} my={'sm'}>
 							<Text>{myRole?.role}</Text>
 
-							<Button onClick={toggle}>edit</Button>
+							<Button onClick={toggle}>edit info</Button>
+							<Button onClick={toggleCategories}>add categories</Button>
 
 							<Modal size={'lg'} opened={opened} onClose={toggle}>
 								<CompetitionUpdateForm
 									competition={competition.data}
 									onSubmitSuccess={toggle}
+								/>
+							</Modal>
+
+							<Modal size={'lg'} opened={categoriesOpen} onClose={toggleCategories}>
+								<CompetitionUpdateForm
+									competition={competition.data}
+									onSubmitSuccess={toggleCategories}
 								/>
 							</Modal>
 						</Flex>

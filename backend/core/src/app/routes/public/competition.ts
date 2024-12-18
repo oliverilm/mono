@@ -24,4 +24,9 @@ export default async function (fastify: FastifyInstance) {
 		const skipTake = skipTakeSchema.parse(request.query);
 		return CompetitionService.listCompetitors(params.slug, skipTake);
 	});
+
+	fastify.get('/competitions/:slug/categories', (request) => {
+		const params = slugSchema.parse(request.params);
+		return CompetitionService.getCompetitionCategories(params.slug);
+	});
 }
