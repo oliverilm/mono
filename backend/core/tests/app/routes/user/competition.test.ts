@@ -1,4 +1,5 @@
 import {
+  createUserWithEmail,
   registerTestUserAndRetrieveToken,
   TEST_CLUB_NAME,
   TEST_EMAIL,
@@ -109,7 +110,14 @@ describe('Competition related actions', () => {
   })
 
   describe("Competitor creation flows", () => {
-    it.todo("should be able to create a competitor successfully", () => {
+    it.todo("should be able to create a competitor successfully", async () => {
+      // const { profile, token } = await createUserWithEmail({
+      //   addons: { withClub: true },
+      // });
+
+      // const [competition] = await createManyCompetitionsWithNames(["test 1"])
+
+
       expect(true).toBe(true)
     })
 

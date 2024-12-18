@@ -54,17 +54,24 @@ interface Overrides {
 }
 
 export async function registerTestUserAndRetrieveToken(override: Overrides = {}): Promise<string> {
-    const created = await UserService.createUser({ email: TEST_EMAIL, password: TEST_PASSWORD, ...override})
-    if (!created) return ""
+    return (await createUserWithEmail(override)).token
+}
 
-    if (Object.entries(override?.addons ?? {}).length > 0) {
-        for (const [addon, enabled] of Object.entries(override.addons ?? {})) {
+export async function createUserWithEmail({ email = TEST_EMAIL, addons}: Overrides = {}) {
+    const created = await UserService.createUser({ email, password: TEST_PASSWORD})
+
+    if (!created){ 
+        throw new Error("Could not create user")
+    }
+
+    if (Object.entries(addons ?? {}).length > 0) {
+        for (const [addon, enabled] of Object.entries(addons ?? {})) {
             if (enabled && addonFunctions[addon as keyof typeof addonFunctions]) {
                 await addonFunctions[addon as keyof typeof addonFunctions](created)
             }
         }
     }
 
-    return created.token
+    return created
 }
 

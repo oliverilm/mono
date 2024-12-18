@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { ClubService } from '../../services/club';
-import { skipTakeSchema } from '@monorepo/utils';
+import { skipTakeSchema, slugSchema } from '@monorepo/utils';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {
@@ -10,7 +10,7 @@ export default async function (fastify: FastifyInstance) {
 	});
 
 	fastify.get('/club/:slug', (request) => {
-		// TODO: implement me
-		return null;
+		const slug = slugSchema.parse(request.params);
+		return ClubService.getClubByIdOrSlug(slug);
 	});
 }

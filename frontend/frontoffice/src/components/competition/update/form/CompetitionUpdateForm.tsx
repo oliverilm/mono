@@ -2,10 +2,11 @@ import { useForm } from '@mantine/form';
 import { CompetitionAPI, CompetitionListItem } from '../../../../api/common';
 import { UpdateCompetition } from '@monorepo/utils';
 import { Button, Flex, Switch, TextInput } from '@mantine/core';
-import { useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useAuthStore } from '../../../../stores/auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { RichText } from '../../../shared/rich-text/RichText';
+import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -29,26 +30,29 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 		},
 	});
 
-	const onSubmit = async (values: typeof form.values) => {
-		const response = await CompetitionAPI.updateCompetition({
-			...values,
-			startingAt: new Date(values?.startingAt ?? new Date()).toISOString(),
-		});
-
-		if (response.data) {
-			if (values.name !== competition.name) {
-				navigate(`/competitions/${response.data.slug}`);
-			}
-			queryClient.invalidateQueries(['competition', competition.slug]);
-
-			if (values.isPublished !== competition.isPublished) {
+	const { mutate } = useMutation({
+		mutationFn: CompetitionAPI.updateCompetition,
+		onSuccess: (data) => {
+			if (data.data.isPublished !== competition.isPublished) {
 				queryClient.invalidateQueries([
 					'competitions-private',
 					authStore.isAuthenticated,
 				]);
 			}
+			if (data.data.slug !== competition.slug) {
+				navigate(`/competitions/${data.data.slug}`);
+			} else {
+				queryClient.invalidateQueries([
+					StaticQueryKey.CompetitionDetail,
+					competition.slug,
+				]);
+			}
 			onSubmitSuccess();
-		}
+		},
+	});
+
+	const onSubmit = async (values: typeof form.values) => {
+		mutate(values);
 	};
 
 	return (

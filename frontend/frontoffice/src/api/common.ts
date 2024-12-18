@@ -24,7 +24,12 @@ function createClub(data: ClubCreate) {
 	return client.post('/user/club/create', data);
 }
 
+function getClub(slug: string) {
+	return client.get(`/public/club/${slug}`);
+}
+
 export const ClubAPI = {
+	getClub,
 	createClub,
 	getPublicClubs,
 	updateClub: () => {},

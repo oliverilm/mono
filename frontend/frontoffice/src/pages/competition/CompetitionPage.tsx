@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { CompetitionAPI } from '../../api/common';
 import { useAuthStore } from '../../stores/auth';
@@ -21,25 +21,29 @@ export function CompetitionPage() {
 	const [opened, { toggle }] = useDisclosure();
 	const [categoriesOpen, { toggle: toggleCategories }] = useDisclosure();
 
-	const { data: competition } = useQuery({
-		queryKey: [StaticQueryKey.CompetitionDetail, slug],
-		queryFn: () => CompetitionAPI.getCompetition(slug),
-	});
-
-	const { data: competitionMetadata } = useQuery({
-		queryKey: [
-			StaticQueryKey.CompetitionMetadata,
-			slug,
-			authStore.isAuthenticated,
-		],
-		queryFn: () => CompetitionAPI.getCompetitionMetadata(slug),
-	});
-
-	const { data: competitionCategories } = useQuery({
-		queryKey: [StaticQueryKey.CompetitionCategories, slug],
-		queryFn: () => CompetitionAPI.getCompetitionCategories(slug!),
-		enabled: Boolean(slug),
-	});
+	const [
+		{ data: competition },
+		{ data: competitionMetadata },
+		{ data: competitionCategories },
+	] = useQueries([
+		{
+			queryKey: [StaticQueryKey.CompetitionDetail, slug],
+			queryFn: () => CompetitionAPI.getCompetition(slug!),
+		},
+		{
+			queryKey: [
+				StaticQueryKey.CompetitionMetadata,
+				slug,
+				authStore.isAuthenticated,
+			],
+			queryFn: () => CompetitionAPI.getCompetitionMetadata(slug!),
+		},
+		{
+			queryKey: [StaticQueryKey.CompetitionCategories, slug],
+			queryFn: () => CompetitionAPI.getCompetitionCategories(slug!),
+			enabled: Boolean(slug),
+		},
+	]);
 
 	const myRole = competitionMetadata?.data?.competitionAdmins?.find(
 		({ userId }) => authStore.profile?.userId === userId,
