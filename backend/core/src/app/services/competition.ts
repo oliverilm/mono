@@ -7,6 +7,7 @@ import {
 	CreateCompetition,
 	Search,
 	SkipTake,
+	Slug,
 	UpdateCompetition,
 } from '@monorepo/utils';
 import { LRUCache } from 'lru-cache';
@@ -17,6 +18,30 @@ const cache = new LRUCache({
 });
 
 export const CompetitionService = {
+	createCompetitor: async function (
+		data: { competitionId: string; competitorId: string },
+		userId: string,
+	) {
+		// checks needed to be done
+		// schenario 1:
+		// if competitor id is not users profile id
+		// check if user is in a club and club admin or something like that
+		// if not, fail this operation
+		// if yes, create the competitor with the user id as the competitor id
+		// scenario 2:
+		// if competitor id is users profile id
+		// if yes, create the competitor with the user id as the competitor id
+		// return prisma.competitor.create({ data });
+	},
+	listCompetitors: async function (slug: string, skipTake: SkipTake) {
+		// TODO: add more searching fields here
+		return prisma.competitor.findMany({
+			where: {
+				competitionSlug: slug,
+			},
+			...convertSkipTake(skipTake),
+		});
+	},
 	privateCompetitions: async function (userId: string) {
 		const adminInCompetitions = await prisma.competitionAdmin.findMany({
 			where: {

@@ -1,13 +1,14 @@
 import {
   registerTestUserAndRetrieveToken,
+  TEST_EMAIL,
   testServer,
 } from '../../../integration-init';
-import { describe, test, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import { expectAnyString, expectToBeIsoTimestamp } from '../../../utils/helpers';
 import { Sex } from '@prisma/client';
 
 describe('user routes', () => {
-  test('should be able to fetch user profile with authenticated session', async () => {
+  it('should be able to fetch user profile with authenticated session', async () => {
     const token = await registerTestUserAndRetrieveToken();
     const response = await testServer.inject({
       method: 'GET',
@@ -33,7 +34,7 @@ describe('user routes', () => {
     });
   });
 
-  test('should be able to update user profile', async () => {
+  it('should be able to update user profile', async () => {
     const token = await registerTestUserAndRetrieveToken();
     const response = await testServer.inject({
       method: 'PATCH',
@@ -68,7 +69,7 @@ describe('user routes', () => {
     );
   });
 
-  test('should not be able to update user profile with an incorrect birth day', async () => {
+  it('should not be able to update user profile with an incorrect birth day', async () => {
     const token = await registerTestUserAndRetrieveToken();
     const response = await testServer.inject({
       method: 'PATCH',
@@ -92,7 +93,7 @@ describe('user routes', () => {
     });
   });
 
-  test('should not be able to update user profile with an incorrect national id', async () => {
+  it('should not be able to update user profile with an incorrect national id', async () => {
     const token = await registerTestUserAndRetrieveToken();
     const response = await testServer.inject({
       method: 'PATCH',
@@ -116,7 +117,7 @@ describe('user routes', () => {
     });
   });
 
-  test('should not be able to update user profile with a duplicate national id', async () => {
+  it('should not be able to update user profile with a duplicate national id', async () => {
     const token = await registerTestUserAndRetrieveToken();
     await testServer.inject({
       method: 'PATCH',
@@ -151,8 +152,6 @@ describe('user routes', () => {
       },
     });
 
-    console.log(import.meta.env.DATABASE_URL)
-
     expect(response.json()).toStrictEqual(
       {
         "error": "Internal Server Error",
@@ -161,4 +160,41 @@ describe('user routes', () => {
       }
     );
   });
+
+  it("should return the test user as the result when searched with exact email", async () => {
+    const token = await registerTestUserAndRetrieveToken();
+    const response = await testServer.inject({
+      method: "GET",
+      url: "/user/user-by-email",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      query: {
+        search: TEST_EMAIL,
+      },
+    });
+
+    expect(response.json()).toStrictEqual(
+      {
+        "email": TEST_EMAIL,
+        "id": expectAnyString(),
+      }
+    );
+  })
+
+  it("should not return any users when email is incorrect", async () => {
+    const token = await registerTestUserAndRetrieveToken();
+    const response = await testServer.inject({
+      method: "GET",
+      url: "/user/user-by-email",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      query: {
+        search: "incorrect@gmail.com",
+      },
+    });
+
+    expect(response.json()).toStrictEqual(null);
+  })
 });

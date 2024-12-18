@@ -18,4 +18,10 @@ export default async function (fastify: FastifyInstance) {
 		const params = slugSchema.parse(request.params);
 		return CompetitionService.getMetadata(params.slug, request.userId);
 	});
+
+	fastify.get('/competitions/:slug/competitors', (request) => {
+		const params = slugSchema.parse(request.params);
+		const skipTake = skipTakeSchema.parse(request.query);
+		return CompetitionService.listCompetitors(params.slug, skipTake);
+	});
 }
