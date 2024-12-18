@@ -80,7 +80,7 @@ export function LayoutNavbar() {
 					onClose={toggleClubForm}
 					title={'Create club'}
 				>
-					<ClubForm />
+					<ClubForm onSubmit={toggleClubForm} />
 				</Modal>
 			</AppShell.Section>
 			<AppShell.Section>

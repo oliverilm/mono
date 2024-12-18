@@ -3,10 +3,12 @@ import { useForm } from '@mantine/form';
 import { CreateCompetition } from '@monorepo/utils';
 import { CompetitionAPI } from '../../../../api/common';
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useAuthStore } from '../../../../stores/auth';
-
-export function CompetitionFrom() {
+interface Props {
+	onSubmit: () => void;
+}
+export function CompetitionFrom({ onSubmit: onDone }: Props) {
 	const navigate = useNavigate();
 	const authStore = useAuthStore();
 	const queryClient = useQueryClient();
@@ -16,15 +18,19 @@ export function CompetitionFrom() {
 		},
 	});
 
-	const onSubmit = async (values: typeof form.values) => {
-		const response = await CompetitionAPI.createCompetition(values);
-		if (response) {
+	const { mutate } = useMutation(CompetitionAPI.createCompetition, {
+		onSuccess: (data) => {
+			navigate(`/competitions/${data.data.slug}`);
 			queryClient.invalidateQueries([
 				'competitions-private',
 				authStore.isAuthenticated,
 			]);
-			navigate(`/competitions/${response.data.slug}`);
-		}
+			onDone();
+		},
+	});
+
+	const onSubmit = async (values: typeof form.values) => {
+		mutate(values);
 	};
 
 	return (

@@ -1,9 +1,9 @@
 export enum StaticQueryKey {
-    HomeClubs = "home-clubs",
-    HomeCompetitions = "home-competitions",
-    HomeCamps = "home-camps",
+	HomeClubs = 'home-clubs',
+	HomeCompetitions = 'home-competitions',
+	HomeCamps = 'home-camps',
 
-    CompetitionDetail = "competition-detail",
-    CampDetails = "camp-detail",
-    ClubDetails = "club-detail",
+	CompetitionDetail = 'competition-detail',
+	CampDetails = 'camp-detail',
+	ClubDetails = 'club-detail',
 }

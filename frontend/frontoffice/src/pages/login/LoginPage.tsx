@@ -30,9 +30,9 @@ export function LoginPage() {
 				// @ts-expect-error
 				message: error?.response?.data?.message,
 				color: 'red',
-			})
-		}
-	})
+			});
+		},
+	});
 
 	const onSubmit = async (data: typeof form.values) => {
 		await mutate(data);

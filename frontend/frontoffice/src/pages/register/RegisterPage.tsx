@@ -20,7 +20,7 @@ export function RegisterPage() {
 		},
 	});
 
-	const {mutate} = useMutation(createUser, {
+	const { mutate } = useMutation(createUser, {
 		onSuccess: (data) => {
 			authStore.setProfile(data.data.profile);
 			localStorage.setItem(LS_TOKEN_KEY, data.data.token);
@@ -31,14 +31,14 @@ export function RegisterPage() {
 				// @ts-expect-error
 				message: error?.response?.data?.message,
 				color: 'red',
-			})
-		}
-	})
+			});
+		},
+	});
 
 	const onSubmit = async (data: typeof form.values) => {
-		mutate(data)
+		mutate(data);
 	};
-	
+
 	return (
 		<LayoutPage>
 			<form onSubmit={form.onSubmit(onSubmit)}>

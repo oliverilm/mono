@@ -3,7 +3,6 @@ import { CompetitionCarousel } from '../../components/competition/carousel/Compe
 import { LayoutPage } from '../layout/page/LayoutPage';
 
 export function HomePage() {
-
 	return (
 		<LayoutPage>
 			<CompetitionCarousel />
