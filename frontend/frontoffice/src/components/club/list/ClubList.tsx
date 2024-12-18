@@ -1,6 +1,8 @@
 import { useQuery } from 'react-query';
 import { ClubAPI } from '../../../api/common';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
+import { Card, Flex, Image } from '@mantine/core';
+import { getRandomTestClubImage, TEST_CLUB_IMAGES } from '../../../constants';
 
 export function ClubList() {
 	const { data: clubs } = useQuery({
@@ -12,9 +14,12 @@ export function ClubList() {
 		<div>
 			{clubs?.data?.map((club) => {
 				return (
-					<div key={club.id}>
-						<h1>{club.name}</h1>
-					</div>
+					<Card withBorder w={'auto'}>
+						<Flex>
+							<Image w={100} h={100} src={getRandomTestClubImage()} />
+							<Card.Section>{club.name}</Card.Section>
+						</Flex>
+					</Card>
 				);
 			})}
 		</div>

@@ -50,7 +50,7 @@ export function CompetitionPage() {
 					overlay={<CompetitionImageOverlay competition={competition.data} />}
 				/>
 
-				<Box w={1200} m={'auto'}>
+				<Box maw={1200} m={'auto'}>
 					{isAdministrator && myRole && (
 						<Flex align={'center'} bg={'gray.0'} gap={'md'} p={'sm'} my={'sm'}>
 							<Text>{myRole?.role}</Text>

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { LS_TOKEN_KEY } from '../constants';
 import { useAuthStore } from '../stores/auth';
 import { getProfile } from '../api/auth';
+
 export function useSystemAuth() {
 	const authStore = useAuthStore();
 
