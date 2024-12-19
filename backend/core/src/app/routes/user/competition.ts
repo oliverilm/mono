@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyRequest } from 'fastify';
 import { CompetitionService } from '../../services/competition';
 import { getUserProfileFromRequest } from '../../utils/db';
 import {
+	createCompetitionCategorySchema,
 	createCompetitionSchema,
 	createCompetitorSchema,
 	slugSchema,
@@ -35,6 +36,29 @@ export default async function (fastify: FastifyInstance) {
 		const data = createCompetitorSchema.parse(request.body);
 
 		return CompetitionService.createCompetitor(data, userId);
+	});
+
+	fastify.post('/competitions/:slug/categories', async (request) => {
+		const slug = slugSchema.parse(request.params);
+		const body = createCompetitionCategorySchema.parse(request.body);
+		const userId = getAssertedUserIdFromRequest(request);
+		const competitionId = await CompetitionService.getCompetitionIdFromSlug(
+			slug.slug,
+		);
+
+		const isAdmin = await CompetitionService.isAdmin(competitionId, userId);
+
+		if (!isAdmin) {
+			throw new Error('User is not an admin');
+		}
+
+		return CompetitionService.createCompetitionCategory(slug.slug, body);
+	});
+
+	fastify.get('/competitions/:slug/categories', (request) => {
+		const slug = slugSchema.parse(request.params);
+
+		return CompetitionService.getCompetitionCategories(slug.slug);
 	});
 
 	fastify.get('/competitions/private', (request) => {

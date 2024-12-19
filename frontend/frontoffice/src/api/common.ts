@@ -4,6 +4,7 @@ import {
 	SkipTake,
 	ClubCreate,
 	UpdateCompetition,
+	CreateCompetitionCategory,
 } from '@monorepo/utils';
 import { addSkipTakeSearch, client } from './client';
 import { AxiosResponse } from 'axios';
@@ -85,34 +86,50 @@ function updateCompetition(
 	return client.patch(`/user/competitions`, data);
 }
 
-function getPrivateCompetitions(): Promise<
-	AxiosResponse<CompetitionListItem[]>
-> {
-	return client.get('/user/competitions/private');
-}
-
-function getCompetition(competitionSlug?: string) {
-	if (!competitionSlug) return Promise.resolve(null);
-	return client.get(`/public/competitions/${competitionSlug}`);
-}
-
-function getCompetitionMetadata(
-	competitionSlug?: string,
-): Promise<AxiosResponse<CompetitionMetadata> | null> {
-	if (!competitionSlug) return Promise.resolve(null);
-	return client.get(`/public/competitions/${competitionSlug}/metadata`);
+export interface CompetitionCategory {
+	id: number;
+	weights: string[];
+	largestYearAllowed: number;
+	smallestYearAllowed: number;
+	sex: string;
+	competitionId: string;
+	competitionName: string;
+	competitionSlug: string;
+	categoryId: number;
+	categoryName: string;
 }
 
 export const CompetitionAPI = {
 	getPublicCompetitions,
 	createCompetition,
 	updateCompetition,
-	getPrivateCompetitions,
-	getCompetition,
-	getCompetitionMetadata,
+	getPrivateCompetitions: function (): Promise<
+		AxiosResponse<CompetitionListItem[]>
+	> {
+		return client.get('/user/competitions/private');
+	},
+	getCompetition: function (competitionSlug?: string) {
+		if (!competitionSlug) return Promise.resolve(null);
+		return client.get(`/public/competitions/${competitionSlug}`);
+	},
+	getCompetitionMetadata: function (
+		slug?: string,
+	): Promise<AxiosResponse<CompetitionMetadata> | null> {
+		if (!slug) return Promise.resolve(null);
+		return client.get(`/public/competitions/${slug}/metadata`);
+	},
 
-	getCompetitionCategories: (slug: string) => {},
-	createCompetitionCategory: () => {},
+	getCompetitionCategories: (
+		slug: string,
+	): Promise<AxiosResponse<CompetitionCategory[]>> => {
+		return client.get(`/public/competitions/${slug}/categories`);
+	},
+	createCompetitionCategory: (
+		slug: string,
+		data: CreateCompetitionCategory,
+	): Promise<AxiosResponse<CompetitionCategory>> => {
+		return client.post(`/user/competitions/${slug}/categories`, data);
+	},
 	updateCompetitionCategory: () => {},
 	deleteCompetitionCategory: () => {},
 
@@ -129,4 +146,14 @@ export const CampsAPI = {
 	createCamp: () => {},
 	updateCamp: () => {},
 	getCamp: () => {},
+};
+
+export interface Category {
+	id: number;
+	value: string;
+}
+export const CommonAPI = {
+	getCategories: function (): Promise<AxiosResponse<Category[]>> {
+		return client.get('/public/common/categories');
+	},
 };

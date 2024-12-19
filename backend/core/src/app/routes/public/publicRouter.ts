@@ -6,4 +6,5 @@ export default async function (fastify: FastifyInstance) {
 	fastify.register(import('./auth'));
 	fastify.register(import('./club'));
 	fastify.register(import('./competition'));
+	fastify.register(import('./common'));
 }

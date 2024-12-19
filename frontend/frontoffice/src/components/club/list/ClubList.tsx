@@ -1,9 +1,17 @@
 import { useQuery } from 'react-query';
 import { ClubAPI } from '../../../api/common';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
-import { Card, Flex, Image } from '@mantine/core';
+import { Flex, Grid, Image, Paper, Title } from '@mantine/core';
 import { getRandomTestClubImage } from '../../../constants';
 import { useNavigate } from 'react-router-dom';
+
+const span = {
+	xl: 4,
+	lg: 4,
+	md: 6,
+	sm: 6,
+	xs: 12,
+};
 
 export function ClubList() {
 	const { data: clubs } = useQuery({
@@ -14,21 +22,23 @@ export function ClubList() {
 	const navigate = useNavigate();
 
 	return (
-		<div>
-			{clubs?.data?.map((club) => {
-				return (
-					<Card
-						withBorder
-						w={'auto'}
+		<Grid>
+			{clubs?.data?.map((club) => (
+				<Grid.Col span={span}>
+					<Paper
+						bg={'gray.2'}
+						p="0"
 						onClick={() => navigate(`/clubs/${club.slug}`)}
 					>
 						<Flex>
-							<Image w={100} h={100} src={getRandomTestClubImage()} />
-							<Card.Section>{club.name}</Card.Section>
+							<Image p={'xs'} w={100} h={100} src={getRandomTestClubImage()} />
+							<Flex p={'sm'}>
+								<Title size="h3">{club.name}</Title>
+							</Flex>
 						</Flex>
-					</Card>
-				);
-			})}
-		</div>
+					</Paper>
+				</Grid.Col>
+			))}
+		</Grid>
 	);
 }

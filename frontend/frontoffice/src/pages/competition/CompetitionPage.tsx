@@ -13,6 +13,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { CompetitionUpdateForm } from '../../components/competition/update/form/CompetitionUpdateForm';
 import { LayoutPage } from '../layout/page/LayoutPage';
 import { StaticQueryKey } from '../../providers/query-provider/keys';
+import { CompetitionCategoryForm } from '../../components/competition/category/CompetitionCategoryForm';
 
 export function CompetitionPage() {
 	const { slug } = useParams<'slug'>();
@@ -41,6 +42,10 @@ export function CompetitionPage() {
 		{
 			queryKey: [StaticQueryKey.CompetitionCategories, slug],
 			queryFn: () => CompetitionAPI.getCompetitionCategories(slug!),
+			refetchOnMount: false,
+			refetchOnWindowFocus: false,
+			refetchOnReconnect: false,
+			refetchInterval: false,
 			enabled: Boolean(slug),
 		},
 	]);
@@ -82,13 +87,13 @@ export function CompetitionPage() {
 							</Modal>
 
 							<Modal
-								size={'lg'}
+								size={'md'}
 								opened={categoriesOpen}
 								onClose={toggleCategories}
 							>
-								<CompetitionUpdateForm
+								<CompetitionCategoryForm
 									competition={competition.data}
-									onSubmitSuccess={toggleCategories}
+									onDone={toggleCategories}
 								/>
 							</Modal>
 						</Flex>
@@ -100,7 +105,10 @@ export function CompetitionPage() {
 									value: 'info',
 									label: 'Info',
 									element: (
-										<CompetitionDetailInfo competition={competition.data} />
+										<CompetitionDetailInfo
+											competition={competition.data}
+											competitionCategories={competitionCategories?.data ?? []}
+										/>
 									),
 								},
 								{

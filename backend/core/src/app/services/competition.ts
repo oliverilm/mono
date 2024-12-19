@@ -5,10 +5,10 @@ import { tryHandleKnownErrors } from '../utils/error';
 import { prisma } from '../utils/db';
 import {
 	CreateCompetition,
+	CreateCompetitionCategory,
 	CreateCompetitor,
 	Search,
 	SkipTake,
-	Slug,
 	UpdateCompetition,
 } from '@monorepo/utils';
 import { LRUCache } from 'lru-cache';
@@ -21,6 +21,36 @@ const cache = new LRUCache({
 });
 
 export const CompetitionService = {
+	createCompetitionCategory: async function (
+		slug: string,
+		data: CreateCompetitionCategory,
+	) {
+		try {
+			const result = await prisma.competitionCategory.create({
+				data: {
+					category: {
+						connect: {
+							id: data.categoryId,
+						},
+					},
+					competition: {
+						connect: {
+							slug,
+						},
+					},
+					sex: data.sex,
+					largestYearAllowed: data.largestYearAllowed,
+					smallestYearAllowed: data.smallestYearAllowed,
+					weights: data.weights,
+				},
+			});
+
+			return result;
+		} catch (error) {
+			tryHandleKnownErrors(error as Error);
+			throw error;
+		}
+	},
 	getCompetitionCategories: async function (slug: string) {
 		return prisma.competitionCategory.findMany({
 			where: {

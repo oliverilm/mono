@@ -89,6 +89,7 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 interface RendererProps {
 	value: string;
 }
+
 export function RichTextRenderer({ value }: RendererProps) {
 	return <div dangerouslySetInnerHTML={{ __html: value }}></div>;
 }

@@ -23,3 +23,15 @@ export const createCompetitorSchema = z.object({
 	weight: z.string(),
 });
 export type CreateCompetitor = z.infer<typeof createCompetitorSchema>;
+
+export const createCompetitionCategorySchema = z.object({
+	weights: z.array(z.string()),
+	largestYearAllowed: z.number(),
+	smallestYearAllowed: z.number(),
+	sex: z.enum(['Male', 'Female', 'Unisex']),
+	competitionId: z.string(),
+	categoryId: z.number(),
+});
+export type CreateCompetitionCategory = z.infer<
+	typeof createCompetitionCategorySchema
+>;
