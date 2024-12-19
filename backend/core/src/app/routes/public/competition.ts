@@ -14,9 +14,14 @@ export default async function (fastify: FastifyInstance) {
 		return CompetitionService.get(params.slug);
 	});
 
-	fastify.get('/competitions/:slug/metadata', (request) => {
+	fastify.get('/competitions/:slug/metadata', async (request) => {
 		const params = slugSchema.parse(request.params);
-		return CompetitionService.getMetadata(params.slug, request.userId);
+		
+		const [competitionAdmins, competitionLinks] = await Promise.all([
+			CompetitionService.getCompetitionAdmins(params.slug, request.userId),
+			CompetitionService.getCompetitionLinks(params.slug),
+		]);
+		return { ...competitionAdmins, competitionLinks };
 	});
 
 	fastify.get('/competitions/:slug/competitors', (request) => {

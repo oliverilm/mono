@@ -20,6 +20,8 @@ model Competition {
     camp Camp?
     categories CompetitionCategory[]
     competitionAdmins CompetitionAdmin[]
+    competitionLinks CompetitionLink[]
+
     
     @@unique([id, name, slug])
 
@@ -88,6 +90,7 @@ model CompetitionCategory {
     @@index(categoryId)
 }
 
+
 model Competitor {
     id      Int @id @default(autoincrement())
 
@@ -117,4 +120,17 @@ model Competitor {
     @@index(profileId)
     @@index(clubName)
 
+}
+
+
+model CompetitionLink {
+    id Int @id @default(autoincrement())
+
+    url String
+    label String
+
+    competition Competition @relation(fields: [competitionId], references: [id])
+    competitionId String
+
+    @@index([competitionId])
 }

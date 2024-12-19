@@ -251,7 +251,21 @@ export const CompetitionService = {
 		cache.set(competitionSlug, competition.id);
 		return competition.id;
 	},
-	getMetadata: async function (competitionSlug: string, userId?: string) {
+	getCompetitionLinks: async function (competitionSlug: string) {
+		const competitionId = await this.getCompetitionIdFromSlug(competitionSlug);
+
+		const links = await prisma.competitionLink.findMany({
+			where: {
+				competitionId,
+			},
+		});
+
+		return links;
+	},
+	getCompetitionAdmins: async function (
+		competitionSlug: string,
+		userId?: string,
+	) {
 		if (!userId) return {};
 
 		const competitionId = await this.getCompetitionIdFromSlug(competitionSlug);

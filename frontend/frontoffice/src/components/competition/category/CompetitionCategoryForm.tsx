@@ -9,7 +9,6 @@ import { StaticQueryKey } from '../../../providers/query-provider/keys';
 
 interface Props {
 	competition: CompetitionListItem;
-
 	onDone: () => void;
 }
 
