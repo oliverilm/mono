@@ -3,6 +3,7 @@ import { CompetitionService } from '../../services/competition';
 import { getUserProfileFromRequest } from '../../utils/db';
 import {
 	createCompetitionCategorySchema,
+	createCompetitionLinkSchema,
 	createCompetitionSchema,
 	createCompetitorSchema,
 	slugSchema,
@@ -59,6 +60,14 @@ export default async function (fastify: FastifyInstance) {
 		const slug = slugSchema.parse(request.params);
 
 		return CompetitionService.getCompetitionCategories(slug.slug);
+	});
+
+	fastify.post('/competitions/:slug/links', (request) => {
+		const slug = slugSchema.parse(request.params); // TODO: not sure what to do with this
+		const userId = getAssertedUserIdFromRequest(request);
+		const data = createCompetitionLinkSchema.parse(request.body);
+
+		return CompetitionService.createCompetitionLink(data, userId, slug.slug);
 	});
 
 	fastify.get('/competitions/private', (request) => {

@@ -5,6 +5,7 @@ import {
 	ClubCreate,
 	UpdateCompetition,
 	CreateCompetitionCategory,
+	CreateCompetitionLink,
 } from '@monorepo/utils';
 import { addSkipTakeSearch, client } from './client';
 import { AxiosResponse } from 'axios';
@@ -66,6 +67,11 @@ export interface CompetitionMetadata {
 		email: string;
 		role: string;
 	}[];
+	competitionLinks: {
+		id: number;
+		url: string;
+		label: string;
+	}[];
 }
 
 function getPublicCompetitions(
@@ -100,6 +106,9 @@ export interface CompetitionCategory {
 }
 
 export const CompetitionAPI = {
+	createCompetitionLink: (slug: string, data: CreateCompetitionLink) => {
+		return client.post(`/user/competitions/${slug}/links`, data);
+	},
 	getPublicCompetitions,
 	createCompetition,
 	updateCompetition,

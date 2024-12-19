@@ -35,3 +35,9 @@ export const createCompetitionCategorySchema = z.object({
 export type CreateCompetitionCategory = z.infer<
 	typeof createCompetitionCategorySchema
 >;
+
+export const createCompetitionLinkSchema = z.object({
+	url: z.string(),
+	label: z.string(),
+});
+export type CreateCompetitionLink = z.infer<typeof createCompetitionLinkSchema>;

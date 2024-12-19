@@ -1,4 +1,4 @@
-import { Box, Chip, Divider, Flex, Paper, Stack, Text } from '@mantine/core';
+import { Box, Flex, Paper, Text } from '@mantine/core';
 import {
 	CompetitionCategory,
 	CompetitionListItem,

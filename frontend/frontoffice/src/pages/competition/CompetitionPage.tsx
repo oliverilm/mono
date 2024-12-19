@@ -1,5 +1,5 @@
 import { useQueries } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { CompetitionAPI } from '../../api/common';
 import { useAuthStore } from '../../stores/auth';
 import { Box, Button, Flex, Modal, Text } from '@mantine/core';
@@ -14,6 +14,7 @@ import { CompetitionUpdateForm } from '../../components/competition/update/form/
 import { LayoutPage } from '../layout/page/LayoutPage';
 import { StaticQueryKey } from '../../providers/query-provider/keys';
 import { CompetitionCategoryForm } from '../../components/competition/category/CompetitionCategoryForm';
+import { CompetitionLinkFrom } from '../../components/competition/links/form/CompetitionLinkForm';
 
 export function CompetitionPage() {
 	const { slug } = useParams<'slug'>();
@@ -21,6 +22,7 @@ export function CompetitionPage() {
 
 	const [opened, { toggle }] = useDisclosure();
 	const [categoriesOpen, { toggle: toggleCategories }] = useDisclosure();
+	const [linkOpen, { toggle: toggleLink }] = useDisclosure();
 
 	const [
 		{ data: competition },
@@ -78,6 +80,7 @@ export function CompetitionPage() {
 
 							<Button onClick={toggle}>edit info</Button>
 							<Button onClick={toggleCategories}>add categories</Button>
+							<Button onClick={toggleLink}>add link</Button>
 
 							<Modal size={'lg'} opened={opened} onClose={toggle}>
 								<CompetitionUpdateForm
@@ -96,6 +99,20 @@ export function CompetitionPage() {
 									onDone={toggleCategories}
 								/>
 							</Modal>
+
+							<Modal size={'lg'} opened={linkOpen} onClose={toggleLink}>
+								<CompetitionLinkFrom
+									competition={competition.data}
+									onDone={toggleLink}
+								/>
+							</Modal>
+						</Flex>
+					)}
+					{competitionMetadata?.data?.competitionLinks && (
+						<Flex>
+							{competitionMetadata.data.competitionLinks.map(( { url, label }) => {
+								return <a href={url} target='__blank'>{label}</a>
+							})}
 						</Flex>
 					)}
 					<Flex justify={'center'}>

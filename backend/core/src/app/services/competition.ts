@@ -6,6 +6,7 @@ import { prisma } from '../utils/db';
 import {
 	CreateCompetition,
 	CreateCompetitionCategory,
+	CreateCompetitionLink,
 	CreateCompetitor,
 	Search,
 	SkipTake,
@@ -21,6 +22,21 @@ const cache = new LRUCache({
 });
 
 export const CompetitionService = {
+	createCompetitionLink: async function (data: CreateCompetitionLink, userId: string, slug: string) {
+		const competitionId = await this.getCompetitionIdFromSlug(slug)
+		const isAdmin = await this.isAdmin(competitionId, userId)
+
+		if (!isAdmin) {
+			throw new Error('User is not an admin');
+		}
+		return prisma.competitionLink.create({
+			data: {
+				competitionId,
+				label: data.label,
+				url: data.url,
+			},
+		});
+	},
 	createCompetitionCategory: async function (
 		slug: string,
 		data: CreateCompetitionCategory,
@@ -257,6 +273,11 @@ export const CompetitionService = {
 		const links = await prisma.competitionLink.findMany({
 			where: {
 				competitionId,
+			},
+			select: {
+				id: true,
+				label: true,
+				url: true,
 			},
 		});
 
