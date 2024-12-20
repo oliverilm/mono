@@ -5,5 +5,13 @@ interface Props {
 	width?: 'full' | 'default';
 }
 export function LayoutPage({ children, width = 'default' }: Props) {
-	return <Box {...(width === 'default' ? { p: 'md' } : {})}>{children}</Box>;
+	return (
+		<Box
+			{...(width === 'default'
+				? { p: 'xl', w: '100%', maw: 1200, mx: 'auto' }
+				: {})}
+		>
+			{children}
+		</Box>
+	);
 }

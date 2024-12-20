@@ -55,6 +55,7 @@ export interface CompetitionListItem {
 	description: string;
 	startingAt: Date;
 	location: string;
+	registrationEndAt: string;
 	additionalInfo: JSON;
 	createdAt: string;
 	updatedAt: string;
@@ -142,7 +143,9 @@ export const CompetitionAPI = {
 	updateCompetitionCategory: () => {},
 	deleteCompetitionCategory: () => {},
 
-	getCompetitors: () => {},
+	getCompetitors: (slug: string): Promise<AxiosResponse<unknown[]>> => {
+		return Promise.resolve({ data: [] } as AxiosResponse);
+	},
 	createCompetitor: () => {},
 };
 

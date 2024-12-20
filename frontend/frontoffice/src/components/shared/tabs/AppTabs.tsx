@@ -14,10 +14,10 @@ export function AppTabs({ tabs }: Props) {
 
 	return (
 		<Tabs
-			variant="none"
 			value={value}
 			onChange={setValue}
-			w={'100%'}
+			w={'inherit'}
+			defaultValue={tabs[0].value}
 			mx={'auto'}
 			display={'flex'}
 			style={{ alignItems: 'center', flexDirection: 'column' }}
@@ -34,7 +34,7 @@ export function AppTabs({ tabs }: Props) {
 
 			{tabs.map(({ value, element }) => {
 				return (
-					<Tabs.Panel key={value} value={value}>
+					<Tabs.Panel mt={'lg'} w={'inherit'} key={value} value={value}>
 						{element as React.ReactNode}
 					</Tabs.Panel>
 				);

@@ -7,5 +7,6 @@ export const linkCardPaper = style({
 
 globalStyle(`${linkCardPaper}:hover`, {
 	transitionDuration: '200ms',
-	boxShadow: '3px 3px 3px 3px var(--mantine-color-dark-1)',
+	border: '1px solid var(--mantine-color-gray-2)',
+	inset: '1px',
 });
