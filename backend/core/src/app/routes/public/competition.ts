@@ -16,7 +16,7 @@ export default async function (fastify: FastifyInstance) {
 
 	fastify.get('/competitions/:slug/metadata', async (request) => {
 		const params = slugSchema.parse(request.params);
-		
+
 		const [competitionAdmins, competitionLinks] = await Promise.all([
 			CompetitionService.getCompetitionAdmins(params.slug, request.userId),
 			CompetitionService.getCompetitionLinks(params.slug),

@@ -22,9 +22,13 @@ const cache = new LRUCache({
 });
 
 export const CompetitionService = {
-	createCompetitionLink: async function (data: CreateCompetitionLink, userId: string, slug: string) {
-		const competitionId = await this.getCompetitionIdFromSlug(slug)
-		const isAdmin = await this.isAdmin(competitionId, userId)
+	createCompetitionLink: async function (
+		data: CreateCompetitionLink,
+		userId: string,
+		slug: string,
+	) {
+		const competitionId = await this.getCompetitionIdFromSlug(slug);
+		const isAdmin = await this.isAdmin(competitionId, userId);
 
 		if (!isAdmin) {
 			throw new Error('User is not an admin');

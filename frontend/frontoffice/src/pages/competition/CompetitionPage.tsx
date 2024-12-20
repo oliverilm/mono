@@ -1,8 +1,19 @@
 import { useQueries } from 'react-query';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { CompetitionAPI } from '../../api/common';
 import { useAuthStore } from '../../stores/auth';
-import { Box, Button, Flex, Modal, Text } from '@mantine/core';
+import {
+	Box,
+	Button,
+	Center,
+	Divider,
+	Flex,
+	Grid,
+	Modal,
+	Paper,
+	Text,
+	Title,
+} from '@mantine/core';
 import { getRandomTestCompetitionImage } from '../../constants';
 import { AppTabs } from '../../components/shared/tabs/AppTabs';
 import { ImageWithOverlay } from '../../components/shared/image-with-text/ImageWithText';
@@ -15,6 +26,8 @@ import { LayoutPage } from '../layout/page/LayoutPage';
 import { StaticQueryKey } from '../../providers/query-provider/keys';
 import { CompetitionCategoryForm } from '../../components/competition/category/CompetitionCategoryForm';
 import { CompetitionLinkFrom } from '../../components/competition/links/form/CompetitionLinkForm';
+import { linkCardPaper } from './styles.css';
+import { IconLink } from '@tabler/icons-react';
 
 export function CompetitionPage() {
 	const { slug } = useParams<'slug'>();
@@ -108,14 +121,38 @@ export function CompetitionPage() {
 							</Modal>
 						</Flex>
 					)}
+
 					{competitionMetadata?.data?.competitionLinks && (
-						<Flex>
-							{competitionMetadata.data.competitionLinks.map(( { url, label }) => {
-								return <a href={url} target='__blank'>{label}</a>
-							})}
+						<Flex direction={'column'} m={'md'} p={'md'}>
+							<Title size={'h3'}>Important links</Title>
+							<Divider my={'xs'} />
+							{competitionMetadata.data.competitionLinks.map(
+								({ url, label }) => {
+									return (
+										<Flex
+											direction={'row'}
+											align={'center'}
+											justify={'space-between'}
+											onClick={() => window.open(url, '__blank')}
+											className={linkCardPaper}
+											p={'sm'}
+										>
+											<Flex align={'center'} gap={'sm'}>
+												<IconLink size={'1rem'} />
+												<Text size="h4" m={0} p={0}>
+													{label}
+												</Text>
+											</Flex>
+											<Text c="gray.4" fs={'xs'}>
+												Click to open
+											</Text>
+										</Flex>
+									);
+								},
+							)}
 						</Flex>
 					)}
-					<Flex justify={'center'}>
+					<Flex justify={'center'} maw={1000} w={'100%'}>
 						<AppTabs
 							tabs={[
 								{

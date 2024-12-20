@@ -16,10 +16,8 @@ export function CompetitionDetailInfo({
 	competitionCategories,
 }: Props) {
 	const boxProps = {
-		maw: 500,
-		miw: 300,
-		w: 500,
-		mx: 'auto',
+		m: 'lg',
+		maw: '500px',
 	};
 
 	const groupedCategoryData = competitionCategories.reduce<
@@ -35,10 +33,10 @@ export function CompetitionDetailInfo({
 	}, {});
 
 	return (
-		<Flex gap={'md'} mx={'lg'} wrap={'wrap'} align={'start'}>
-			<Box {...boxProps}>
+		<Flex gap={'md'} wrap={'wrap'} align={'start'} w={'100%'}>
+			<Flex {...boxProps}>
 				<RichTextRenderer value={competition.description ?? ''} />
-			</Box>
+			</Flex>
 			<Flex {...boxProps} direction="column" gap="sm">
 				{Object.entries(groupedCategoryData).map(([categoryId, categories]) => (
 					<Paper bg={'gray.1'} key={categoryId} className={categoryPaper}>
@@ -51,7 +49,7 @@ export function CompetitionDetailInfo({
 							{categories.map((category) => (
 								<Flex
 									direction={'column'}
-									bg={'gray.2'}
+									bg={'blue.2'}
 									p={'xs'}
 									className={categoryPaper}
 								>
