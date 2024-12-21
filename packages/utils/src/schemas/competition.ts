@@ -12,6 +12,7 @@ export const updateCompetitionSchema = z.object({
 	isArchived: z.boolean().optional(),
 	description: z.string().optional(),
 	startingAt: z.string().optional(),
+	registrationEndAt: z.string().optional(),
 	location: z.string().optional(),
 });
 export type UpdateCompetition = z.infer<typeof updateCompetitionSchema>;

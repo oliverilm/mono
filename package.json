@@ -5,7 +5,7 @@
   "scripts": {
     "build:packages": "cd packages/utils && pnpm build",
     "start:core": "cd backend/core && pnpm start",
-    "start:fo": "cd frontend/frontoffice && pnpm start",
+    "start:fo": "cd frontend/frontoffice && pnpm run dev",
 
     "test:core": "cd backend/core && pnpm run test",
     "coverage:core": "cd backend/core && pnpm run coverage",

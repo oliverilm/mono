@@ -1,12 +1,13 @@
-import { useForm } from '@mantine/form';
-import { CompetitionAPI, CompetitionListItem } from '../../../../api/common';
-import { UpdateCompetition } from '@monorepo/utils';
 import { Button, Flex, Switch, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import type { UpdateCompetition } from '@monorepo/utils';
 import { useMutation, useQueryClient } from 'react-query';
-import { useAuthStore } from '../../../../stores/auth';
-import { useNavigate, useParams } from 'react-router-dom';
-import { RichText } from '../../../shared/rich-text/RichText';
+import { useNavigate } from 'react-router-dom';
+import { CompetitionAPI, type CompetitionListItem } from '../../../../api/common';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
+import { useAuthStore } from '../../../../stores/auth';
+import { DatePicker } from '../../../shared/date-picker/DatePicker';
+import { RichText } from '../../../shared/rich-text/RichText';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -24,6 +25,9 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 			isPublished: competition.isPublished || false,
 			location: competition.location ?? '',
 			name: competition.name ?? '',
+			registrationEndAt: new Date(
+				competition.registrationEndAt,
+			).toISOString() ?? new Date().toISOString(),
 			startingAt:
 				new Date(competition.startingAt).toISOString() ??
 				new Date().toISOString(),
@@ -74,6 +78,14 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 					label="startingAt"
 					{...form.getInputProps('startingAt')}
 				/>
+				<TextInput
+
+					type="datetime-local"
+					label="Registration End"
+					{...form.getInputProps('registrationEndAt')}
+				/>
+
+				<DatePicker />
 
 				<Switch
 					label="is published"
@@ -91,5 +103,6 @@ interface RendererProps {
 }
 
 export function RichTextRenderer({ value }: RendererProps) {
-	return <div dangerouslySetInnerHTML={{ __html: value }}></div>;
+	// biome-ignore lint/security/noDangerouslySetInnerHtml: i need this
+	return <div dangerouslySetInnerHTML={{ __html: value }} />;
 }

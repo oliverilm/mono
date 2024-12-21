@@ -1,20 +1,18 @@
 import {
-	Box,
 	Flex,
 	Grid,
-	Paper,
 	Text,
 	useMantineColorScheme,
 } from '@mantine/core';
-import {
+import type {
 	CompetitionCategory,
 	CompetitionListItem,
 	CompetitionMetadata,
 } from '../../../../api/common';
-import { RichTextRenderer } from '../../update/form/CompetitionUpdateForm';
-import { categoryIdentifier, categoryPaper } from './CompetitionDetailInfo.css';
-import { CompetitionDetailLinks } from '../links/CompetitionDetailLinks';
 import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
+import { RichTextRenderer } from '../../update/form/CompetitionUpdateForm';
+import { CompetitionDetailLinks } from '../links/CompetitionDetailLinks';
+import { categoryIdentifier, categoryPaper } from './CompetitionDetailInfo.css';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -49,12 +47,12 @@ export function CompetitionDetailInfo({
 				}}
 			>
 				<Flex direction={'column'} gap={'lg'}>
-					<Paper p={'md'} bg={colorScheme === 'dark' ? 'gray.8' : 'gray.1'}>
+					<ThemePaper light={"gray.1"} dark={"gray.8"} p={'md'}>
 						<RichTextRenderer value={competition.description ?? ''} />
-					</Paper>
-					<Paper p={'md'} bg={colorScheme === 'dark' ? 'gray.8' : 'gray.1'}>
+					</ThemePaper>
+					<ThemePaper light={"gray.1"} dark={"gray.8"} p={'md'}>
 						<CompetitionDetailLinks links={links} />
-					</Paper>
+					</ThemePaper>
 				</Flex>
 			</Grid.Col>
 			<Grid.Col
@@ -83,6 +81,7 @@ export function CompetitionDetailInfo({
 						<Flex direction={'column'} gap={'xs'} p={'sm'}>
 							{categories.map((category) => (
 								<Flex
+								key={category.categoryId}
 									direction={'column'}
 									bg={colorScheme === 'dark' ? 'gray.7' : 'gray.3'}
 									p={'xs'}
@@ -97,7 +96,7 @@ export function CompetitionDetailInfo({
 									</Flex>
 									<Flex gap={'sm'}>
 										{category.weights.map((weight) => (
-											<Text>{weight}</Text>
+											<Text key={weight}>{weight}</Text>
 										))}
 									</Flex>
 								</Flex>
