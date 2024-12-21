@@ -1,5 +1,5 @@
+import { Tabs, type TabsListProps, type TabsProps } from '@mantine/core';
 import { useState } from 'react';
-import { Tabs } from '@mantine/core';
 
 interface Tab {
 	value: string;
@@ -7,9 +7,11 @@ interface Tab {
 	element: React.ReactNode;
 }
 interface Props {
+	TabsProps?: Omit<TabsProps, "children">
+	TabListProps?: Omit<TabsListProps, "children">
 	tabs: Tab[];
 }
-export function AppTabs({ tabs }: Props) {
+export function AppTabs({ tabs, TabsProps, TabListProps  }: Props) {
 	const [value, setValue] = useState<string | null>('info');
 
 	return (
@@ -21,8 +23,9 @@ export function AppTabs({ tabs }: Props) {
 			mx={'auto'}
 			display={'flex'}
 			style={{ alignItems: 'center', flexDirection: 'column' }}
+			{...TabsProps}
 		>
-			<Tabs.List>
+			<Tabs.List {...TabListProps}>
 				{tabs.map(({ value, label }) => {
 					return (
 						<Tabs.Tab key={value} value={value}>

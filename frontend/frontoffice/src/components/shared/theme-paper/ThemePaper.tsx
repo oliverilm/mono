@@ -1,5 +1,5 @@
-import { Paper, PaperProps, useMantineColorScheme } from '@mantine/core';
-import React from 'react';
+import { Paper, type PaperProps, useMantineColorScheme } from '@mantine/core';
+import type React from 'react';
 
 export interface Props extends PaperProps {
 	light: PaperProps['bg'];
@@ -7,7 +7,7 @@ export interface Props extends PaperProps {
 	children: React.ReactNode;
 }
 
-export function ThemePaper({ light, dark, children }: Props) {
+export function ThemePaper({ light, dark, children, ...rest }: Props) {
 	const { colorScheme } = useMantineColorScheme();
-	return <Paper bg={colorScheme === 'dark' ? dark : light}>{children}</Paper>;
+	return <Paper {...rest} bg={colorScheme === 'dark' ? dark : light}>{children}</Paper>;
 }

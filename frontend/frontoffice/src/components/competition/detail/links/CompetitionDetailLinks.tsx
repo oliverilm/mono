@@ -1,7 +1,7 @@
 import { Divider, Flex, Text, Title } from '@mantine/core';
-import { CompetitionMetadata } from '../../../../api/common';
-import { linkCardPaper } from '../../../../pages/competition/styles.css';
 import { IconLink } from '@tabler/icons-react';
+import type { CompetitionMetadata } from '../../../../api/common';
+import { linkCardPaper } from '../../../../pages/competition/styles.css';
 
 interface Props {
 	links?: CompetitionMetadata['competitionLinks'];
@@ -18,6 +18,7 @@ export function CompetitionDetailLinks({ links }: Props) {
 			{links.map(({ url, label }) => {
 				return (
 					<Flex
+						key={url}
 						p={'sm'}
 						className={linkCardPaper}
 						onClick={() => window.open(url, '__blank')}

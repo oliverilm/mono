@@ -1,5 +1,6 @@
 import { useQuery } from 'react-query';
-import { CompetitionAPI, CompetitionListItem } from '../../../../api/common';
+import { CompetitionAPI, type CompetitionListItem } from '../../../../api/common';
+import { Table } from '@mantine/core';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -13,7 +14,9 @@ export function CompetitionDetailCompetitors({ competition }: Props) {
 
 	return (
 		<div>
-			<h1>Competitors</h1>
+			<Table>
+				
+			</Table>
 		</div>
 	);
 }

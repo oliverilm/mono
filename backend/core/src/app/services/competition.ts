@@ -1,9 +1,4 @@
-import { CompetitionRole, Competitor, UserProfile } from '@prisma/client';
-import { slugifyString } from '../utils/string';
-import { convertSkipTake } from '../utils/object';
-import { tryHandleKnownErrors } from '../utils/error';
-import { prisma } from '../utils/db';
-import {
+import type {
 	CreateCompetition,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
@@ -12,9 +7,14 @@ import {
 	SkipTake,
 	UpdateCompetition,
 } from '@monorepo/utils';
+import { CompetitionRole, type Competitor, type UserProfile } from '@prisma/client';
 import { LRUCache } from 'lru-cache';
-import { UserService } from './user';
+import { prisma } from '../utils/db';
+import { tryHandleKnownErrors } from '../utils/error';
+import { convertSkipTake } from '../utils/object';
+import { slugifyString } from '../utils/string';
 import { ClubService } from './club';
+import { UserService } from './user';
 
 const cache = new LRUCache({
 	ttl: 1000 * 60 * 60, // 1 hour
@@ -22,6 +22,70 @@ const cache = new LRUCache({
 });
 
 export const CompetitionService = {
+	getPersonalCompetitors: async ({slug, userId}: {
+		slug: string, userId: string
+	}) => {
+
+		// prerequisite: is competition slug valid and competition is open
+		const competition = await CompetitionService.get(slug)
+		
+		if (!competition) {
+			throw new Error('Can not fetch entities, competition slug is invalid')
+		}
+
+		const categories = await CompetitionService.getCompetitionCategories(slug)
+
+		// 1. check get user club and club role
+		
+		const profile = await UserService.getUserProfile(userId)
+
+		if (!profile) {
+			throw new Error('User profile not found');
+		}
+
+		if (!profile.clubId) {
+			// wants to register as individual
+			return;
+		}
+
+		const isClubAdmin = await ClubService.isClubAdmin(userId, profile.clubId)
+
+		if (!isClubAdmin) {
+			// also wants to register as an individual
+			return;
+		}
+
+		const profilesInTheClubThatMatchCompetitionCategoryCriteria = 
+			await prisma.userProfile.findMany({
+				where: {
+					AND: {
+						clubId: profile.clubId,
+					},
+					OR: 
+						categories.map(({ smallestYearAllowed, largestYearAllowed}) => {
+							let smallest: Date;
+							let largest: Date
+
+							if (smallestYearAllowed < largestYearAllowed) {
+								smallest = new Date(smallestYearAllowed, 0, 1, 0, 0 ,0);
+								largest = new Date(largestYearAllowed, 11, 31, 23, 59 ,59);
+							} else {
+								largest = new Date(smallestYearAllowed, 0, 1, 0, 0 ,0);
+								smallest = new Date(largestYearAllowed, 11, 31, 23, 59 ,59);
+							}
+							
+							return { dateOfBirth: {
+								lte: largest,
+								gte: smallest,
+							}}
+						})
+				},
+			});
+
+
+			return profilesInTheClubThatMatchCompetitionCategoryCriteria
+		
+	},
 	createCompetitionLink: async function (
 		data: CreateCompetitionLink,
 		userId: string,
@@ -41,10 +105,10 @@ export const CompetitionService = {
 			},
 		});
 	},
-	createCompetitionCategory: async function (
+	createCompetitionCategory: async (
 		slug: string,
 		data: CreateCompetitionCategory,
-	) {
+	) => {
 		try {
 			const result = await prisma.competitionCategory.create({
 				data: {
@@ -71,17 +135,15 @@ export const CompetitionService = {
 			throw error;
 		}
 	},
-	getCompetitionCategories: async function (slug: string) {
-		return prisma.competitionCategory.findMany({
+	getCompetitionCategories: async (slug: string) => prisma.competitionCategory.findMany({
 			where: {
 				competitionSlug: slug,
 			},
-		});
-	},
-	createCompetitor: async function (
+		}),
+	createCompetitor: async (
 		data: CreateCompetitor,
 		userId: string,
-	): Promise<null | Competitor> {
+	): Promise<null | Competitor> => {
 		// TODO: throw everything from here to a transaction maybe
 		const userProfile = await UserService.getUserProfile(userId);
 
@@ -181,7 +243,7 @@ export const CompetitionService = {
 			throw error;
 		}
 	},
-	listCompetitors: async function (slug: string, skipTake: SkipTake) {
+	listCompetitors: async (slug: string, skipTake: SkipTake) => {
 		// TODO: add more searching fields here
 		return prisma.competitor.findMany({
 			where: {
@@ -190,7 +252,7 @@ export const CompetitionService = {
 			...convertSkipTake(skipTake),
 		});
 	},
-	privateCompetitions: async function (userId: string) {
+	privateCompetitions: async (userId: string) => {
 		const adminInCompetitions = await prisma.competitionAdmin.findMany({
 			where: {
 				userId,
@@ -207,10 +269,10 @@ export const CompetitionService = {
 		return adminInCompetitions.map(({ competition }) => competition);
 	},
 
-	createCompetitionAdmin: async function (
+	createCompetitionAdmin: async (
 		data: { competitionId: string; userId: string; role: CompetitionRole },
 		competitionAdminId: string,
-	) {
+	) => {
 		const admin = await prisma.competitionAdmin.findFirst({
 			where: {
 				userId: competitionAdminId,
@@ -230,7 +292,7 @@ export const CompetitionService = {
 		return prisma.competitionAdmin.create({ data });
 	},
 
-	isAdmin: async function (competitionId: string, userId: string) {
+	isAdmin: async (competitionId: string, userId: string) => {
 		const cacheKey = `${competitionId}-${userId}`;
 		const cachedResult = cache.get(cacheKey);
 
@@ -250,7 +312,7 @@ export const CompetitionService = {
 		return isAdmin;
 	},
 
-	getCompetitionIdFromSlug: async function (competitionSlug: string) {
+	getCompetitionIdFromSlug: async (competitionSlug: string) => {
 		if (cache.get(competitionSlug)) {
 			return cache.get(competitionSlug) as string;
 		}
@@ -328,7 +390,7 @@ export const CompetitionService = {
 			competitionAdmins: [],
 		};
 	},
-	get: async function (competitionSlug: string) {
+	get: async (competitionSlug: string) => {
 		// TODO: could add caching here aswell
 		return prisma.competition.findUnique({
 			where: {
@@ -337,10 +399,10 @@ export const CompetitionService = {
 		});
 	},
 
-	createCompetition: async function ({
+	createCompetition: async ({
 		data,
 		userProfile,
-	}: { data: CreateCompetition; userProfile: UserProfile }) {
+	}: { data: CreateCompetition; userProfile: UserProfile }) => {
 		const slug = slugifyString(data.name);
 
 		if (!userProfile.userId) {
@@ -387,8 +449,7 @@ export const CompetitionService = {
 		return competition;
 	},
 
-	list: async function ({ search, ...skipTake }: SkipTake & Search) {
-		return prisma.competition.findMany({
+	list: async ({ search, ...skipTake }: SkipTake & Search) => prisma.competition.findMany({
 			where: {
 				isArchived: false,
 				isPublished: true,
@@ -401,8 +462,7 @@ export const CompetitionService = {
 					: {}),
 			},
 			...convertSkipTake(skipTake),
-		});
-	},
+		}),
 
 	updateCompetition: async function ({
 		data,
@@ -419,6 +479,9 @@ export const CompetitionService = {
 		}
 		if (data.startingAt) {
 			Object.assign(data, { startingAt: new Date(data.startingAt) });
+		}
+		if (data.registrationEndAt) {
+			Object.assign(data, { registrationEndAt: new Date(data.registrationEndAt) });
 		}
 
 		try {

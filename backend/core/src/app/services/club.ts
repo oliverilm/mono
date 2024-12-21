@@ -1,8 +1,7 @@
-import { Club, ClubRole } from '@prisma/client';
-import { slugifyString } from '../utils/string';
+import type { ClubCreate, SkipTake, UserIdObject } from '@monorepo/utils';
+import { type Club, ClubRole } from '@prisma/client';
 import { prisma } from '../utils/db';
-import { ClubCreate, SkipTake, UserIdObject } from '@monorepo/utils';
-import { tryHandleKnownErrors } from '../utils/error';
+import { slugifyString } from '../utils/string';
 
 export type SlugOrId =
 	| {
@@ -11,22 +10,20 @@ export type SlugOrId =
 	| { slug: string };
 
 export const ClubService = {
-	isClubAdmin: async function (
+	isClubAdmin: async (
 		userId: string,
 		clubId: string,
-	): Promise<boolean> {
-		return (
+	): Promise<boolean> => (
 			(await prisma.clubAdmin.count({
 				where: {
 					userId,
 					clubId,
 				},
 			})) > 0
-		);
-	},
-	getClubByIdOrSlug: function (
+		),
+	getClubByIdOrSlug: (
 		slugOrId: SlugOrId,
-	): Promise<Club | null> | null {
+	): Promise<Club | null> | null => {
 		if ('id' in slugOrId) {
 			return prisma.club.findUnique({
 				where: {
@@ -43,20 +40,18 @@ export const ClubService = {
 		}
 		return null;
 	},
-	getClubList: function ({ take = 25, skip = 0 }: SkipTake): Promise<Club[]> {
-		return prisma.club.findMany({
+	getClubList: ({ take = 25, skip = 0 }: SkipTake): Promise<Club[]> => prisma.club.findMany({
 			take: Number(take),
 			skip: Number(skip),
 			orderBy: {
 				id: 'desc',
 			},
-		});
-	},
-	create: async function ({
+		}),
+	create: async ({
 		name,
 		country,
 		userId,
-	}: ClubCreate & UserIdObject): Promise<Club | null> {
+	}: ClubCreate & UserIdObject): Promise<Club | null> => {
 		// PS: this action should require a subscription later on
 		// if user is subscribed then allow them to create a club
 

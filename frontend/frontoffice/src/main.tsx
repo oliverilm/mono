@@ -4,22 +4,26 @@ import { AppRouter } from './routes/index.tsx';
 
 import '@mantine/notifications/styles.css';
 import '@mantine/core/styles.css';
-import { SystemAuth } from './system/SystemAuth.tsx';
 import { ThemeProvider } from './providers/ThemeProvider.tsx';
+import { SystemAuth } from './system/SystemAuth.tsx';
 
 import '@mantine/carousel/styles.css';
 import '@mantine/tiptap/styles.css';
 import { QueryProvider } from './providers/query-provider/QueryProvider.js';
 
-createRoot(document.getElementById('root')!).render(
-	<StrictMode>
-		<QueryProvider>
-			<ThemeProvider>
-				{/* TODO: investigate, if this is slower */}
-				<SystemAuth />
+const element = document.getElementById('root')
 
-				<AppRouter />
-			</ThemeProvider>
-		</QueryProvider>
-	</StrictMode>,
-);
+if (element) {
+	createRoot(element).render(
+		<StrictMode>
+			<QueryProvider>
+				<ThemeProvider>
+					{/* TODO: investigate, if this is slower */}
+					<SystemAuth />
+
+					<AppRouter />
+				</ThemeProvider>
+			</QueryProvider>
+		</StrictMode>,
+	);
+}

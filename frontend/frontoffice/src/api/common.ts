@@ -1,14 +1,14 @@
-import {
-	CreateCompetition,
-	Search,
-	SkipTake,
+import type {
 	ClubCreate,
-	UpdateCompetition,
+	CreateCompetition,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
+	Search,
+	SkipTake,
+	UpdateCompetition,
 } from '@monorepo/utils';
+import type { AxiosResponse } from 'axios';
 import { addSkipTakeSearch, client } from './client';
-import { AxiosResponse } from 'axios';
 
 export interface Club {
 	id: string;
@@ -90,7 +90,7 @@ function createCompetition(
 function updateCompetition(
 	data: UpdateCompetition,
 ): Promise<AxiosResponse<CompetitionListItem>> {
-	return client.patch(`/user/competitions`, data);
+	return client.patch("/user/competitions", data);
 }
 
 export interface CompetitionCategory {
@@ -113,25 +113,24 @@ export const CompetitionAPI = {
 	getPublicCompetitions,
 	createCompetition,
 	updateCompetition,
-	getPrivateCompetitions: function (): Promise<
+	getPrivateCompetitions: (): Promise<
 		AxiosResponse<CompetitionListItem[]>
-	> {
-		return client.get('/user/competitions/private');
-	},
-	getCompetition: function (competitionSlug?: string) {
+	> => client.get('/user/competitions/private'),
+	getCompetition: (competitionSlug?: string) => {
 		if (!competitionSlug) return Promise.resolve(null);
 		return client.get(`/public/competitions/${competitionSlug}`);
 	},
-	getCompetitionMetadata: function (
+	getCompetitionMetadata: (
 		slug?: string,
-	): Promise<AxiosResponse<CompetitionMetadata> | null> {
+	): Promise<AxiosResponse<CompetitionMetadata> | null> => {
 		if (!slug) return Promise.resolve(null);
 		return client.get(`/public/competitions/${slug}/metadata`);
 	},
 
 	getCompetitionCategories: (
-		slug: string,
-	): Promise<AxiosResponse<CompetitionCategory[]>> => {
+		slug?: string,
+	): Promise<AxiosResponse<CompetitionCategory[]> | null> => {
+		if (!slug) return Promise.resolve(null);
 		return client.get(`/public/competitions/${slug}/categories`);
 	},
 	createCompetitionCategory: (
@@ -165,7 +164,5 @@ export interface Category {
 	value: string;
 }
 export const CommonAPI = {
-	getCategories: function (): Promise<AxiosResponse<Category[]>> {
-		return client.get('/public/common/categories');
-	},
+	getCategories: (): Promise<AxiosResponse<Category[]>> => client.get('/public/common/categories'),
 };

@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { CompetitionAPI, type CompetitionListItem } from '../../../../api/common';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
-import { DatePicker } from '../../../shared/date-picker/DatePicker';
 import { RichText } from '../../../shared/rich-text/RichText';
 
 interface Props {
@@ -80,12 +79,10 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 				/>
 				<TextInput
 
-					type="datetime-local"
+					type="date"
 					label="Registration End"
 					{...form.getInputProps('registrationEndAt')}
 				/>
-
-				<DatePicker />
 
 				<Switch
 					label="is published"

@@ -1,16 +1,17 @@
+import { Carousel } from '@mantine/carousel';
+import { Box, Card, Divider, Flex, Text, Title } from '@mantine/core';
+import { useLayoutEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { CompetitionListItem } from '../../../../api/common';
+import { TEST_COMPETITION_IMAGES } from '../../../../constants';
+import { ImageWithOverlay } from '../../../shared/image-with-text/ImageWithText';
 import {
 	card,
 	cardContent,
 	cardSection,
 	slide,
 } from './CompetitionCarouselCard.css';
-import { Card, Divider, Flex, Text, Title } from '@mantine/core';
-import { Carousel } from '@mantine/carousel';
-import { useLayoutEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CompetitionListItem } from '../../../../api/common';
-import { TEST_COMPETITION_IMAGES } from '../../../../constants';
-import { ImageWithOverlay } from '../../../shared/image-with-text/ImageWithText';
+import { getCompetitionBannerColorAndStatus } from './CompetitionCarouselCard.utils';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -18,8 +19,10 @@ interface Props {
 
 export function CompetitionCarouselCard({ competition }: Props) {
 	const ref = useRef<HTMLDivElement | null>(null);
-
 	const navigate = useNavigate();
+
+
+	
 
 	useLayoutEffect(() => {
 		// Select the card element
@@ -60,6 +63,8 @@ export function CompetitionCarouselCard({ competition }: Props) {
 			Math.floor(Math.random() * TEST_COMPETITION_IMAGES.length)
 		];
 
+
+		const {text, bg} = getCompetitionBannerColorAndStatus(competition)
 	return (
 		<Carousel.Slide className={slide}>
 			<Card
@@ -85,6 +90,11 @@ export function CompetitionCarouselCard({ competition }: Props) {
 							</Flex>
 						}
 					/>
+					<Box bg={bg} pos={"absolute"} top={0} w={"100%"} p={"3px"} style={{ zIndex: 2}}>
+						<Text>
+							{text}
+						</Text>
+					</Box>
 				</Card.Section>
 			</Card>
 		</Carousel.Slide>

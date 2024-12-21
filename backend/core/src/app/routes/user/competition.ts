@@ -1,6 +1,3 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
-import { CompetitionService } from '../../services/competition';
-import { getUserProfileFromRequest } from '../../utils/db';
 import {
 	createCompetitionCategorySchema,
 	createCompetitionLinkSchema,
@@ -9,7 +6,10 @@ import {
 	slugSchema,
 	updateCompetitionSchema,
 } from '@monorepo/utils';
+import type { FastifyInstance, FastifyRequest } from 'fastify';
 import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
+import { CompetitionService } from '../../services/competition';
+import { getUserProfileFromRequest } from '../../utils/db';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
@@ -73,5 +73,12 @@ export default async function (fastify: FastifyInstance) {
 	fastify.get('/competitions/private', (request) => {
 		const userId = getAssertedUserIdFromRequest(request);
 		return CompetitionService.privateCompetitions(userId);
+	});
+
+	fastify.get('/competitions/:slug/personal-competitors', (request) => {
+		const userId = getAssertedUserIdFromRequest(request);
+		const slug = slugSchema.parse(request.params); // TODO: not sure what to do with this
+
+		return CompetitionService.getPersonalCompetitors({ userId, slug: slug.slug });
 	});
 }
