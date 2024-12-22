@@ -10,20 +10,14 @@ export type SlugOrId =
 	| { slug: string };
 
 export const ClubService = {
-	isClubAdmin: async (
-		userId: string,
-		clubId: string,
-	): Promise<boolean> => (
-			(await prisma.clubAdmin.count({
-				where: {
-					userId,
-					clubId,
-				},
-			})) > 0
-		),
-	getClubByIdOrSlug: (
-		slugOrId: SlugOrId,
-	): Promise<Club | null> | null => {
+	isClubAdmin: async (userId: string, clubId: string): Promise<boolean> =>
+		(await prisma.clubAdmin.count({
+			where: {
+				userId,
+				clubId,
+			},
+		})) > 0,
+	getClubByIdOrSlug: (slugOrId: SlugOrId): Promise<Club | null> | null => {
 		if ('id' in slugOrId) {
 			return prisma.club.findUnique({
 				where: {
@@ -40,7 +34,8 @@ export const ClubService = {
 		}
 		return null;
 	},
-	getClubList: ({ take = 25, skip = 0 }: SkipTake): Promise<Club[]> => prisma.club.findMany({
+	getClubList: ({ take = 25, skip = 0 }: SkipTake): Promise<Club[]> =>
+		prisma.club.findMany({
 			take: Number(take),
 			skip: Number(skip),
 			orderBy: {

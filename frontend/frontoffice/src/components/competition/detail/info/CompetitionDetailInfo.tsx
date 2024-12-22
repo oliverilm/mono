@@ -1,9 +1,4 @@
-import {
-	Flex,
-	Grid,
-	Text,
-	useMantineColorScheme,
-} from '@mantine/core';
+import { Flex, Grid, Text, useMantineColorScheme } from '@mantine/core';
 import type {
 	CompetitionCategory,
 	CompetitionListItem,
@@ -47,10 +42,10 @@ export function CompetitionDetailInfo({
 				}}
 			>
 				<Flex direction={'column'} gap={'lg'}>
-					<ThemePaper light={"gray.1"} dark={"gray.8"} p={'md'}>
+					<ThemePaper light={'gray.1'} dark={'gray.8'} p={'md'}>
 						<RichTextRenderer value={competition.description ?? ''} />
 					</ThemePaper>
-					<ThemePaper light={"gray.1"} dark={"gray.8"} p={'md'}>
+					<ThemePaper light={'gray.1'} dark={'gray.8'} p={'md'}>
 						<CompetitionDetailLinks links={links} />
 					</ThemePaper>
 				</Flex>
@@ -65,7 +60,7 @@ export function CompetitionDetailInfo({
 					<ThemePaper
 						light={'gray.1'}
 						dark={'gray.8'}
-						key={categoryId}
+						key={`${categoryId}`}
 						className={categoryPaper}
 					>
 						<ThemePaper
@@ -81,7 +76,7 @@ export function CompetitionDetailInfo({
 						<Flex direction={'column'} gap={'xs'} p={'sm'}>
 							{categories.map((category) => (
 								<Flex
-								key={category.categoryId}
+									key={`${category.categoryId}-${category.sex}`}
 									direction={'column'}
 									bg={colorScheme === 'dark' ? 'gray.7' : 'gray.3'}
 									p={'xs'}

@@ -79,6 +79,9 @@ export default async function (fastify: FastifyInstance) {
 		const userId = getAssertedUserIdFromRequest(request);
 		const slug = slugSchema.parse(request.params); // TODO: not sure what to do with this
 
-		return CompetitionService.getPersonalCompetitors({ userId, slug: slug.slug });
+		return CompetitionService.getPersonalCompetitors({
+			userId,
+			slug: slug.slug,
+		});
 	});
 }

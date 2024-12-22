@@ -21,9 +21,6 @@ export function CompetitionCarouselCard({ competition }: Props) {
 	const ref = useRef<HTMLDivElement | null>(null);
 	const navigate = useNavigate();
 
-
-	
-
 	useLayoutEffect(() => {
 		// Select the card element
 		const card = ref.current;
@@ -63,8 +60,7 @@ export function CompetitionCarouselCard({ competition }: Props) {
 			Math.floor(Math.random() * TEST_COMPETITION_IMAGES.length)
 		];
 
-
-		const {text, bg} = getCompetitionBannerColorAndStatus(competition)
+	const { text, bg } = getCompetitionBannerColorAndStatus(competition);
 	return (
 		<Carousel.Slide className={slide}>
 			<Card
@@ -90,10 +86,15 @@ export function CompetitionCarouselCard({ competition }: Props) {
 							</Flex>
 						}
 					/>
-					<Box bg={bg} pos={"absolute"} top={0} w={"100%"} p={"3px"} style={{ zIndex: 2}}>
-						<Text>
-							{text}
-						</Text>
+					<Box
+						bg={bg}
+						pos={'absolute'}
+						top={0}
+						w={'100%'}
+						p={'3px'}
+						style={{ zIndex: 2 }}
+					>
+						<Text>{text}</Text>
 					</Box>
 				</Card.Section>
 			</Card>

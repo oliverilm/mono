@@ -1,22 +1,18 @@
 import { useQuery } from 'react-query';
-import { CompetitionAPI, type CompetitionListItem } from '../../../../api/common';
-import { Table } from '@mantine/core';
+import {
+	CompetitionAPI,
+	type CompetitionListItem,
+} from '../../../../api/common';
 
 interface Props {
 	competition: CompetitionListItem;
 }
 
 export function CompetitionDetailCompetitors({ competition }: Props) {
-	const { data: competitors } = useQuery({
+	useQuery({
 		queryKey: ['competitors', competition.id],
 		queryFn: () => CompetitionAPI.getCompetitors(competition.slug),
 	});
 
-	return (
-		<div>
-			<Table>
-				
-			</Table>
-		</div>
-	);
+	return <div>null</div>;
 }

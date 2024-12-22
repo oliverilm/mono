@@ -3,7 +3,10 @@ import { useForm } from '@mantine/form';
 import type { UpdateCompetition } from '@monorepo/utils';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { CompetitionAPI, type CompetitionListItem } from '../../../../api/common';
+import {
+	CompetitionAPI,
+	type CompetitionListItem,
+} from '../../../../api/common';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
 import { RichText } from '../../../shared/rich-text/RichText';
@@ -24,9 +27,9 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 			isPublished: competition.isPublished || false,
 			location: competition.location ?? '',
 			name: competition.name ?? '',
-			registrationEndAt: new Date(
-				competition.registrationEndAt,
-			).toISOString() ?? new Date().toISOString(),
+			registrationEndAt:
+				new Date(competition.registrationEndAt).toISOString() ??
+				new Date().toISOString(),
 			startingAt:
 				new Date(competition.startingAt).toISOString() ??
 				new Date().toISOString(),
@@ -78,7 +81,6 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 					{...form.getInputProps('startingAt')}
 				/>
 				<TextInput
-
 					type="date"
 					label="Registration End"
 					{...form.getInputProps('registrationEndAt')}

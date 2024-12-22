@@ -27,7 +27,7 @@ export function CompetitionPage() {
 		{
 			queryKey: [StaticQueryKey.CompetitionDetail, slug],
 			queryFn: () => CompetitionAPI.getCompetition(slug),
-			enabled: Boolean(slug)
+			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [
@@ -36,13 +36,12 @@ export function CompetitionPage() {
 				authStore.isAuthenticated,
 			],
 			queryFn: () => CompetitionAPI.getCompetitionMetadata(slug),
-			enabled: Boolean(slug)
-
+			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [StaticQueryKey.CompetitionCategories, slug],
 			queryFn: () => CompetitionAPI.getCompetitionCategories(slug),
-			
+
 			refetchOnMount: false,
 			refetchOnWindowFocus: false,
 			refetchOnReconnect: false,
@@ -55,11 +54,20 @@ export function CompetitionPage() {
 		return <div>Competition not found</div>;
 	}
 
-	const { text, bg} = getCompetitionBannerColorAndStatus(competition.data)
+	const { text, bg } = getCompetitionBannerColorAndStatus(competition.data);
 	return (
-		<LayoutPage width="full" pos={"relative"} >
-			<Box bg={bg} pos="sticky" top={HEADER_HEIGHT} w={"100%"} p={"5px"} style={{ zIndex: 2}}>
-				<Text c={"white"} fw={"bold"}>{text}</Text>
+		<LayoutPage width="full" pos={'relative'}>
+			<Box
+				bg={bg}
+				pos="sticky"
+				top={HEADER_HEIGHT}
+				w={'100%'}
+				p={'5px'}
+				style={{ zIndex: 2 }}
+			>
+				<Text c={'white'} fw={'bold'}>
+					{text}
+				</Text>
 			</Box>
 			<Flex direction={'column'} p={0} w={'100%'}>
 				<ImageWithOverlay
@@ -77,17 +85,16 @@ export function CompetitionPage() {
 
 					<AppTabs
 						TabListProps={{
-							pos: "sticky",
+							pos: 'sticky',
 							top: HEADER_HEIGHT + 35,
-							w: "100%",
-							style: { 
-								backdropFilter: "blur(20px)",
+							w: '100%',
+							style: {
+								backdropFilter: 'blur(20px)',
 							},
 							grow: true,
-							display: "flex",
-							justify:"space-evenly"
+							display: 'flex',
+							justify: 'space-evenly',
 						}}
-
 						tabs={[
 							{
 								value: 'info',
@@ -106,6 +113,7 @@ export function CompetitionPage() {
 								element: (
 									<CompetitionDetailRegistration
 										competition={competition.data}
+										competitionCategories={competitionCategories?.data ?? []}
 									/>
 								),
 							},
@@ -119,7 +127,9 @@ export function CompetitionPage() {
 									/>
 								),
 							},
-						].filter((el) => authStore.isAuthenticated ? true : el.value !== 'Registration' )}
+						].filter((el) =>
+							authStore.isAuthenticated ? true : el.value !== 'Registration',
+						)}
 					/>
 				</LayoutPage>
 			</Flex>

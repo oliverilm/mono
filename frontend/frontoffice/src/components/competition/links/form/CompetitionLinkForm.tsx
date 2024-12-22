@@ -2,7 +2,10 @@ import { Button, Flex, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { CreateCompetitionLink } from '@monorepo/utils';
 import { useMutation, useQueryClient } from 'react-query';
-import { CompetitionAPI, type CompetitionListItem } from '../../../../api/common';
+import {
+	CompetitionAPI,
+	type CompetitionListItem,
+} from '../../../../api/common';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
 
@@ -42,7 +45,7 @@ export function CompetitionLinkFrom({ competition, onDone }: Props) {
 
 	return (
 		<form onSubmit={form.onSubmit(onSubmit)}>
-			<Flex direction="column" gap={"md"}>
+			<Flex direction="column" gap={'md'}>
 				<TextInput label="label" {...form.getInputProps('label')} />
 				<TextInput label="url" {...form.getInputProps('url')} />
 				<Button type="submit">Submit</Button>

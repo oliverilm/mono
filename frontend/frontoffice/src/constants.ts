@@ -44,4 +44,4 @@ export function getRandomTestClubImage() {
 	return TEST_CLUB_IMAGES[Math.floor(Math.random() * TEST_CLUB_IMAGES.length)];
 }
 
-export const HEADER_HEIGHT = 60
+export const HEADER_HEIGHT = 60;

@@ -11,7 +11,7 @@ import '@mantine/carousel/styles.css';
 import '@mantine/tiptap/styles.css';
 import { QueryProvider } from './providers/query-provider/QueryProvider.js';
 
-const element = document.getElementById('root')
+const element = document.getElementById('root');
 
 if (element) {
 	createRoot(element).render(

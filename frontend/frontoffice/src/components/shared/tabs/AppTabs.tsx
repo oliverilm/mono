@@ -7,11 +7,11 @@ interface Tab {
 	element: React.ReactNode;
 }
 interface Props {
-	TabsProps?: Omit<TabsProps, "children">
-	TabListProps?: Omit<TabsListProps, "children">
+	TabsProps?: Omit<TabsProps, 'children'>;
+	TabListProps?: Omit<TabsListProps, 'children'>;
 	tabs: Tab[];
 }
-export function AppTabs({ tabs, TabsProps, TabListProps  }: Props) {
+export function AppTabs({ tabs, TabsProps, TabListProps }: Props) {
 	const [value, setValue] = useState<string | null>('info');
 
 	return (

@@ -3,6 +3,7 @@ import type {
 	CreateCompetition,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
+	CreateCompetitor,
 	Search,
 	SkipTake,
 	UpdateCompetition,
@@ -90,7 +91,7 @@ function createCompetition(
 function updateCompetition(
 	data: UpdateCompetition,
 ): Promise<AxiosResponse<CompetitionListItem>> {
-	return client.patch("/user/competitions", data);
+	return client.patch('/user/competitions', data);
 }
 
 export interface CompetitionCategory {
@@ -106,6 +107,22 @@ export interface CompetitionCategory {
 	categoryName: string;
 }
 
+export interface PrivateCompetitor {
+	id: string;
+	firstName: string;
+	lastName: string;
+	sex: string;
+	dateOfBirth: string;
+	participations: {
+		id: string;
+		weight: string;
+		competitionCategory: {
+			id: string;
+			competitionName: string;
+		};
+	}[];
+}
+
 export const CompetitionAPI = {
 	createCompetitionLink: (slug: string, data: CreateCompetitionLink) => {
 		return client.post(`/user/competitions/${slug}/links`, data);
@@ -113,9 +130,8 @@ export const CompetitionAPI = {
 	getPublicCompetitions,
 	createCompetition,
 	updateCompetition,
-	getPrivateCompetitions: (): Promise<
-		AxiosResponse<CompetitionListItem[]>
-	> => client.get('/user/competitions/private'),
+	getPrivateCompetitions: (): Promise<AxiosResponse<CompetitionListItem[]>> =>
+		client.get('/user/competitions/private'),
 	getCompetition: (competitionSlug?: string) => {
 		if (!competitionSlug) return Promise.resolve(null);
 		return client.get(`/public/competitions/${competitionSlug}`);
@@ -142,10 +158,21 @@ export const CompetitionAPI = {
 	updateCompetitionCategory: () => {},
 	deleteCompetitionCategory: () => {},
 
-	getCompetitors: (slug: string): Promise<AxiosResponse<unknown[]>> => {
-		return Promise.resolve({ data: [] } as AxiosResponse);
+	getCompetitors: (slug?: string): Promise<AxiosResponse<[]> | null> => {
+		if (!slug) return Promise.resolve(null);
+		return Promise.resolve(null);
 	},
-	createCompetitor: () => {},
+
+	getPersonalCompetitors: (
+		slug?: string,
+	): Promise<AxiosResponse<PrivateCompetitor[]> | null> => {
+		if (!slug) return Promise.resolve(null);
+		return client.get(`/user/competitions/${slug}/personal-competitors`);
+	},
+
+	createCompetitor: (slug: string, data: CreateCompetitor) => {
+		return client.post(`/user/competitions/${slug}/competitors`, data);
+	},
 };
 
 function getPublicCamps(query: SkipTake & Search) {
@@ -164,5 +191,6 @@ export interface Category {
 	value: string;
 }
 export const CommonAPI = {
-	getCategories: (): Promise<AxiosResponse<Category[]>> => client.get('/public/common/categories'),
+	getCategories: (): Promise<AxiosResponse<Category[]>> =>
+		client.get('/public/common/categories'),
 };

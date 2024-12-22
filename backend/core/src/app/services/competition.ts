@@ -7,7 +7,15 @@ import type {
 	SkipTake,
 	UpdateCompetition,
 } from '@monorepo/utils';
-import { CompetitionRole, type Competitor, type UserProfile } from '@prisma/client';
+import {
+	type Competition,
+	type CompetitionCategory,
+	CompetitionCategorySex,
+	CompetitionRole,
+	type Competitor,
+	Sex,
+	type UserProfile,
+} from '@prisma/client';
 import { LRUCache } from 'lru-cache';
 import { prisma } from '../utils/db';
 import { tryHandleKnownErrors } from '../utils/error';
@@ -21,23 +29,102 @@ const cache = new LRUCache({
 	max: 1000,
 });
 
-export const CompetitionService = {
-	getPersonalCompetitors: async ({slug, userId}: {
-		slug: string, userId: string
-	}) => {
+function queryActiveParticipations({
+	competition,
+	categories,
+	userId,
+	clubId,
+}: {
+	competition: Competition;
+	clubId?: string;
+	userId?: string;
+	categories: CompetitionCategory[];
+}) {
+	return prisma.userProfile.findMany({
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
+			sex: true,
+			dateOfBirth: true,
+			participations: {
+				where: {
+					competitionId: competition.id,
+				},
+				select: {
+					id: true,
+					weight: true,
+					seed: true,
+					competitionCategory: {
+						select: {
+							id: true,
+							categoryName: true,
+						},
+					},
+				},
+			},
+		},
+		where: {
+			...(clubId ? { clubId } : {}),
+			...(userId ? { userId } : {}),
+			OR: categories.map(({ sex, smallestYearAllowed, largestYearAllowed }) => {
+				let smallest: Date;
+				let largest: Date;
 
+				if (smallestYearAllowed < largestYearAllowed) {
+					smallest = new Date(smallestYearAllowed, 0, 1, 0, 0, 0);
+					largest = new Date(largestYearAllowed, 11, 31, 23, 59, 59);
+				} else {
+					largest = new Date(smallestYearAllowed, 0, 1, 0, 0, 0);
+					smallest = new Date(largestYearAllowed, 11, 31, 23, 59, 59);
+				}
+
+				const filter = {
+					dateOfBirth: {
+						lte: largest,
+						gte: smallest,
+					},
+				};
+
+				const categorySexAsProfileSex = (() => {
+					if (sex === CompetitionCategorySex.Male) {
+						return Sex.Male;
+					}
+
+					if (sex === CompetitionCategorySex.Female) {
+						return Sex.Female;
+					}
+				})();
+
+				if (categorySexAsProfileSex) {
+					Object.assign(filter, { sex: categorySexAsProfileSex });
+				}
+
+				return filter;
+			}),
+		},
+	});
+}
+
+export const CompetitionService = {
+	getPersonalCompetitors: async ({
+		slug,
+		userId,
+	}: {
+		slug: string;
+		userId: string;
+	}) => {
 		// prerequisite: is competition slug valid and competition is open
-		const competition = await CompetitionService.get(slug)
-		
+		const competition = await CompetitionService.get(slug);
+
 		if (!competition) {
-			throw new Error('Can not fetch entities, competition slug is invalid')
+			throw new Error('Can not fetch entities, competition slug is invalid');
 		}
 
-		const categories = await CompetitionService.getCompetitionCategories(slug)
+		const categories = await CompetitionService.getCompetitionCategories(slug);
 
 		// 1. check get user club and club role
-		
-		const profile = await UserService.getUserProfile(userId)
+		const profile = await UserService.getUserProfile(userId);
 
 		if (!profile) {
 			throw new Error('User profile not found');
@@ -45,47 +132,31 @@ export const CompetitionService = {
 
 		if (!profile.clubId) {
 			// wants to register as individual
-			return;
+			return queryActiveParticipations({
+				competition,
+				categories,
+				userId,
+			});
 		}
 
-		const isClubAdmin = await ClubService.isClubAdmin(userId, profile.clubId)
+		const isClubAdmin = await ClubService.isClubAdmin(userId, profile.clubId);
 
 		if (!isClubAdmin) {
 			// also wants to register as an individual
-			return;
+			return queryActiveParticipations({
+				competition,
+				categories,
+				userId,
+			});
 		}
 
-		const profilesInTheClubThatMatchCompetitionCategoryCriteria = 
-			await prisma.userProfile.findMany({
-				where: {
-					AND: {
-						clubId: profile.clubId,
-					},
-					OR: 
-						categories.map(({ smallestYearAllowed, largestYearAllowed}) => {
-							let smallest: Date;
-							let largest: Date
-
-							if (smallestYearAllowed < largestYearAllowed) {
-								smallest = new Date(smallestYearAllowed, 0, 1, 0, 0 ,0);
-								largest = new Date(largestYearAllowed, 11, 31, 23, 59 ,59);
-							} else {
-								largest = new Date(smallestYearAllowed, 0, 1, 0, 0 ,0);
-								smallest = new Date(largestYearAllowed, 11, 31, 23, 59 ,59);
-							}
-							
-							return { dateOfBirth: {
-								lte: largest,
-								gte: smallest,
-							}}
-						})
-				},
-			});
-
-
-			return profilesInTheClubThatMatchCompetitionCategoryCriteria
-		
+		return queryActiveParticipations({
+			competition,
+			categories,
+			clubId: profile.clubId,
+		});
 	},
+
 	createCompetitionLink: async function (
 		data: CreateCompetitionLink,
 		userId: string,
@@ -135,7 +206,8 @@ export const CompetitionService = {
 			throw error;
 		}
 	},
-	getCompetitionCategories: async (slug: string) => prisma.competitionCategory.findMany({
+	getCompetitionCategories: async (slug: string) =>
+		prisma.competitionCategory.findMany({
 			where: {
 				competitionSlug: slug,
 			},
@@ -234,6 +306,7 @@ export const CompetitionService = {
 					lastName: potentialCompetitor.lastName ?? 'unknown',
 					competitionSlug: competition.slug,
 					competitionName: competition.name,
+					seed: data.seed,
 				},
 			});
 			return competitor;
@@ -449,7 +522,8 @@ export const CompetitionService = {
 		return competition;
 	},
 
-	list: async ({ search, ...skipTake }: SkipTake & Search) => prisma.competition.findMany({
+	list: async ({ search, ...skipTake }: SkipTake & Search) =>
+		prisma.competition.findMany({
 			where: {
 				isArchived: false,
 				isPublished: true,
@@ -481,7 +555,9 @@ export const CompetitionService = {
 			Object.assign(data, { startingAt: new Date(data.startingAt) });
 		}
 		if (data.registrationEndAt) {
-			Object.assign(data, { registrationEndAt: new Date(data.registrationEndAt) });
+			Object.assign(data, {
+				registrationEndAt: new Date(data.registrationEndAt),
+			});
 		}
 
 		try {

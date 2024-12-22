@@ -9,5 +9,9 @@ export interface Props extends PaperProps {
 
 export function ThemePaper({ light, dark, children, ...rest }: Props) {
 	const { colorScheme } = useMantineColorScheme();
-	return <Paper {...rest} bg={colorScheme === 'dark' ? dark : light}>{children}</Paper>;
+	return (
+		<Paper {...rest} bg={colorScheme === 'dark' ? dark : light}>
+			{children}
+		</Paper>
+	);
 }

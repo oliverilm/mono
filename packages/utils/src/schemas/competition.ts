@@ -22,6 +22,7 @@ export const createCompetitorSchema = z.object({
 	competitorId: z.string(),
 	competitionCategoryId: z.number(),
 	weight: z.string(),
+	seed: z.number(),
 });
 export type CreateCompetitor = z.infer<typeof createCompetitorSchema>;
 
