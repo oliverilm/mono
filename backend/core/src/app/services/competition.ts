@@ -106,6 +106,22 @@ function queryActiveParticipations({
 	});
 }
 
+async function getUserClubName(clubId?: string | null) {
+	if (!clubId) return 'Individual';
+
+	const club = await prisma.club.findUnique({
+		where: {
+			id: clubId,
+		},
+		select: {
+			name: true,
+		},
+	});
+
+	if (!club) return 'Individual';
+	return club.name;
+}
+
 export const CompetitionService = {
 	getPersonalCompetitors: async ({
 		slug,
@@ -241,11 +257,25 @@ export const CompetitionService = {
 		if (!competition) {
 			throw new Error('Competition not found');
 		}
+		const clubName = await getUserClubName(userProfile?.clubId);
 
 		if (userProfile?.userId === userId) {
-			// person registers themselves to the competition
-			// TODO: handle this
-			return null;
+			console.log(data);
+			return prisma.competitor.create({
+				data: {
+					competitionId: data.competitionId,
+					profileId: data.competitorId,
+					competitionCategoryId: data.competitionCategoryId,
+					weight: data.weight,
+					seed: data.seed,
+
+					clubName,
+					firstName: userProfile.firstName ?? 'unknown',
+					lastName: userProfile.lastName ?? 'unknown',
+					competitionSlug: competition.slug,
+					competitionName: competition.name,
+				},
+			});
 		}
 
 		if (!userProfile.clubId) {
@@ -278,35 +308,20 @@ export const CompetitionService = {
 			throw new Error('Insufficent permissions, user is not a club admin');
 		}
 
-		// check if competitor is already registred in the competition with
-
-		const club = await prisma.club.findUnique({
-			where: {
-				id: userProfile.clubId,
-			},
-			select: {
-				name: true,
-			},
-		});
-
-		if (!club) {
-			// impossible scenario
-			throw new Error('Club not found');
-		}
-
 		try {
 			const competitor = await prisma.competitor.create({
 				data: {
 					competitionId: data.competitionId,
 					profileId: data.competitorId,
-					weight: '',
-					clubName: club.name ?? 'individual',
 					competitionCategoryId: data.competitionCategoryId,
+					weight: data.weight,
+					seed: data.seed,
+
+					clubName,
 					firstName: potentialCompetitor.firstName ?? 'unknown',
 					lastName: potentialCompetitor.lastName ?? 'unknown',
 					competitionSlug: competition.slug,
 					competitionName: competition.name,
-					seed: data.seed,
 				},
 			});
 			return competitor;

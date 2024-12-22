@@ -41,7 +41,7 @@ export function ParticipationFormForCategory({
 }: { category: CompetitionCategory; competitor: PrivateCompetitor }) {
 	const form = useForm<CreateCompetitor>({
 		initialValues: {
-			competitionCategoryId: category.categoryId,
+			competitionCategoryId: category.id,
 			competitionId: category.competitionId,
 			competitorId: competitor.id,
 			weight: category.weights[0],
@@ -57,7 +57,11 @@ export function ParticipationFormForCategory({
 
 	const onSubmit = () => {
 		form.validate();
-		mutate({ data: form.values, slug: category.competitionSlug });
+		const data = form.values;
+		Object.assign(data, { seed: Number(data.seed) });
+
+		console.log(data);
+		mutate({ data, slug: category.competitionSlug });
 	};
 
 	return (
