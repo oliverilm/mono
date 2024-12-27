@@ -1,5 +1,6 @@
 import type {
 	CreateCompetition,
+	CreateCompetitionAdmin,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
 	CreateCompetitor,
@@ -358,7 +359,7 @@ export const CompetitionService = {
 	},
 
 	createCompetitionAdmin: async (
-		data: { competitionId: string; userId: string; role: CompetitionRole },
+		data: CreateCompetitionAdmin,
 		competitionAdminId: string,
 	) => {
 		const admin = await prisma.competitionAdmin.findFirst({
@@ -371,13 +372,18 @@ export const CompetitionService = {
 			},
 		});
 
-		const isAdmin = admin?.role === 'OWNER';
+		const isAdmin = admin?.role === CompetitionRole.OWNER;
 
 		if (!isAdmin) {
 			throw new Error('You are not an admin of this competition');
 		}
 
-		return prisma.competitionAdmin.create({ data });
+		return prisma.competitionAdmin.create({
+			data: {
+				...data,
+				role: CompetitionRole.MANAGER,
+			},
+		});
 	},
 
 	isAdmin: async (competitionId: string, userId: string) => {
@@ -437,6 +443,7 @@ export const CompetitionService = {
 
 		return links;
 	},
+
 	getCompetitionAdmins: async function (
 		competitionSlug: string,
 		userId?: string,

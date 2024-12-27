@@ -1,13 +1,14 @@
 import { Button, Flex, Modal, useMantineColorScheme } from '@mantine/core';
-import {
+import { useDisclosure } from '@mantine/hooks';
+import type {
 	CompetitionListItem,
 	CompetitionMetadata,
 } from '../../../../api/common';
 import { useAuthStore } from '../../../../stores/auth';
-import { CompetitionUpdateForm } from '../../update/form/CompetitionUpdateForm';
 import { CompetitionCategoryForm } from '../../category/CompetitionCategoryForm';
 import { CompetitionLinkFrom } from '../../links/form/CompetitionLinkForm';
-import { useDisclosure } from '@mantine/hooks';
+import { CompetitionUpdateForm } from '../../update/form/CompetitionUpdateForm';
+import { CompetitionDetailAdminForm } from './form/CompetitionDetailAdminForm';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -19,6 +20,7 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 	const [opened, { toggle }] = useDisclosure();
 	const [categoriesOpen, { toggle: toggleCategories }] = useDisclosure();
 	const [linkOpen, { toggle: toggleLink }] = useDisclosure();
+	const [adminOpen, { toggle: toggleAdmin }] = useDisclosure();
 	const authStore = useAuthStore();
 	const myRole = metadata?.competitionAdmins?.find(
 		({ userId }) => authStore.profile?.userId === userId,
@@ -44,6 +46,9 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 					<Button size="xs" onClick={toggleLink}>
 						Add link
 					</Button>
+					<Button size="xs" onClick={toggleAdmin}>
+						Add admin
+					</Button>
 				</Flex>
 				<Button size="xs" onClick={toggle}>
 					Edit
@@ -54,6 +59,10 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 						competition={competition}
 						onSubmitSuccess={toggle}
 					/>
+				</Modal>
+
+				<Modal size={'lg'} opened={adminOpen} onClose={toggleAdmin}>
+					<CompetitionDetailAdminForm competition={competition} />
 				</Modal>
 
 				<Modal size={'md'} opened={categoriesOpen} onClose={toggleCategories}>

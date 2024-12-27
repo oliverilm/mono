@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { FastifyRequest } from 'fastify';
+import type { FastifyRequest } from 'fastify';
 import { getAssertedUserIdFromRequest } from './request';
 
 export const prisma = new PrismaClient();

@@ -43,3 +43,12 @@ export const createCompetitionLinkSchema = z.object({
 	label: z.string(),
 });
 export type CreateCompetitionLink = z.infer<typeof createCompetitionLinkSchema>;
+
+export const createCompetitionAdminSchema = z.object({
+	competitionId: z.string(),
+	userId: z.string(),
+});
+
+export type CreateCompetitionAdmin = z.infer<
+	typeof createCompetitionAdminSchema
+>;

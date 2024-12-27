@@ -1,8 +1,7 @@
-import { FastifyInstance } from 'fastify';
+import { searchSchema, userPatchSchema } from '@monorepo/utils';
+import type { FastifyInstance } from 'fastify';
 import { UserService } from '../../services/user';
 import { getAssertedUserIdFromRequest } from '../../utils/request';
-import { searchSchema, userPatchSchema } from '@monorepo/utils';
-import { request } from 'http';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {

@@ -1,12 +1,13 @@
 import { Button, Select, Table } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { CreateCompetitor } from '@monorepo/utils';
+import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { useMutation } from 'react-query';
 import {
-	CompetitionAPI,
-	type CompetitionCategory,
-	type PrivateCompetitor,
+    CompetitionAPI,
+    type CompetitionCategory,
+    type PrivateCompetitor,
 } from '../../../../../api/common';
 
 interface Props {
@@ -17,6 +18,8 @@ export function CompetitionDetailRegistrationRow({
 	category,
 	competitor,
 }: Props) {
+
+    const currentCategoryParticipation = competitor.participations.find((participation) => participation.competitionCategory.id === category.id);
 	return (
 		<Table.Tr key={competitor.firstName}>
 			<Table.Td>
@@ -30,7 +33,19 @@ export function CompetitionDetailRegistrationRow({
 					category={category}
 					competitor={competitor}
 				/>
-			) : null}
+			) : (
+                <>
+                    <Table.Td>
+                        {competitor.participations.find()}
+                    </Table.Td>
+                    <Table.Td>
+                        
+                    </Table.Td>
+                    <Table.Td>
+                        
+                    </Table.Td>
+                </>
+            )}
 		</Table.Tr>
 	);
 }
@@ -52,7 +67,10 @@ export function ParticipationFormForCategory({
 	const { mutate } = useMutation({
 		mutationFn: (data: { data: CreateCompetitor; slug: string }) =>
 			CompetitionAPI.createCompetitor(data.slug, data.data),
-		onSuccess: () => {},
+		onSuccess: (data: AxiosResponse<PrivateCompetitor>) => {
+			console.log(data);
+			// TODO: optimistic update part
+		},
 	});
 
 	const onSubmit = () => {

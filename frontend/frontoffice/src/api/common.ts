@@ -1,6 +1,7 @@
 import type {
 	ClubCreate,
 	CreateCompetition,
+	CreateCompetitionAdmin,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
 	CreateCompetitor,
@@ -124,6 +125,9 @@ export interface PrivateCompetitor {
 }
 
 export const CompetitionAPI = {
+	createCompetitionAdmin: (slug: string, data: CreateCompetitionAdmin) => {
+		return client.post(`/user/competitions/${slug}/admins`, data);
+	},
 	createCompetitionLink: (slug: string, data: CreateCompetitionLink) => {
 		return client.post(`/user/competitions/${slug}/links`, data);
 	},

@@ -1,4 +1,5 @@
 import {
+	createCompetitionAdminSchema,
 	createCompetitionCategorySchema,
 	createCompetitionLinkSchema,
 	createCompetitionSchema,
@@ -66,8 +67,15 @@ export default async function (fastify: FastifyInstance) {
 		const slug = slugSchema.parse(request.params); // TODO: not sure what to do with this
 		const userId = getAssertedUserIdFromRequest(request);
 		const data = createCompetitionLinkSchema.parse(request.body);
-
 		return CompetitionService.createCompetitionLink(data, userId, slug.slug);
+	});
+
+	fastify.post('/competitions/:slug/admins', async (request) => {
+		const slug = slugSchema.parse(request.params);
+		const userId = getAssertedUserIdFromRequest(request);
+		const data = createCompetitionAdminSchema.parse(request.body);
+
+		return CompetitionService.createCompetitionAdmin(data, userId);
 	});
 
 	fastify.get('/competitions/private', (request) => {

@@ -1,6 +1,6 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import type { LoginCredentials, NationalId, UserPatch } from '@monorepo/utils';
+import type { AxiosResponse } from 'axios';
 import { addSkipTakeSearch, client } from './client';
-import { LoginCredentials, NationalId, UserPatch } from '@monorepo/utils';
 
 export interface AuthResponse {
 	profile: Profile;
@@ -46,6 +46,8 @@ export async function updateUser(
 
 export async function getUserByEmail(
 	email: string,
-): Promise<AxiosResponse<Profile>> {
-	return client.get(addSkipTakeSearch('/user/get-by-email', { search: email }));
+): Promise<AxiosResponse<{ email: string; id: string }>> {
+	return client.get(
+		addSkipTakeSearch('/user/user-by-email', { search: email }),
+	);
 }
