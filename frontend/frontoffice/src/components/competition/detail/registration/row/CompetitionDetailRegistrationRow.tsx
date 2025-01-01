@@ -5,9 +5,9 @@ import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { useMutation } from 'react-query';
 import {
-    CompetitionAPI,
-    type CompetitionCategory,
-    type PrivateCompetitor,
+	CompetitionAPI,
+	type CompetitionCategory,
+	type PrivateCompetitor,
 } from '../../../../../api/common';
 
 interface Props {
@@ -18,8 +18,7 @@ export function CompetitionDetailRegistrationRow({
 	category,
 	competitor,
 }: Props) {
-
-    const currentCategoryParticipation = competitor.participations.find((participation) => participation.competitionCategory.id === category.id);
+    const currentCategoryParticipation = competitor.participations.filter((participation) => Number(participation.competitionCategory.id) === category.id)?.[0];
 	return (
 		<Table.Tr key={competitor.firstName}>
 			<Table.Td>
@@ -28,24 +27,21 @@ export function CompetitionDetailRegistrationRow({
 			<Table.Td>{competitor.sex}</Table.Td>
 			<Table.Td>{dayjs(competitor.dateOfBirth).year()}</Table.Td>
 
-			{competitor.participations.length === 0 ? (
+			{!currentCategoryParticipation ? (
 				<ParticipationFormForCategory
 					category={category}
 					competitor={competitor}
 				/>
 			) : (
-                <>
-                    <Table.Td>
-                        {competitor.participations.find()}
-                    </Table.Td>
-                    <Table.Td>
-                        
-                    </Table.Td>
-                    <Table.Td>
-                        
-                    </Table.Td>
-                </>
-            )}
+				<>
+					<Table.Td>
+						{currentCategoryParticipation.seed}
+					</Table.Td>
+					<Table.Td>
+						{currentCategoryParticipation.weight}
+					</Table.Td>
+				</>
+			)}
 		</Table.Tr>
 	);
 }

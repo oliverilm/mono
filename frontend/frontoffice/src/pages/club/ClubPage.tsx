@@ -1,7 +1,7 @@
-import { useQueries, useQuery } from 'react-query';
+import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { StaticQueryKey } from '../../providers/query-provider/keys';
 import { ClubAPI } from '../../api/common';
+import { StaticQueryKey } from '../../providers/query-provider/keys';
 import { LayoutPage } from '../layout/page/LayoutPage';
 
 export function ClubPage() {
@@ -10,7 +10,8 @@ export function ClubPage() {
 	const [{ data: clubDetails }] = useQueries([
 		{
 			queryKey: [StaticQueryKey.ClubDetails, slug],
-			queryFn: () => ClubAPI.getClub(slug!),
+			queryFn: () => ClubAPI.getClub(slug),
+			enabled: Boolean(slug),
 		},
 	]);
 
@@ -18,7 +19,7 @@ export function ClubPage() {
 		<LayoutPage>
 			<h1>Club Page</h1>
 
-			<pre>{JSON.stringify(clubDetails, null, 2)}</pre>
+			<pre>{JSON.stringify(clubDetails?.data, null, 2)}</pre>
 		</LayoutPage>
 	);
 }

@@ -28,7 +28,8 @@ function createClub(data: ClubCreate) {
 	return client.post('/user/club/create', data);
 }
 
-function getClub(slug: string) {
+function getClub(slug?: string) {
+	if (!slug) return Promise.resolve(null)
 	return client.get(`/public/club/${slug}`);
 }
 
@@ -117,6 +118,7 @@ export interface PrivateCompetitor {
 	participations: {
 		id: string;
 		weight: string;
+		seed: number;
 		competitionCategory: {
 			id: string;
 			competitionName: string;
