@@ -1,6 +1,6 @@
-import { FastifyInstance } from 'fastify';
-import { CompetitionService } from '../../services/competition';
 import { skipTakeSchema, slugSchema } from '@monorepo/utils';
+import type { FastifyInstance } from 'fastify';
+import { CompetitionService } from '../../services/competition';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {

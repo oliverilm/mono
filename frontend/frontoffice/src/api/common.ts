@@ -18,6 +18,10 @@ export interface Club {
 	slug: string;
 }
 
+export interface ClubMetadata {
+	isAdmin: boolean;
+}
+
 function getPublicClubs(
 	query: SkipTake & Search,
 ): Promise<AxiosResponse<Club[]>> {
@@ -29,7 +33,7 @@ function createClub(data: ClubCreate) {
 }
 
 function getClub(slug?: string) {
-	if (!slug) return Promise.resolve(null)
+	if (!slug) return Promise.resolve(null);
 	return client.get(`/public/club/${slug}`);
 }
 
@@ -37,6 +41,16 @@ export const ClubAPI = {
 	getClub,
 	createClub,
 	getPublicClubs,
+	getClubById: (id?: string | null): Promise<AxiosResponse<Club> | null> => {
+		if (!id) return Promise.resolve(null);
+		return client.get(`/public/clubs/${id}`);
+	},
+	getClubMetadata: (
+		slug?: string,
+	): Promise<AxiosResponse<ClubMetadata> | null> => {
+		if (!slug) return Promise.resolve(null);
+		return client.get(`/public/club/${slug}/metadata`);
+	},
 	updateClub: () => {},
 	getProfilesInClub: () => {},
 	applyToClub: () => {},
@@ -126,6 +140,30 @@ export interface PrivateCompetitor {
 	}[];
 }
 
+export interface Competitor {
+	id: number;
+	clubName: string;
+	profileId: string;
+	firstName: string;
+	lastName: string;
+	competitionCategoryId: number;
+	competitionId: string;
+	competitionName: string;
+	competitionSlug: string;
+	weight: string;
+	seed: number;
+	createdAt: string;
+	updatedAt: string;
+}
+export interface Metadata {
+	count: number;
+}
+
+export interface CompetitorResponse {
+	competitors: Competitor[];
+	metadata: Metadata;
+}
+
 export const CompetitionAPI = {
 	createCompetitionAdmin: (slug: string, data: CreateCompetitionAdmin) => {
 		return client.post(`/user/competitions/${slug}/admins`, data);
@@ -164,9 +202,13 @@ export const CompetitionAPI = {
 	updateCompetitionCategory: () => {},
 	deleteCompetitionCategory: () => {},
 
-	getCompetitors: (slug?: string): Promise<AxiosResponse<[]> | null> => {
-		if (!slug) return Promise.resolve(null);
-		return Promise.resolve(null);
+	getCompetitors: (
+		slug: string,
+		skipTake: SkipTake,
+	): Promise<AxiosResponse<CompetitorResponse> | null> => {
+		return client.get(
+			addSkipTakeSearch(`/public/competitions/${slug}/competitors`, skipTake),
+		);
 	},
 
 	getPersonalCompetitors: (

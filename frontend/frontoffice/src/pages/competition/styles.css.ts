@@ -2,6 +2,8 @@ import { globalStyle, style } from '@vanilla-extract/css';
 
 export const linkCardPaper = style({
 	transitionDuration: '200ms',
+	border: '1px solid transparent',
+
 	cursor: 'pointer',
 });
 

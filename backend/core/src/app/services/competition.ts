@@ -333,13 +333,30 @@ export const CompetitionService = {
 		}
 	},
 	listCompetitors: async (slug: string, skipTake: SkipTake) => {
-		// TODO: add more searching fields here
-		return prisma.competitor.findMany({
+		const competitors = prisma.competitor.findMany({
 			where: {
 				competitionSlug: slug,
 			},
 			...convertSkipTake(skipTake),
 		});
+
+		const metadata = prisma.competitor.count({
+			where: {
+				competitionSlug: slug,
+			},
+		});
+
+		const [awaitedCompetitors, awaitedMetadata] = await Promise.all([
+			competitors,
+			metadata,
+		]);
+
+		return {
+			competitors: awaitedCompetitors,
+			metadata: {
+				count: awaitedMetadata,
+			},
+		};
 	},
 	privateCompetitions: async (userId: string) => {
 		const adminInCompetitions = await prisma.competitionAdmin.findMany({

@@ -18,7 +18,10 @@ export function CompetitionDetailRegistrationRow({
 	category,
 	competitor,
 }: Props) {
-    const currentCategoryParticipation = competitor.participations.filter((participation) => Number(participation.competitionCategory.id) === category.id)?.[0];
+	const currentCategoryParticipation = competitor.participations.filter(
+		(participation) =>
+			Number(participation.competitionCategory.id) === category.id,
+	)?.[0];
 	return (
 		<Table.Tr key={competitor.firstName}>
 			<Table.Td>
@@ -34,12 +37,8 @@ export function CompetitionDetailRegistrationRow({
 				/>
 			) : (
 				<>
-					<Table.Td>
-						{currentCategoryParticipation.seed}
-					</Table.Td>
-					<Table.Td>
-						{currentCategoryParticipation.weight}
-					</Table.Td>
+					<Table.Td>{currentCategoryParticipation.seed}</Table.Td>
+					<Table.Td>{currentCategoryParticipation.weight}</Table.Td>
 				</>
 			)}
 		</Table.Tr>

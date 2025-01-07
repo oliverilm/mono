@@ -1,9 +1,10 @@
+import { Flex, Grid, Image, Title } from '@mantine/core';
 import { useQuery } from 'react-query';
+import { Link } from 'react-router-dom';
 import { ClubAPI } from '../../../api/common';
-import { StaticQueryKey } from '../../../providers/query-provider/keys';
-import { Flex, Grid, Image, Paper, Title } from '@mantine/core';
 import { getRandomTestClubImage } from '../../../constants';
-import { useNavigate } from 'react-router-dom';
+import { StaticQueryKey } from '../../../providers/query-provider/keys';
+import { ThemePaper } from '../../shared/theme-paper/ThemePaper';
 
 const span = {
 	xl: 4,
@@ -19,24 +20,27 @@ export function ClubList() {
 		queryFn: () => ClubAPI.getPublicClubs({ skip: 0, take: 25 }),
 	});
 
-	const navigate = useNavigate();
-
 	return (
 		<Grid>
 			{clubs?.data?.map((club) => (
-				<Grid.Col span={span}>
-					<Paper
-						bg={'gray.2'}
-						p="0"
-						onClick={() => navigate(`/clubs/${club.slug}`)}
-					>
-						<Flex>
-							<Image p={'xs'} w={100} h={100} src={getRandomTestClubImage()} />
-							<Flex p={'sm'}>
-								<Title size="h3">{club.name}</Title>
+				<Grid.Col key={club.id} span={span}>
+					<Link to={`/clubs/${club.slug}`}>
+						<ThemePaper light={'gray.2'} dark={'dark.4'} p="0">
+							<Flex>
+								<Flex w={100} h={100} justify={'center'} align={'center'}>
+									<Image
+										p={'xs'}
+										w={100}
+										h={100}
+										src={getRandomTestClubImage()}
+									/>
+								</Flex>
+								<Flex p={'sm'}>
+									<Title size="h3">{club.name}</Title>
+								</Flex>
 							</Flex>
-						</Flex>
-					</Paper>
+						</ThemePaper>
+					</Link>
 				</Grid.Col>
 			))}
 		</Grid>

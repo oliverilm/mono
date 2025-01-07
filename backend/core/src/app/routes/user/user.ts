@@ -24,4 +24,15 @@ export default async function (fastify: FastifyInstance) {
 		}
 		return UserService.searchByEmailExactMatch(searchParam.search);
 	});
+
+	fastify.get('/user-by-national-id', (request) => {
+		const searchParam = searchSchema.parse(request.query);
+		if (!searchParam.search) {
+			throw new Error('No national id provided');
+		}
+		return UserService.searchByNationalIdExactMatch(
+			searchParam.search,
+			getAssertedUserIdFromRequest(request),
+		);
+	});
 }

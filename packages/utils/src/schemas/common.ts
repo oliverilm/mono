@@ -16,4 +16,9 @@ export type Search = z.infer<typeof searchSchema>;
 export const slugSchema = z.object({
 	slug: z.string(),
 });
+
+export const idSchema = z.object({
+	id: z.string(),
+});
+
 export type Slug = z.infer<typeof slugSchema>;

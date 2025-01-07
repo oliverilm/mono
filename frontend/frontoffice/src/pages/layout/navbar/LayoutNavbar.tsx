@@ -1,4 +1,5 @@
 import { AppShell, Modal, NavLink } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
 	IconChevronRight,
 	IconCup,
@@ -6,13 +7,12 @@ import {
 	IconLogout,
 	IconPassword,
 } from '@tabler/icons-react';
-import { useAuthStore } from '../../../stores/auth';
 import { useQuery } from 'react-query';
-import { CompetitionAPI } from '../../../api/common';
-import { useNavigate } from 'react-router-dom';
-import { useDisclosure } from '@mantine/hooks';
-import { CompetitionFrom } from '../../../components/competition/create/form/CompetitionForm';
+import { Link, useNavigate } from 'react-router-dom';
+import { ClubAPI, CompetitionAPI } from '../../../api/common';
 import { ClubForm } from '../../../components/club/form/ClubForm';
+import { CompetitionFrom } from '../../../components/competition/create/form/CompetitionForm';
+import { useAuthStore } from '../../../stores/auth';
 
 export function LayoutNavbar() {
 	const [competitionFormOpened, { toggle: toggleCompetitionForm }] =
@@ -21,6 +21,15 @@ export function LayoutNavbar() {
 
 	const authStore = useAuthStore();
 	const navigate = useNavigate();
+
+	const userClub = authStore.profile?.clubId;
+	// TODO: this might be slowing things down, one request too many,
+	// figure out how to do it better, maybe select the user club slub with the profile  request
+	const { data: userClubData } = useQuery({
+		queryKey: ['user-club', userClub],
+		queryFn: () => ClubAPI.getClubById(userClub),
+		enabled: !!userClub,
+	});
 
 	const { data } = useQuery({
 		queryKey: ['competitions-private', authStore.isAuthenticated],
@@ -35,13 +44,16 @@ export function LayoutNavbar() {
 	return (
 		<AppShell.Navbar>
 			<AppShell.Section grow>
-				<NavLink
-					label="My club"
-					leftSection={<IconHome {...iconProps} />}
-					rightSection={<Chevron />}
-					active
-				/>
-
+				{userClubData && (
+					<NavLink
+						label="My club"
+						leftSection={<IconHome {...iconProps} />}
+						rightSection={<Chevron />}
+						component={Link}
+						to={`/clubs/${userClubData.data.slug}`}
+						active
+					/>
+				)}
 				{data && data?.data?.length > 0 && (
 					<NavLink
 						label="Unpublished events"

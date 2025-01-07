@@ -1,15 +1,12 @@
-import { Session, UserProfile } from '@prisma/client';
+import type { LoginCredentials, UserPatch } from '@monorepo/utils';
+import type { Session, UserProfile } from '@prisma/client';
+import { prisma } from '../utils/db';
+import { tryHandleKnownErrors } from '../utils/error';
+import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
+import { capitalizeFirstLetter } from '../utils/string';
+import { ClubService } from './club';
 import securify from './securify';
 import { SessionService } from './session';
-import {
-	LoginCredentials,
-	NationalId,
-	NationalIDUtils,
-	UserPatch,
-} from '@monorepo/utils';
-import { capitalizeFirstLetter } from '../utils/string';
-import { tryHandleKnownErrors } from '../utils/error';
-import { prisma } from '../utils/db';
 
 export interface AuthenticationPayload {
 	profile: UserProfile;
@@ -17,10 +14,10 @@ export interface AuthenticationPayload {
 }
 
 export const UserService = {
-	createUser: async function ({
+	createUser: async ({
 		email,
 		password,
-	}: LoginCredentials): Promise<AuthenticationPayload | void> {
+	}: LoginCredentials): Promise<AuthenticationPayload | undefined> => {
 		try {
 			const user = await prisma.user.create({
 				data: {
@@ -56,10 +53,10 @@ export const UserService = {
 		}
 	},
 
-	login: async function ({
+	login: async ({
 		email,
 		password,
-	}: LoginCredentials): Promise<AuthenticationPayload> {
+	}: LoginCredentials): Promise<AuthenticationPayload> => {
 		const user = await prisma.user.findFirst({
 			where: {
 				email,
@@ -86,7 +83,7 @@ export const UserService = {
 			token,
 		};
 	},
-	getUserProfile: async function (userId: string): Promise<UserProfile | null> {
+	getUserProfile: async (userId: string): Promise<UserProfile | null> => {
 		const profile = await prisma.userProfile.findUnique({
 			where: {
 				userId,
@@ -95,43 +92,59 @@ export const UserService = {
 
 		return profile;
 	},
-	updateUserProfile: async function (
+	updateUserProfile: async (
 		payload: UserPatch,
-	): Promise<UserProfile | null> {
+	): Promise<UserProfile | null> => {
 		const { userId, ...rest } = payload;
 
-		// validate national id with its type and b-day
-		if (rest.nationalIdType && rest.nationalId) {
-			let parsed = null;
-			if (rest.nationalIdType === NationalId.Est) {
-				parsed = NationalIDUtils.parseEstonianIdCode(rest.nationalId);
-			} else {
-				parsed = NationalIDUtils.parseFinnishIdCode(rest.nationalId);
-			}
+		validateNationalIdAndDobOrThrow({
+			nationalId: rest.nationalId,
+			nationalIdType: rest.nationalIdType,
+			dob: rest.dateOfBirth,
+		});
 
-			if (!parsed) {
-				throw new Error('Invalid national id');
-			}
+		const existingUserProfile = await prisma.userProfile.findUnique({
+			where: {
+				nationalId: rest.nationalId,
+				nationalIdType: rest.nationalIdType,
+			},
+		});
 
-			// validate b day with national id
-			const dateOfBirth = new Date(rest.dateOfBirth);
-			const {
-				meta: { fullBirthYear },
-				birthMonth,
-				birthDay,
-			} = parsed;
-
-			if (
-				!(
-					fullBirthYear === dateOfBirth.getFullYear() &&
-					Number(birthMonth) === dateOfBirth.getMonth() + 1 &&
-					Number(birthDay) === dateOfBirth.getDate()
-				)
-			) {
-				throw new Error('Date of birth does not match the national id code');
-			}
+		if (
+			existingUserProfile &&
+			existingUserProfile.userId !== undefined &&
+			existingUserProfile.userId !== userId
+		) {
+			throw new Error('National ID already in use by someone else');
 		}
 
+		if (existingUserProfile) {
+			// delete the originally created user profile
+			await prisma.userProfile.delete({
+				where: {
+					userId,
+				},
+			});
+
+			// reassign existing profile to the current user
+			const profile = await prisma.userProfile.update({
+				where: {
+					id: existingUserProfile.id,
+				},
+				data: {
+					userId,
+					firstName: capitalizeFirstLetter(rest.firstName),
+					lastName: capitalizeFirstLetter(rest.lastName),
+					nationalId: rest.nationalId,
+					nationalIdType: rest.nationalIdType,
+					dateOfBirth: new Date(rest.dateOfBirth),
+				},
+			});
+
+			return profile;
+		}
+
+		// existing user profile was not found, continue with default logic
 		try {
 			const profile = await prisma.userProfile.update({
 				where: {
@@ -153,17 +166,16 @@ export const UserService = {
 		}
 	},
 
-	getUserProfileByProfileId: async function (
+	getUserProfileByProfileId: async (
 		profileId: string,
-	): Promise<UserProfile | null> {
-		return prisma.userProfile.findUnique({
+	): Promise<UserProfile | null> =>
+		prisma.userProfile.findUnique({
 			where: {
 				id: profileId,
 			},
-		});
-	},
+		}),
 
-	searchByEmailExactMatch: async function (email: string) {
+	searchByEmailExactMatch: async (email: string) => {
 		// perhaps can add caching here but maybe not important
 		return prisma.user.findUnique({
 			where: {
@@ -172,6 +184,36 @@ export const UserService = {
 			select: {
 				id: true,
 				email: true,
+			},
+		});
+	},
+
+	searchByNationalIdExactMatch: async (nationalId: string, userId: string) => {
+		const isAdmin = await ClubService.isAnyClubAdmin(userId);
+
+		if (!isAdmin) {
+			throw new Error('You are not an admin of any club');
+		}
+		// TODO validate if national id is in correct format
+		// perhaps can add caching here but maybe not important
+		return prisma.userProfile.findUnique({
+			where: {
+				nationalId,
+			},
+			select: {
+				userId: true,
+				nationalId: true,
+				firstName: true,
+				lastName: true,
+				club: {
+					select: {
+						name: true,
+						id: true,
+					},
+				},
+				dateOfBirth: true,
+				nationalIdType: true,
+				sex: true,
 			},
 		});
 	},

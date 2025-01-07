@@ -39,7 +39,7 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 				wrap={'wrap'}
 				justify={'space-between'}
 			>
-				<Flex gap={'sm'}>
+				<Flex gap={'sm'} wrap={'wrap'}>
 					<Button size="xs" onClick={toggleCategories}>
 						Add categories
 					</Button>
@@ -49,10 +49,33 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 					<Button size="xs" onClick={toggleAdmin}>
 						Add admin
 					</Button>
+
+					<Button size="xs" onClick={() => alert('not implemented')}>
+						Export
+					</Button>
 				</Flex>
-				<Button size="xs" onClick={toggle}>
-					Edit
-				</Button>
+				<Flex gap={'sm'}>
+					<Button
+						bg={'green'}
+						size="xs"
+						onClick={() => alert('not implemented')}
+					>
+						Publish
+					</Button>
+					<Button
+						bg={'yellow'}
+						size="xs"
+						onClick={() => alert('not implemented')}
+					>
+						Unpublish
+					</Button>
+					<Button bg="red" size="xs" onClick={() => alert('not implemented')}>
+						Archive
+					</Button>
+					<Button size="xs" onClick={toggle}>
+						Edit
+					</Button>
+				</Flex>
 
 				<Modal size={'lg'} opened={opened} onClose={toggle}>
 					<CompetitionUpdateForm

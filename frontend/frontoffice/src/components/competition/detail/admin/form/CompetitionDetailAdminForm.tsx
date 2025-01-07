@@ -26,10 +26,12 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 		enabled: search.length > 5,
 		select: (data) => {
 			if (data.data) {
-				return {
-					id: data.data.id,
-					email: data.data.email,
-				};
+				return [
+					{
+						value: data?.data?.id,
+						label: data?.data?.email,
+					},
+				];
 			}
 			return [];
 		},
@@ -37,10 +39,14 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 
 	const onSubmit = (values: typeof form.values) => {
 		console.log(values);
+		// TODO
 	};
+
+	// TODO: also show and allow to remove existing admins, if the current user is an owner
+
 	return (
 		<form onSubmit={form.onSubmit(onSubmit)}>
-			<Flex direction={'column'}>
+			<Flex direction={'column'} gap={'md'}>
 				<Select
 					description={
 						'Please type the accurate email address of the user you want to assign as admin'
@@ -49,7 +55,7 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 						search.length < 5 ? 'Insert an email address.' : 'Nothing found...'
 					}
 					data={
-						[matchingUsers ?? []] as unknown as {
+						(matchingUsers || []) as unknown as {
 							label: string;
 							value: string;
 						}[]
@@ -58,8 +64,6 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 					onSearchChange={(e) => setSearch(e)}
 					searchValue={search}
 				/>
-
-				<pre>{JSON.stringify(matchingUsers, null, 2)}</pre>
 
 				<Button type="submit">Add</Button>
 			</Flex>

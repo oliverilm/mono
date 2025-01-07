@@ -1,6 +1,7 @@
-import { FastifyInstance } from 'fastify';
+import { idSchema, skipTakeSchema, slugSchema } from '@monorepo/utils';
+import type { FastifyInstance } from 'fastify';
+import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
 import { ClubService } from '../../services/club';
-import { skipTakeSchema, slugSchema } from '@monorepo/utils';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {
@@ -9,8 +10,31 @@ export default async function (fastify: FastifyInstance) {
 		return ClubService.getClubList(skipTake);
 	});
 
+	fastify.get('/clubs/:id', (request) => {
+		const id = idSchema.parse(request.params);
+		return ClubService.getClubByIdOrSlug(id);
+	});
+
 	fastify.get('/club/:slug', (request) => {
 		const slug = slugSchema.parse(request.params);
 		return ClubService.getClubByIdOrSlug(slug);
+	});
+
+	fastify.get('/club/:slug/metadata', async (request) => {
+		const slug = slugSchema.parse(request.params);
+		const club = await ClubService.getClubByIdOrSlug(slug);
+
+		if (!club) {
+			throw new Error('Club not found');
+		}
+
+		const userId = getAssertedUserIdFromRequest(request);
+
+		const [isAdmin] = await Promise.all([
+			userId ? ClubService.isClubAdmin(userId, club.id) : false,
+		]);
+		return {
+			isAdmin,
+		};
 	});
 }

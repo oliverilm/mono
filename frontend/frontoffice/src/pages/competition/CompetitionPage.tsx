@@ -124,6 +124,7 @@ export function CompetitionPage() {
 								element: (
 									<CompetitionDetailCompetitors
 										competition={competition.data}
+										competitionCategories={competitionCategories?.data ?? []}
 									/>
 								),
 							},

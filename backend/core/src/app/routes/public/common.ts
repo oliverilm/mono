@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { LRUCache } from 'lru-cache';
 import { prisma } from 'src/app/utils/db';
 import { TIME_HOUR } from 'src/app/utils/time';

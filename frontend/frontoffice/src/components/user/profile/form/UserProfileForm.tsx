@@ -1,8 +1,8 @@
-import { useForm } from '@mantine/form';
-import { useAuthStore } from '../../../../stores/auth';
 import { Button, Flex, Select, Stack, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { NationalId, type UserPatch } from '@monorepo/utils';
 import { updateUser } from '../../../../api/auth';
-import { NationalId, UserPatch } from '@monorepo/utils';
+import { useAuthStore } from '../../../../stores/auth';
 
 export function UserProfileForm() {
 	const authStore = useAuthStore();
