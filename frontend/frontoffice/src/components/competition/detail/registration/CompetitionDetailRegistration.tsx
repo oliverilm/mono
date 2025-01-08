@@ -55,7 +55,7 @@ export function CompetitionDetailRegistration({
 	};
 
 	return (
-		<Flex direction={'column'}>
+		<Flex direction={'column'} gap={'lg'}>
 			{competitionCategories.map((category) => {
 				const rows = getRowsForCompetitionCategory(category);
 				if (!rows?.length) return null;
@@ -84,7 +84,6 @@ export function CompetitionDetailRegistration({
 								</Table.Tr>
 							</Table.Thead>
 							<Table.Tbody>{rows}</Table.Tbody>
-							<Table.Caption>Scroll page to see sticky thead</Table.Caption>
 						</Table>
 					</Flex>
 				);

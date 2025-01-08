@@ -3,7 +3,7 @@ import { useForm } from '@mantine/form';
 import type { CreateCompetitor } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import {
 	CompetitionAPI,
 	type CompetitionCategory,
@@ -49,6 +49,7 @@ export function ParticipationFormForCategory({
 	category,
 	competitor,
 }: { category: CompetitionCategory; competitor: PrivateCompetitor }) {
+	const queryClient = useQueryClient();
 	const form = useForm<CreateCompetitor>({
 		initialValues: {
 			competitionCategoryId: category.id,
@@ -62,9 +63,35 @@ export function ParticipationFormForCategory({
 	const { mutate } = useMutation({
 		mutationFn: (data: { data: CreateCompetitor; slug: string }) =>
 			CompetitionAPI.createCompetitor(data.slug, data.data),
-		onSuccess: (data: AxiosResponse<PrivateCompetitor>) => {
-			console.log(data);
-			// TODO: optimistic update part
+		onSuccess: (data) => {
+			queryClient.setQueryData(
+				['personal-competitors', category.competitionSlug],
+				(previousData: AxiosResponse<PrivateCompetitor[]>) => {
+					return {
+						...previousData,
+						data: previousData.data.map((competitor) => {
+							if (competitor.id === String(data.data.profileId)) {
+								const participation: PrivateCompetitor['participations'][number] =
+									{
+										competitionCategory: {
+											id: String(data.data.competitionCategoryId),
+											competitionName: '',
+										},
+										seed: data.data.seed,
+										weight: data.data.weight,
+										id: String(data.data.id),
+									};
+
+								return {
+									...competitor,
+									participations: [...competitor.participations, participation],
+								};
+							}
+							return competitor;
+						}),
+					};
+				},
+			);
 		},
 	});
 

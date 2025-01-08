@@ -5,6 +5,7 @@ import type {
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
 	CreateCompetitor,
+	CreateMember,
 	Search,
 	SkipTake,
 	UpdateCompetition,
@@ -40,6 +41,14 @@ function getClub(slug?: string) {
 export const ClubAPI = {
 	getClub,
 	createClub,
+	getClubMembers: (slug?: string) => {
+		if (!slug) return Promise.resolve(null);
+		return client.get(`/user/club/${slug}/members`);
+	},
+	createMember: (data: CreateMember, slug?: string) => {
+		if (!slug) return Promise.resolve(null);
+		return client.post(`/user/club/${slug}/members`, data);
+	},
 	getPublicClubs,
 	getClubById: (id?: string | null): Promise<AxiosResponse<Club> | null> => {
 		if (!id) return Promise.resolve(null);
@@ -164,6 +173,14 @@ export interface CompetitorResponse {
 	metadata: Metadata;
 }
 
+export interface CreateCompetitorResponse {
+	competitionCategoryId: number;
+	competitionId: string;
+	competitorId: string;
+	weight: string;
+	seed: number;
+}
+
 export const CompetitionAPI = {
 	createCompetitionAdmin: (slug: string, data: CreateCompetitionAdmin) => {
 		return client.post(`/user/competitions/${slug}/admins`, data);
@@ -218,7 +235,10 @@ export const CompetitionAPI = {
 		return client.get(`/user/competitions/${slug}/personal-competitors`);
 	},
 
-	createCompetitor: (slug: string, data: CreateCompetitor) => {
+	createCompetitor: (
+		slug: string,
+		data: CreateCompetitor,
+	): Promise<AxiosResponse<Competitor>> => {
 		return client.post(`/user/competitions/${slug}/competitors`, data);
 	},
 };

@@ -8,18 +8,25 @@ import { ClubMemberForm } from '../member/form/ClubMemberForm';
 export function ClubDetail() {
 	const { slug } = useParams<'slug'>();
 
-	const [{ data: clubDetails }, { data: clubMetadata }] = useQueries([
-		{
-			queryKey: [StaticQueryKey.ClubDetails, slug],
-			queryFn: () => ClubAPI.getClub(slug),
-			enabled: Boolean(slug),
-		},
-		{
-			queryKey: [StaticQueryKey.ClubMetadata, slug],
-			queryFn: () => ClubAPI.getClubMetadata(slug),
-			enabled: Boolean(slug),
-		},
-	]);
+	const [{ data: clubDetails }, { data: clubMetadata }, { data: clubMembers }] =
+		useQueries([
+			{
+				queryKey: [StaticQueryKey.ClubDetails, slug],
+				queryFn: () => ClubAPI.getClub(slug),
+				enabled: Boolean(slug),
+			},
+			{
+				queryKey: [StaticQueryKey.ClubMetadata, slug],
+				queryFn: () => ClubAPI.getClubMetadata(slug),
+				enabled: Boolean(slug),
+			},
+
+			{
+				queryKey: [StaticQueryKey.ClubMembers, slug],
+				queryFn: () => ClubAPI.getClubMembers(slug),
+				enabled: Boolean(slug),
+			},
+		]);
 
 	return (
 		<Stack>
@@ -27,6 +34,7 @@ export function ClubDetail() {
 
 			<pre>{JSON.stringify(clubDetails?.data, null, 2)}</pre>
 			<pre>{JSON.stringify(clubMetadata?.data, null, 2)}</pre>
+			<pre>{JSON.stringify(clubMembers?.data, null, 2)}</pre>
 
 			{clubMetadata?.data.isAdmin && <ClubMemberForm />}
 		</Stack>

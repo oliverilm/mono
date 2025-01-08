@@ -15,6 +15,11 @@ const adminCache = new LRUCache<string, boolean>({
 	ttl: 1000 * 60 * 60 * 24,
 });
 
+const idCache = new LRUCache<string, string>({
+	max: 500,
+	ttl: 1000 * 60 * 60 * 24,
+});
+
 // TODO: validate if this works
 async function getSetReturn<T extends {}>(
 	cache: LRUCache<string, T>,
@@ -60,6 +65,19 @@ export const ClubService = {
 				},
 			})) > 0,
 		),
+
+	getClubIdBySlug: async (slug: string) =>
+		getSetReturn(
+			idCache,
+			slug,
+			(
+				await prisma.club.findFirst({
+					where: {
+						slug,
+					},
+				})
+			)?.id ?? "",
+		),
 	getClubByIdOrSlug: (slugOrId: SlugOrId): Promise<Club | null> | null => {
 		if ('id' in slugOrId) {
 			return prisma.club.findUnique({
@@ -86,7 +104,7 @@ export const ClubService = {
 			},
 		}),
 
-	createMember: async (data: CreateMember, userId: string) => {
+	createMember: async (data: CreateMember, userId: string, clubId: string) => {
 		// member is not already a part of some other club
 		// if user exists, dont allow to create the member
 		// 	the user should be presented with a button to invite them / automatically added to the club
@@ -98,7 +116,7 @@ export const ClubService = {
 			dob: data.dateOfBirth,
 		});
 
-		const isAdmin = await ClubService.isAnyClubAdmin(userId);
+		const isAdmin = await ClubService.isClubAdmin(userId, clubId);
 
 		if (!isAdmin) {
 			throw new Error('You are not an admin of any club');
@@ -123,7 +141,7 @@ export const ClubService = {
 			where: {
 				nationalId: data.nationalId,
 				nationalIdType: data.nationalIdType,
-				dateOfBirth: data.dateOfBirth,
+				dateOfBirth: new Date(data.dateOfBirth),
 			},
 		});
 

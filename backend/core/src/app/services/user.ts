@@ -166,6 +166,9 @@ export const UserService = {
 		}
 	},
 
+	getUserProfileByUserId: (id: string) =>
+		prisma.userProfile.findUnique({ where: { userId: id } }),
+
 	getUserProfileByProfileId: async (
 		profileId: string,
 	): Promise<UserProfile | null> =>
