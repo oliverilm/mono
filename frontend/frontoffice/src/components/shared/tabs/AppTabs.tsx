@@ -12,12 +12,12 @@ interface Props {
 	tabs: Tab[];
 }
 export function AppTabs({ tabs, TabsProps, TabListProps }: Props) {
-	const [value, setValue] = useState<string | null>('info');
+	const [selected, setSelected] = useState<string | null>('info');
 
 	return (
 		<Tabs
-			value={value}
-			onChange={setValue}
+			value={selected}
+			onChange={setSelected}
 			w={'inherit'}
 			defaultValue={tabs[0].value}
 			mx={'auto'}
@@ -35,13 +35,12 @@ export function AppTabs({ tabs, TabsProps, TabListProps }: Props) {
 				})}
 			</Tabs.List>
 
-			{tabs.map(({ value, element }) => {
-				return (
+			{tabs.map(({ value, element }) => selected === value ? (
 					<Tabs.Panel mt={'lg'} w={'inherit'} key={value} value={value}>
 						{element as React.ReactNode}
 					</Tabs.Panel>
-				);
-			})}
+				)
+			 : null )}
 		</Tabs>
 	);
 }
