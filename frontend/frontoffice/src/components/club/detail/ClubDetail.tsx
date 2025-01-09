@@ -1,42 +1,27 @@
 import { Stack } from '@mantine/core';
-import { useQueries } from 'react-query';
+import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ClubAPI } from '../../../api/common';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
-import { ClubMemberForm } from '../member/form/ClubMemberForm';
+import { ClubDetailAdmin } from './admin/ClubDetailAdmin';
+import { ClubDetailPublic } from './public/ClubDetailPublic';
 
 export function ClubDetail() {
 	const { slug } = useParams<'slug'>();
 
-	const [{ data: clubDetails }, { data: clubMetadata }, { data: clubMembers }] =
-		useQueries([
-			{
-				queryKey: [StaticQueryKey.ClubDetails, slug],
-				queryFn: () => ClubAPI.getClub(slug),
-				enabled: Boolean(slug),
-			},
-			{
-				queryKey: [StaticQueryKey.ClubMetadata, slug],
-				queryFn: () => ClubAPI.getClubMetadata(slug),
-				enabled: Boolean(slug),
-			},
-
-			{
-				queryKey: [StaticQueryKey.ClubMembers, slug],
-				queryFn: () => ClubAPI.getClubMembers(slug),
-				enabled: Boolean(slug),
-			},
-		]);
+	const { data: clubMetadata } = useQuery(
+		{
+			queryKey: [StaticQueryKey.ClubMetadata, slug],
+			queryFn: () => ClubAPI.getClubMetadata(slug),
+			enabled: Boolean(slug),
+		},
+	);
 
 	return (
 		<Stack>
 			<h1>Club Page</h1>
 
-			<pre>{JSON.stringify(clubDetails?.data, null, 2)}</pre>
-			<pre>{JSON.stringify(clubMetadata?.data, null, 2)}</pre>
-			<pre>{JSON.stringify(clubMembers?.data, null, 2)}</pre>
-
-			{clubMetadata?.data.isAdmin && <ClubMemberForm />}
+			{clubMetadata?.data.isAdmin ? <ClubDetailAdmin /> : <ClubDetailPublic />}
 		</Stack>
 	);
 }

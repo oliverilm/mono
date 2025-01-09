@@ -1,11 +1,11 @@
-import { useForm } from '@mantine/form';
-import { CompetitionAPI, CompetitionListItem } from '../../../api/common';
-import { CreateCompetitionCategory } from '@monorepo/utils';
-import { useCommonStore } from '../../../stores/common';
 import { Button, Flex, NumberInput, Select, TagsInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import type { CreateCompetitionCategory } from '@monorepo/utils';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
+import { CompetitionAPI, type CompetitionListItem } from '../../../api/common';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
+import { useCommonStore } from '../../../stores/common';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -30,8 +30,8 @@ export function CompetitionCategoryForm({ competition, onDone }: Props) {
 		initialValues: {
 			categoryId: 0,
 			competitionId: competition.id,
-			largestYearAllowed: 10,
-			smallestYearAllowed: 19,
+			largestYearAllowed: 1990,
+			smallestYearAllowed: 2000,
 			sex: 'Male & Female',
 			weights: [],
 		},
@@ -114,7 +114,7 @@ export function CompetitionCategoryForm({ competition, onDone }: Props) {
 					{...form.getInputProps('largestYearAllowed')}
 				/>
 				<NumberInput
-					label="Smallesy year allowed"
+					label="Smallest year allowed"
 					{...form.getInputProps('smallestYearAllowed')}
 				/>
 			</Flex>

@@ -13,6 +13,7 @@ import type {
 	UpdateCompetition,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
+import type { Profile } from './auth';
 import { addSkipTakeSearch, client } from './client';
 
 export interface Club {
@@ -43,7 +44,7 @@ function getClub(slug?: string) {
 export const ClubAPI = {
 	getClub,
 	createClub,
-	getClubMembers: (slug?: string) => {
+	getClubMembers: (slug?: string): Promise<AxiosResponse<Profile[]> | null> => {
 		if (!slug) return Promise.resolve(null);
 		return client.get(`/user/club/${slug}/members`);
 	},

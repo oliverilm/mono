@@ -35,12 +35,13 @@ export function AppTabs({ tabs, TabsProps, TabListProps }: Props) {
 				})}
 			</Tabs.List>
 
-			{tabs.map(({ value, element }) => selected === value ? (
+			{tabs
+				.filter(({ value }) => selected === value)
+				.map(({ value, element }) => (
 					<Tabs.Panel mt={'lg'} w={'inherit'} key={value} value={value}>
 						{element as React.ReactNode}
 					</Tabs.Panel>
-				)
-			 : null )}
+				))}
 		</Tabs>
 	);
 }
