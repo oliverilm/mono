@@ -1,6 +1,7 @@
-import { Button, Select, Table } from '@mantine/core';
+import { ActionIcon, Select, Table } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { CreateCompetitor } from '@monorepo/utils';
+import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from 'react-query';
@@ -64,10 +65,15 @@ export function CompetitionDetailRegistrationRow({
 				<>
 					<Table.Td>{currentCategoryParticipation.seed}</Table.Td>
 					<Table.Td>{currentCategoryParticipation.weight}</Table.Td>
-					<Table.Td>
-						<Button onClick={() => mutate(currentCategoryParticipation.id)}>
-							remove
-						</Button>
+					<Table.Td align="right">
+						<ActionIcon
+							mx="md"
+							variant="transparent"
+							c={'orange'}
+							onClick={() => mutate(currentCategoryParticipation.id)}
+						>
+							<IconTrash />
+						</ActionIcon>
 					</Table.Td>
 				</>
 			)}
@@ -153,8 +159,15 @@ export function ParticipationFormForCategory({
 					{...form.getInputProps('weight')}
 				/>
 			</Table.Td>
-			<Table.Td>
-				<Button onClick={onSubmit}> submit</Button>
+			<Table.Td align="right">
+				<ActionIcon
+					mx="md"
+					variant="transparent"
+					c={'green'}
+					onClick={onSubmit}
+				>
+					<IconDeviceFloppy />
+				</ActionIcon>
 			</Table.Td>
 		</>
 	);

@@ -20,7 +20,7 @@ export function CompetitionDetailCompetitors({
 	const pagination = usePagination({ total: TAKE, initialPage: 1 });
 
 	const { data } = useQuery({
-		queryKey: ['competitors', competition.slug, pagination],
+		queryKey: ['competitors', competition.slug, pagination.active],
 		queryFn: () =>
 			CompetitionAPI.getCompetitors(competition.slug, {
 				skip: (pagination.active - 1) * TAKE,

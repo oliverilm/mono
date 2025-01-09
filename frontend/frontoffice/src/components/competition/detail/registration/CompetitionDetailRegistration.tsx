@@ -80,7 +80,7 @@ export function CompetitionDetailRegistration({
 									<Table.Th>year</Table.Th>
 									<Table.Th>Seed</Table.Th>
 									<Table.Th>Weight</Table.Th>
-									<Table.Th>action</Table.Th>
+									<Table.Th />
 								</Table.Tr>
 							</Table.Thead>
 							<Table.Tbody>{rows}</Table.Tbody>
