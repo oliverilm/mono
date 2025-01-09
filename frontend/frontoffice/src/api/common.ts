@@ -1,11 +1,13 @@
 import type {
 	ClubCreate,
+	CompetitionVisibility,
 	CreateCompetition,
 	CreateCompetitionAdmin,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
 	CreateCompetitor,
 	CreateMember,
+	DeleteCompetitor,
 	Search,
 	SkipTake,
 	UpdateCompetition,
@@ -139,7 +141,7 @@ export interface PrivateCompetitor {
 	sex: string;
 	dateOfBirth: string;
 	participations: {
-		id: string;
+		id: number;
 		weight: string;
 		seed: number;
 		competitionCategory: {
@@ -188,6 +190,8 @@ export const CompetitionAPI = {
 	createCompetitionLink: (slug: string, data: CreateCompetitionLink) => {
 		return client.post(`/user/competitions/${slug}/links`, data);
 	},
+	deleteCompetitor: async (data: DeleteCompetitor) =>
+		client.post('/user/delete-competitor', data),
 	getPublicCompetitions,
 	createCompetition,
 	updateCompetition,
@@ -215,6 +219,11 @@ export const CompetitionAPI = {
 		data: CreateCompetitionCategory,
 	): Promise<AxiosResponse<CompetitionCategory>> => {
 		return client.post(`/user/competitions/${slug}/categories`, data);
+	},
+
+	// TODO: maybe this should be a patch instead and also connected with update
+	configureVisibility: (slug: string, data: CompetitionVisibility) => {
+		return client.post(`/competitions/${slug}/configure-visibility`, data);
 	},
 	updateCompetitionCategory: () => {},
 	deleteCompetitionCategory: () => {},

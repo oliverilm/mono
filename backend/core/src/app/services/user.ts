@@ -110,15 +110,11 @@ export const UserService = {
 			},
 		});
 
-		if (
-			existingUserProfile &&
-			existingUserProfile.userId !== undefined &&
-			existingUserProfile.userId !== userId
-		) {
-			throw new Error('National ID already in use by someone else');
-		}
-
+		// check wether to join profile to a user if the profile has been registered already
 		if (existingUserProfile) {
+			if (existingUserProfile.userId && existingUserProfile.userId !== userId) {
+				throw new Error('National ID already in use by someone else');
+			}
 			// delete the originally created user profile
 			await prisma.userProfile.delete({
 				where: {

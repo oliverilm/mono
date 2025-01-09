@@ -22,6 +22,31 @@ export function CompetitionDetailRegistrationRow({
 		(participation) =>
 			Number(participation.competitionCategory.id) === category.id,
 	)?.[0];
+
+	const queryClient = useQueryClient();
+	const { mutate } = useMutation({
+		mutationFn: (id: number) => CompetitionAPI.deleteCompetitor({ id }),
+		onSuccess: (data) => {
+			queryClient.setQueryData(
+				['personal-competitors', category.competitionSlug],
+				(oldData: unknown) => {
+					const previousData = oldData as AxiosResponse<PrivateCompetitor[]>;
+					return {
+						...previousData,
+						data: previousData.data.map((competitor) => {
+							return {
+								...competitor,
+								participations: competitor.participations.filter(
+									(participation) => participation.id !== data.data.id,
+								),
+							};
+						}),
+					};
+				},
+			);
+		},
+	});
+
 	return (
 		<Table.Tr key={competitor.firstName}>
 			<Table.Td>
@@ -39,12 +64,18 @@ export function CompetitionDetailRegistrationRow({
 				<>
 					<Table.Td>{currentCategoryParticipation.seed}</Table.Td>
 					<Table.Td>{currentCategoryParticipation.weight}</Table.Td>
+					<Table.Td>
+						<Button onClick={() => mutate(currentCategoryParticipation.id)}>
+							remove
+						</Button>
+					</Table.Td>
 				</>
 			)}
 		</Table.Tr>
 	);
 }
 
+// TODO: separate this to a new file
 export function ParticipationFormForCategory({
 	category,
 	competitor,
@@ -66,7 +97,8 @@ export function ParticipationFormForCategory({
 		onSuccess: (data) => {
 			queryClient.setQueryData(
 				['personal-competitors', category.competitionSlug],
-				(previousData: AxiosResponse<PrivateCompetitor[]>) => {
+				(oldData: unknown) => {
+					const previousData = oldData as AxiosResponse<PrivateCompetitor[]>;
 					return {
 						...previousData,
 						data: previousData.data.map((competitor) => {
@@ -79,7 +111,7 @@ export function ParticipationFormForCategory({
 										},
 										seed: data.data.seed,
 										weight: data.data.weight,
-										id: String(data.data.id),
+										id: data.data.id,
 									};
 
 								return {

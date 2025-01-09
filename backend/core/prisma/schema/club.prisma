@@ -13,6 +13,9 @@ model Club {
     clubMetadata ClubMetadata?
     clubAdmins  ClubAdmin[]
     userProfiles UserProfile[]
+    competitors  Competitor[]
+
+    @@unique([id, name])
 }
 
 

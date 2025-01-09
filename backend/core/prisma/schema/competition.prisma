@@ -94,7 +94,9 @@ model CompetitionCategory {
 model Competitor {
     id      Int @id @default(autoincrement())
 
-    clubName    String
+    club        Club? @relation(fields: [clubId, clubName], references: [id, name])
+    clubId      String?
+    clubName    String?
 
     profile     UserProfile @relation(fields: [profileId, firstName, lastName], references: [id, firstName, lastName])
     profileId   String

@@ -1,4 +1,8 @@
-import { clubCreateSchema, createMemberSchema, slugSchema } from '@monorepo/utils';
+import {
+	clubCreateSchema,
+	createMemberSchema,
+	slugSchema,
+} from '@monorepo/utils';
 import type { FastifyInstance } from 'fastify';
 import { UserService } from 'src/app/services/user';
 import { prisma } from 'src/app/utils/db';
@@ -21,34 +25,36 @@ export default async function (fastify: FastifyInstance) {
 		return ClubService.createMember(createMemberPayload, userId, clubId);
 	});
 
-	fastify.get('/club/:slug/members',  async (request) => {
+	fastify.get('/club/:slug/members', async (request) => {
 		const userId = getAssertedUserIdFromRequest(request);
-		const user = await UserService.getUserProfileByUserId(userId)
+		const user = await UserService.getUserProfileByUserId(userId);
 		const slug = slugSchema.parse(request.params);
-		
+
 		if (!user?.clubId) {
 			throw new Error('User is not a member of a club');
 		}
 
 		const clubId = await ClubService.getClubIdBySlug(slug.slug);
-		const isAdmin = await ClubService.isClubAdmin(userId,clubId);
-		
+		const isAdmin = await ClubService.isClubAdmin(userId, clubId);
+
 		return prisma.userProfile.findMany({
 			where: {
 				club: {
-					slug: slug.slug
-				}
+					slug: slug.slug,
+				},
 			},
-			...(!isAdmin ? {
-				select: {
-					firstName: true,
-					lastName: true,
-					sex: true,
-					belt: true,
-					dateOfBirth: true
-				}
-			} : {})
-		})
+			...(!isAdmin
+				? {
+						select: {
+							firstName: true,
+							lastName: true,
+							sex: true,
+							belt: true,
+							dateOfBirth: true,
+						},
+					}
+				: {}),
+		});
 	});
 
 	fastify.post('/club/create', async (request) => {

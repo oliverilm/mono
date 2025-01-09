@@ -54,8 +54,13 @@ export const ClubService = {
 			})) > 0,
 		);
 	},
-	isClubAdmin: async (userId: string, clubId: string): Promise<boolean> =>
-		getSetReturn(
+	isClubAdmin: async (
+		userId: string,
+		clubId?: string | null,
+	): Promise<boolean> => {
+		if (!clubId) return Promise.resolve(false);
+
+		return getSetReturn(
 			adminCache,
 			`${userId}-${clubId}`,
 			(await prisma.clubAdmin.count({
@@ -64,7 +69,8 @@ export const ClubService = {
 					clubId,
 				},
 			})) > 0,
-		),
+		);
+	},
 
 	getClubIdBySlug: async (slug: string) =>
 		getSetReturn(
@@ -76,7 +82,7 @@ export const ClubService = {
 						slug,
 					},
 				})
-			)?.id ?? "",
+			)?.id ?? '',
 		),
 	getClubByIdOrSlug: (slugOrId: SlugOrId): Promise<Club | null> | null => {
 		if ('id' in slugOrId) {

@@ -11,8 +11,7 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "build": "tsc",
-    "start": "tsx watch src/main.ts",
-    "prepare": "ts-patch install && typia patch"
+    "start": "tsx watch src/main.ts"
   },
   "keywords": [],
   "author": "",

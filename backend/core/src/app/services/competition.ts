@@ -269,6 +269,7 @@ export const CompetitionService = {
 					seed: data.seed,
 
 					profileId: userProfile.id,
+					clubId: userProfile.clubId,
 					clubName,
 					firstName: userProfile.firstName ?? 'unknown',
 					lastName: userProfile.lastName ?? 'unknown',
@@ -317,6 +318,7 @@ export const CompetitionService = {
 					weight: data.weight,
 					seed: data.seed,
 
+					clubId: potentialCompetitor.clubId,
 					clubName,
 					firstName: potentialCompetitor.firstName ?? 'unknown',
 					lastName: potentialCompetitor.lastName ?? 'unknown',

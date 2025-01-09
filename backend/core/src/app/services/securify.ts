@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 class SecurityService {
 	hashPassword(password: string): string {

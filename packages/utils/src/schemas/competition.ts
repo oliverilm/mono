@@ -52,3 +52,15 @@ export const createCompetitionAdminSchema = z.object({
 export type CreateCompetitionAdmin = z.infer<
 	typeof createCompetitionAdminSchema
 >;
+
+export const deleteCompetitorSchema = z.object({
+	id: z.number(),
+});
+
+export type DeleteCompetitor = z.infer<typeof deleteCompetitorSchema>;
+
+export const competitionVisibilitySchema = z.object({
+	isPublished: z.boolean().optional(),
+	isArchived: z.boolean().optional(),
+});
+export type CompetitionVisibility = z.infer<typeof competitionVisibilitySchema>;
