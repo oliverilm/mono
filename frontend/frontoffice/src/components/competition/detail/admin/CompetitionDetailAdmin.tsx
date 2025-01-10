@@ -1,9 +1,6 @@
 import { Button, Flex, Modal, useMantineColorScheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import type {
-	CompetitionListItem,
-	CompetitionMetadata,
-} from '../../../../api/common';
+import type { CompetitionListItem, CompetitionMetadata } from '../../../../api/utils/common-types';
 import { useAuthStore } from '../../../../stores/auth';
 import { CompetitionCategoryForm } from '../../category/CompetitionCategoryForm';
 import { CompetitionLinkFrom } from '../../links/form/CompetitionLinkForm';

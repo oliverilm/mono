@@ -7,7 +7,7 @@ import { getUserByEmail } from '../../../../../api/auth';
 import type {
 	CompetitionListItem,
 	CompetitionMetadata,
-} from '../../../../../api/common';
+} from '../../../../../api/utils/common-types';
 
 interface Props {
 	competition: CompetitionListItem;

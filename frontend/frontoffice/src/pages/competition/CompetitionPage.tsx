@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@mantine/core';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { CompetitionAPI } from '../../api/common';
+import { CompetitionAPI } from '../../api/competition-api';
 import { getCompetitionBannerColorAndStatus } from '../../components/competition/carousel/card/CompetitionCarouselCard.utils';
 import { CompetitionDetailAdmin } from '../../components/competition/detail/admin/CompetitionDetailAdmin';
 import { CompetitionDetailCompetitors } from '../../components/competition/detail/competitors/CompetitionDetailCompetitors';
@@ -41,7 +41,6 @@ export function CompetitionPage() {
 		{
 			queryKey: [StaticQueryKey.CompetitionCategories, slug],
 			queryFn: () => CompetitionAPI.getCompetitionCategories(slug),
-
 			refetchOnMount: false,
 			refetchOnWindowFocus: false,
 			refetchOnReconnect: false,

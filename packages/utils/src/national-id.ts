@@ -4,6 +4,17 @@ export enum NationalId {
 }
 
 export const NationalIDUtils = {
+	parse: (type: NationalId, idCode: string) => {
+		if (type === NationalId.Est) {
+			return NationalIDUtils.parseEstonianIdCode(idCode);
+		}
+
+		if (type === NationalId.Fin) {
+			return NationalIDUtils.parseFinnishIdCode(idCode);
+		}
+
+		throw new Error('Invalid national id type');
+	},
 	parseEstonianIdCode: (idCode: string) => {
 		const estonianIdCodeRegExp = /^\d{11}$/;
 

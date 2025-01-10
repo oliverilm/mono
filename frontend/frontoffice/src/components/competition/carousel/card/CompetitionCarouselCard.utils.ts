@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import type { CompetitionListItem } from '../../../../api/common';
+import type { CompetitionListItem } from '../../../../api/utils/common-types';
 
 export function getCompetitionBannerColorAndStatus(
 	competition: CompetitionListItem,

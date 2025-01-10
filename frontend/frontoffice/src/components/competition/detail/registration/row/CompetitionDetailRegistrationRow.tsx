@@ -5,11 +5,8 @@ import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from 'react-query';
-import {
-	CompetitionAPI,
-	type CompetitionCategory,
-	type PrivateCompetitor,
-} from '../../../../../api/common';
+import { CompetitionAPI } from '../../../../../api/competition-api';
+import type { CompetitionCategory, PrivateCompetitor } from '../../../../../api/utils/common-types';
 
 interface Props {
 	category: CompetitionCategory;

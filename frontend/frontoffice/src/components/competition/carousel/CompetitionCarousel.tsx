@@ -1,9 +1,9 @@
 import { Carousel } from '@mantine/carousel';
-import { CompetitionCarouselCard } from './card/CompetitionCarouselCard';
 import { useMatches } from '@mantine/core';
-import { CompetitionAPI } from '../../../api/common';
 import { useQuery } from 'react-query';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
+import { CompetitionCarouselCard } from './card/CompetitionCarouselCard';
+import { CompetitionAPI } from '../../../api/competition-api';
 
 export function CompetitionCarousel() {
 	const { data: competitions } = useQuery({

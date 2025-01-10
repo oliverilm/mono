@@ -1,6 +1,6 @@
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { ClubAPI } from '../../../../api/common';
+import { ClubAPI } from '../../../../api/club-api';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 
 export function ClubDetailPublic() {

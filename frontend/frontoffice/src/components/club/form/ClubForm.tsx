@@ -1,8 +1,8 @@
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { ClubCreate } from '@monorepo/utils';
-import { ClubAPI } from '../../../api/common';
+import type { ClubCreate } from '@monorepo/utils';
 import { useMutation, useQueryClient } from 'react-query';
+import { ClubAPI } from '../../../api/club-api';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 
 interface Props {

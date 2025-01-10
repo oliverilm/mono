@@ -1,27 +1,48 @@
-import { Button, Flex, Select, Stack, TextInput } from '@mantine/core';
+import { Button, Flex, Select, Stack, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { CreateMember } from '@monorepo/utils';
-import { useMutation, useQueryClient } from 'react-query';
+import {
+	type CreateMember,
+	NationalIDUtils,
+	NationalId,
+} from '@monorepo/utils';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { ClubAPI } from '../../../../api/common';
+import { getUserByNationalId } from '../../../../api/auth';
+import { ClubAPI } from '../../../../api/club-api';
 import type { AppError } from '../../../../api/utils/types';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
+import { useAuthStore } from '../../../../stores/auth';
 
 export function ClubMemberForm() {
 	const { slug } = useParams<'slug'>();
 	const queryClient = useQueryClient();
+	const authStore = useAuthStore();
+
+	const isValidNationalId = (type: NationalId, code: string) => {
+		try {
+			const details = NationalIDUtils.parse(type, code);
+			return Boolean(details);
+		} catch {
+			return false;
+		}
+	};
+
 	const form = useForm<CreateMember>({
 		initialValues: {
-			nationalIdType: 'estid',
+			nationalIdType: NationalId.Est,
 			nationalId: '',
 			firstName: '',
 			lastName: '',
 			dateOfBirth: '',
 		},
+		validateInputOnBlur: true,
+		validate: {
+			nationalId: (value, values) =>
+				!isValidNationalId(values.nationalIdType as NationalId, value)
+					? 'Invalid national id'
+					: undefined,
+		},
 	});
-
-	// TODO enable searching by national id
-	// TODO if national id has been inserted, generate a search for this profile
 
 	const { mutate } = useMutation({
 		mutationFn: (data: CreateMember) => ClubAPI.createMember(data, slug),
@@ -35,7 +56,17 @@ export function ClubMemberForm() {
 		},
 	});
 
+	const { data: result } = useQuery({
+		queryKey: ['national-id-user-search', form.values.nationalId],
+		queryFn: () => getUserByNationalId(form.values.nationalId),
+		enabled: isValidNationalId(
+			form.values.nationalIdType as NationalId,
+			form.values.nationalId,
+		),
+	});
+
 	const onSubmit = (values: typeof form.values) => {
+		if (result?.data) return;
 		Object.assign(values, { dateOfBirth: new Date(values.dateOfBirth) });
 		mutate(values);
 	};
@@ -47,7 +78,7 @@ export function ClubMemberForm() {
 				<Flex gap={'sm'}>
 					<Select
 						w={'30%'}
-						data={['estid', 'finid']}
+						data={Object.values(NationalId)}
 						{...form.getInputProps('nationalIdType')}
 					/>
 					<TextInput
@@ -57,23 +88,44 @@ export function ClubMemberForm() {
 						{...form.getInputProps('nationalId')}
 					/>
 				</Flex>
-				<TextInput
-					type="text"
-					placeholder="First Name"
-					{...form.getInputProps('firstName')}
-				/>
-				<TextInput
-					type="text"
-					placeholder="Last Name"
-					{...form.getInputProps('lastName')}
-				/>
-				<TextInput
-					type="date"
-					placeholder="Date of Birth"
-					{...form.getInputProps('dateOfBirth')}
-				/>
-				<Button type="submit">Submit</Button>
-				{JSON.stringify(form.errors)}
+				{!result?.data ? (
+					<>
+						<TextInput
+							type="text"
+							placeholder="First Name"
+							{...form.getInputProps('firstName')}
+						/>
+						<TextInput
+							type="text"
+							placeholder="Last Name"
+							{...form.getInputProps('lastName')}
+						/>
+						<TextInput
+							type="date"
+							placeholder="Date of Birth"
+							{...form.getInputProps('dateOfBirth')}
+						/>
+						<Button type="submit">Submit</Button>
+					</>
+				) : (
+					<>
+						{result?.data.club.id === authStore.profile?.clubId ? (
+							<Text>this user is already in your club</Text>
+						) : (
+							<Flex>
+								<Text>
+									{result?.data.firstName} {result?.data.lastName}
+								</Text>
+								<Text>{result?.data.club.name}</Text>
+								{result?.data.userId === null ? (
+									<Button type="submit">Send club change request</Button>
+								) : (
+									<Button type="submit">Send an invite</Button>
+								)}
+							</Flex>
+						)}
+					</>
+				)}
 			</Stack>
 		</form>
 	);

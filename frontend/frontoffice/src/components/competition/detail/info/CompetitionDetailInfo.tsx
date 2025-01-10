@@ -1,9 +1,5 @@
 import { Flex, Grid, Text, useMantineColorScheme } from '@mantine/core';
-import type {
-	CompetitionCategory,
-	CompetitionListItem,
-	CompetitionMetadata,
-} from '../../../../api/common';
+import type { CompetitionCategory, CompetitionListItem, CompetitionMetadata } from '../../../../api/utils/common-types';
 import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 import { RichTextRenderer } from '../../update/form/CompetitionUpdateForm';
 import { CompetitionDetailLinks } from '../links/CompetitionDetailLinks';

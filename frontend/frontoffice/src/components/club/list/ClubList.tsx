@@ -1,7 +1,7 @@
 import { Flex, Grid, Image, Title } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
-import { ClubAPI } from '../../../api/common';
+import { ClubAPI } from '../../../api/club-api';
 import { getRandomTestClubImage } from '../../../constants';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 import { ThemePaper } from '../../shared/theme-paper/ThemePaper';

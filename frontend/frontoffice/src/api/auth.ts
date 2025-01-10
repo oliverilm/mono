@@ -51,3 +51,25 @@ export async function getUserByEmail(
 		addSkipTakeSearch('/user/user-by-email', { search: email }),
 	);
 }
+
+export interface NationalIdSearchResult {
+	userId: string | null;
+	nationalId: string;
+	firstName: string;
+	lastName: string;
+	club: NationalIdSearchClub;
+	dateOfBirth: string;
+	nationalIdType: string;
+	sex: string;
+}
+
+export interface NationalIdSearchClub {
+	name: string;
+	id: string;
+}
+
+export async function getUserByNationalId(
+	nationalId: string,
+): Promise<AxiosResponse<NationalIdSearchResult | null>> {
+	return client.get(`/user/user-by-national-id?search=${nationalId}`);
+}

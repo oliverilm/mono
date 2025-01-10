@@ -2,7 +2,7 @@ import { Carousel } from '@mantine/carousel';
 import { Box, Card, Divider, Flex, Text, Title } from '@mantine/core';
 import { useLayoutEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { CompetitionListItem } from '../../../../api/common';
+import type { CompetitionListItem } from '../../../../api/utils/common-types';
 import { TEST_COMPETITION_IMAGES } from '../../../../constants';
 import { ImageWithOverlay } from '../../../shared/image-with-text/ImageWithText';
 import {

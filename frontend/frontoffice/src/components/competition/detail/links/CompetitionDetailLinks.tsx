@@ -1,6 +1,6 @@
 import { Divider, Flex, Text, Title } from '@mantine/core';
 import { IconLink } from '@tabler/icons-react';
-import type { CompetitionMetadata } from '../../../../api/common';
+import type { CompetitionMetadata } from '../../../../api/utils/common-types';
 import { linkCardPaper } from '../../../../pages/competition/styles.css';
 
 interface Props {

@@ -2,11 +2,8 @@ import { Flex, Table, Text, TextInput, Title } from '@mantine/core';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-import {
-	CompetitionAPI,
-	type CompetitionCategory,
-	type CompetitionListItem,
-} from '../../../../api/common';
+import { CompetitionAPI } from '../../../../api/competition-api';
+import type { CompetitionCategory, CompetitionListItem } from '../../../../api/utils/common-types';
 import { CompetitionDetailRegistrationRow } from './row/CompetitionDetailRegistrationRow';
 
 interface Props {

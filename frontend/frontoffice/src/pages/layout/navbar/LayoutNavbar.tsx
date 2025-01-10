@@ -9,7 +9,8 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { ClubAPI, CompetitionAPI } from '../../../api/common';
+import { ClubAPI } from '../../../api/club-api';
+import { CompetitionAPI } from '../../../api/competition-api';
 import { ClubForm } from '../../../components/club/form/ClubForm';
 import { CompetitionFrom } from '../../../components/competition/create/form/CompetitionForm';
 import { useAuthStore } from '../../../stores/auth';

@@ -1,5 +1,5 @@
 import { Flex, Text, Title } from '@mantine/core';
-import { CompetitionListItem } from '../../../api/common';
+import type { CompetitionListItem } from '../../../api/utils/common-types';
 
 interface Props {
 	competition: CompetitionListItem;
