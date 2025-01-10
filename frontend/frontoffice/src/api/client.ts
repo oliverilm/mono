@@ -1,6 +1,6 @@
+import type { Search, SkipTake } from '@monorepo/utils';
 import axios from 'axios';
 import { LS_TOKEN_KEY } from '../constants';
-import { Search, SkipTake } from '@monorepo/utils';
 
 export const client = axios.create({
 	baseURL: 'http://localhost:3000',
@@ -31,8 +31,7 @@ export function addSkipTakeSearch(url: string, query: SkipTake & Search) {
 	if (take !== undefined) parts.push(`take=${take}`);
 	if (search !== undefined) parts.push(`search=${search}`);
 	if (parts.length > 0) {
-		url += `?${parts.join('&')}`;
-		return url;
+		return url.concat(`?${parts.join('&')}`);
 	}
 	return url;
 }

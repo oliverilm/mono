@@ -1,5 +1,6 @@
-import { Flex, Table, Text, Title } from '@mantine/core';
+import { Flex, Table, Text, TextInput, Title } from '@mantine/core';
 import dayjs from 'dayjs';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import {
 	CompetitionAPI,
@@ -22,25 +23,33 @@ export function CompetitionDetailRegistration({
 		enabled: Boolean(competition.slug),
 	});
 
+	const [search, setSearch] = useState('');
+
 	const getRowsForCompetitionCategory = (category: CompetitionCategory) => {
 		// get judokas suitable for this category
 		const { smallestYearAllowed, sex, largestYearAllowed } = category;
 
-		const selection = competitors?.data.filter((competitor) => {
-			if (sex !== 'Unisex' && sex !== competitor.sex) {
-				return false;
-			}
+		const selection = competitors?.data.filter(
+			({ dateOfBirth, firstName, lastName, ...competitor }) => {
+				if (sex !== 'Unisex' && sex !== competitor.sex) {
+					return false;
+				}
 
-			const [smallest, largest] = [
-				Number(smallestYearAllowed),
-				Number(largestYearAllowed),
-			].sort();
+				const [smallest, largest] = [
+					Number(smallestYearAllowed),
+					Number(largestYearAllowed),
+				].sort();
 
-			const isValidYear =
-				dayjs(competitor.dateOfBirth).year() >= smallest &&
-				dayjs(competitor.dateOfBirth).year() <= largest;
-			return isValidYear;
-		});
+				const isValidYear =
+					dayjs(dateOfBirth).year() >= smallest &&
+					dayjs(dateOfBirth).year() <= largest;
+
+				const isContainingSearchChars = `${firstName} ${lastName}`
+					.toLowerCase()
+					.includes(search.toLowerCase());
+				return isValidYear && isContainingSearchChars;
+			},
+		);
 
 		// todo: test the sorting order, may be backwards
 		return selection
@@ -56,6 +65,11 @@ export function CompetitionDetailRegistration({
 
 	return (
 		<Flex direction={'column'} gap={'lg'}>
+			<TextInput
+				value={search}
+				onChange={(e) => setSearch(e.currentTarget.value)}
+				placeholder="Search for competitor"
+			/>
 			{competitionCategories.map((category) => {
 				const rows = getRowsForCompetitionCategory(category);
 				if (!rows?.length) return null;
@@ -73,16 +87,6 @@ export function CompetitionDetailRegistration({
 							</Text>
 						</Flex>
 						<Table stickyHeader stickyHeaderOffset={60}>
-							<Table.Thead>
-								<Table.Tr>
-									<Table.Th>Name</Table.Th>
-									<Table.Th>Sex</Table.Th>
-									<Table.Th>year</Table.Th>
-									<Table.Th>Seed</Table.Th>
-									<Table.Th>Weight</Table.Th>
-									<Table.Th />
-								</Table.Tr>
-							</Table.Thead>
 							<Table.Tbody>{rows}</Table.Tbody>
 						</Table>
 					</Flex>

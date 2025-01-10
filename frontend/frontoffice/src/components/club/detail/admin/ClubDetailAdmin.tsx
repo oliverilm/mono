@@ -1,5 +1,16 @@
-import { ActionIcon, Divider, Flex, Grid, Table, Title } from '@mantine/core';
-import { IconDotsVertical } from '@tabler/icons-react';
+import {
+	ActionIcon,
+	Badge,
+	Divider,
+	Flex,
+	Grid,
+	Modal,
+	Table,
+	Text,
+	Title,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconDotsVertical, IconPlus, IconUser } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -10,6 +21,8 @@ import { ClubMemberForm } from '../../member/form/ClubMemberForm';
 
 export function ClubDetailAdmin() {
 	const { slug } = useParams<'slug'>();
+
+	const [opened, { toggle }] = useDisclosure();
 
 	const [{ data: clubDetails }, { data: clubMetadata }, { data: clubMembers }] =
 		useQueries([
@@ -39,21 +52,44 @@ export function ClubDetailAdmin() {
 			<Grid>
 				<Grid.Col span={6}>
 					<ThemePaper light={'blue.1'} dark={'blue.9'} p={'sm'}>
-						<Flex justify={'space-between'}>
+						<Flex justify={'space-between'} my={'xs'}>
 							<Title px="xs" size={'h3'}>
 								Members
 							</Title>
-							<ActionIcon>
-								<IconDotsVertical />
-							</ActionIcon>
+							<Flex gap={'sm'}>
+								<ActionIcon variant="transparent">
+									<IconDotsVertical />
+								</ActionIcon>
+								<ActionIcon onClick={toggle} variant="transparent">
+									<IconPlus />
+								</ActionIcon>
+							</Flex>
 						</Flex>
-						<Divider py={'1px'} bg={'gray.3'} />
+						<Divider my={'xs'} py={'1px'} bg={'gray.3'} />
 						<Table>
 							<Table.Tbody>
 								{clubMembers?.data.map((member) => (
 									<Table.Tr key={member.id}>
 										<Table.Td>
-											{member.firstName} {member.lastName}
+											<Flex align={'center'} gap={'sm'}>
+												<Text>
+													{member.firstName} {member.lastName}
+												</Text>
+												{member.userId && (
+													<ActionIcon size={'sm'} variant="transparent">
+														<IconUser />
+													</ActionIcon>
+												)}
+
+												{member.userId !== null &&
+													clubMetadata?.data.admins
+														.map((admin) => admin.userId)
+														.includes(member.userId) && (
+														<Badge variant="outline" color={'red'}>
+															admin
+														</Badge>
+													)}
+											</Flex>
 										</Table.Td>
 										<Table.Td>{member.belt}</Table.Td>
 										<Table.Td>{dayjs(member.dateOfBirth).year()}</Table.Td>
@@ -76,7 +112,12 @@ export function ClubDetailAdmin() {
 					</ThemePaper>
 				</Grid.Col>
 			</Grid>
-			{clubMetadata?.data.isAdmin && <ClubMemberForm />}
+
+			{clubMetadata?.data.isAdmin && (
+				<Modal opened={opened} onClose={toggle}>
+					<ClubMemberForm />
+				</Modal>
+			)}
 		</div>
 	);
 }

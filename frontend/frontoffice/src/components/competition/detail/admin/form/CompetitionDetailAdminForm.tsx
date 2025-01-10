@@ -4,10 +4,14 @@ import type { CreateCompetitionAdmin } from '@monorepo/utils';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { getUserByEmail } from '../../../../../api/auth';
-import type { CompetitionListItem } from '../../../../../api/common';
+import type {
+	CompetitionListItem,
+	CompetitionMetadata,
+} from '../../../../../api/common';
 
 interface Props {
 	competition: CompetitionListItem;
+	metadata?: CompetitionMetadata;
 }
 
 export function CompetitionDetailAdminForm({ competition }: Props) {

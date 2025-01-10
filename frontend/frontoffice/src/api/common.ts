@@ -22,8 +22,17 @@ export interface Club {
 	slug: string;
 }
 
+export interface ClubMetadataAdmin {
+	firstName: string;
+	lastName: string;
+	email: string;
+	role: string;
+	userId: string;
+}
+
 export interface ClubMetadata {
 	isAdmin: boolean;
+	admins: ClubMetadataAdmin[];
 }
 
 function getPublicClubs(

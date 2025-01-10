@@ -1,13 +1,13 @@
-import { useForm } from '@mantine/form';
-import { login } from '../../api/auth';
-import { useAuthStore } from '../../stores/auth';
 import { Button, TextInput } from '@mantine/core';
-import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedirectToHome';
-import { LS_TOKEN_KEY } from '../../constants';
-import { LoginCredentials } from '@monorepo/utils';
-import { LayoutPage } from '../layout/page/LayoutPage';
-import { useMutation } from 'react-query';
+import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import type { LoginCredentials } from '@monorepo/utils';
+import { useMutation } from 'react-query';
+import { login } from '../../api/auth';
+import { LS_TOKEN_KEY } from '../../constants';
+import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedirectToHome';
+import { useAuthStore } from '../../stores/auth';
+import { LayoutPage } from '../layout/page/LayoutPage';
 
 export function LoginPage() {
 	useAuthenticatedRedirectToHome();

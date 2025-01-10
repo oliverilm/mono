@@ -339,6 +339,14 @@ export const CompetitionService = {
 				competitionSlug: slug,
 			},
 			...convertSkipTake(skipTake),
+			select: {
+				firstName: true,
+				id: true,
+				lastName: true,
+				clubName: true,
+				competitionCategoryId: true,
+				weight: true,
+			},
 		});
 
 		const metadata = prisma.competitor.count({

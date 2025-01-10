@@ -17,11 +17,13 @@ interface Props {
 
 export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 	const { colorScheme } = useMantineColorScheme();
+	const authStore = useAuthStore();
+
 	const [opened, { toggle }] = useDisclosure();
 	const [categoriesOpen, { toggle: toggleCategories }] = useDisclosure();
 	const [linkOpen, { toggle: toggleLink }] = useDisclosure();
 	const [adminOpen, { toggle: toggleAdmin }] = useDisclosure();
-	const authStore = useAuthStore();
+
 	const myRole = metadata?.competitionAdmins?.find(
 		({ userId }) => authStore.profile?.userId === userId,
 	);
@@ -85,7 +87,10 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 				</Modal>
 
 				<Modal size={'lg'} opened={adminOpen} onClose={toggleAdmin}>
-					<CompetitionDetailAdminForm competition={competition} />
+					<CompetitionDetailAdminForm
+						competition={competition}
+						metadata={metadata}
+					/>
 				</Modal>
 
 				<Modal size={'md'} opened={categoriesOpen} onClose={toggleCategories}>

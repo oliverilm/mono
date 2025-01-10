@@ -43,6 +43,38 @@ export type SlugOrId =
 	| { slug: string };
 
 export const ClubService = {
+	getClubAdmins: async (clubId: string) => {
+		const admins = await prisma.clubAdmin.findMany({
+			where: {
+				clubId,
+			},
+			select: {
+				userId: true,
+				user: {
+					select: {
+						id: true,
+						email: true,
+						userProfile: {
+							select: {
+								id: true,
+								firstName: true,
+								lastName: true,
+							},
+						},
+					},
+				},
+				role: true,
+			},
+		});
+
+		return admins.map((admin) => ({
+			email: admin.user.email,
+			firstName: admin.user.userProfile?.firstName,
+			lastName: admin.user.userProfile?.lastName,
+			role: admin.role,
+			userId: admin.userId,
+		}));
+	},
 	isAnyClubAdmin: async (userId: string): Promise<boolean> => {
 		return getSetReturn(
 			adminCache,

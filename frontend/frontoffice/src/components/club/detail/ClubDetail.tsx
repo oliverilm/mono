@@ -9,13 +9,11 @@ import { ClubDetailPublic } from './public/ClubDetailPublic';
 export function ClubDetail() {
 	const { slug } = useParams<'slug'>();
 
-	const { data: clubMetadata } = useQuery(
-		{
-			queryKey: [StaticQueryKey.ClubMetadata, slug],
-			queryFn: () => ClubAPI.getClubMetadata(slug),
-			enabled: Boolean(slug),
-		},
-	);
+	const { data: clubMetadata } = useQuery({
+		queryKey: [StaticQueryKey.ClubMetadata, slug],
+		queryFn: () => ClubAPI.getClubMetadata(slug),
+		enabled: Boolean(slug),
+	});
 
 	return (
 		<Stack>

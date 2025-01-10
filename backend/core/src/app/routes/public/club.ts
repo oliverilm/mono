@@ -30,11 +30,13 @@ export default async function (fastify: FastifyInstance) {
 
 		const userId = getAssertedUserIdFromRequest(request);
 
-		const [isAdmin] = await Promise.all([
+		const [isAdmin, admins] = await Promise.all([
 			userId ? ClubService.isClubAdmin(userId, club.id) : false,
+			ClubService.getClubAdmins(club.id),
 		]);
 		return {
 			isAdmin,
+			admins,
 		};
 	});
 }
