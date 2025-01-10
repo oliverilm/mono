@@ -1,5 +1,5 @@
 import type { LoginCredentials, UserPatch } from '@monorepo/utils';
-import type { Session, UserProfile } from '@prisma/client';
+import { type Session, Sex, type UserProfile } from '@prisma/client';
 import { prisma } from '../utils/db';
 import { tryHandleKnownErrors } from '../utils/error';
 import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
@@ -97,7 +97,7 @@ export const UserService = {
 	): Promise<UserProfile | null> => {
 		const { userId, ...rest } = payload;
 
-		validateNationalIdAndDobOrThrow({
+		const idDetails = validateNationalIdAndDobOrThrow({
 			nationalId: rest.nationalId,
 			nationalIdType: rest.nationalIdType,
 			dob: rest.dateOfBirth,
@@ -147,6 +147,7 @@ export const UserService = {
 					userId,
 				},
 				data: {
+					sex: idDetails.meta.gender === "m" ? Sex.Male : Sex.Female,
 					firstName: capitalizeFirstLetter(rest.firstName),
 					lastName: capitalizeFirstLetter(rest.lastName),
 					nationalId: rest.nationalId,

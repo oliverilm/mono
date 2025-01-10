@@ -4,7 +4,7 @@ import type {
 	SkipTake,
 	UserIdObject,
 } from '@monorepo/utils';
-import { type Club, ClubRole } from '@prisma/client';
+import { type Club, ClubRole, Sex } from '@prisma/client';
 import { LRUCache } from 'lru-cache';
 import { prisma } from '../utils/db';
 import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
@@ -148,7 +148,7 @@ export const ClubService = {
 		// 	the user should be presented with a button to invite them / automatically added to the club
 		// 	if user is not a part of some other club
 
-		validateNationalIdAndDobOrThrow({
+		const idDetails = validateNationalIdAndDobOrThrow({
 			nationalId: data.nationalId,
 			nationalIdType: data.nationalIdType,
 			dob: data.dateOfBirth,
@@ -192,6 +192,7 @@ export const ClubService = {
 		return prisma.userProfile.create({
 			data: {
 				...data,
+				sex: idDetails.meta.gender === "m" ? Sex.Male : Sex.Female,
 				clubId: userProfile.clubId,
 			},
 		});

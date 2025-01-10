@@ -109,14 +109,14 @@ export function ClubMemberForm() {
 					</>
 				) : (
 					<>
-						{result?.data.club.id === authStore.profile?.clubId ? (
+						{result?.data.club && result?.data.club?.id === authStore.profile?.clubId ? (
 							<Text>this user is already in your club</Text>
 						) : (
-							<Flex>
+							<Flex direction={"column"} gap={"sm"}>
 								<Text>
 									{result?.data.firstName} {result?.data.lastName}
 								</Text>
-								<Text>{result?.data.club.name}</Text>
+								<Text>{result?.data.club?.name}</Text>
 								{result?.data.userId === null ? (
 									<Button type="submit">Send club change request</Button>
 								) : (
