@@ -1,7 +1,7 @@
 import {
-	invitatationCreateSchema,
-	invitationDecideSchema,
-	invitationQueryParamSchema,
+    invitatationCreateSchema,
+    invitationDecideSchema,
+    invitationQueryParamSchema,
 } from '@monorepo/utils';
 import type { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
