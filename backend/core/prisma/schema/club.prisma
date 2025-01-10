@@ -14,6 +14,7 @@ model Club {
     clubAdmins  ClubAdmin[]
     userProfiles UserProfile[]
     competitors  Competitor[]
+    invitations Invitation[]
 
     @@unique([id, name])
 }
@@ -44,6 +45,22 @@ model ClubMetadata {
 
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+}
+
+model Invitation {
+    id  Int @id @default(autoincrement())
+
+    club    Club @relation(fields: [clubId, clubName], references: [id, name])
+    clubId  String
+    clubName String
+
+    isAccepted Boolean?
+
+    profile UserProfile @relation(fields: [profileId], references: [id], name: "invited")
+    profileId   String
+
+    invitedBy   UserProfile @relation(fields: [invitedById], references: [id], name: "invitedBy")
+    invitedById   String
 }
 
 

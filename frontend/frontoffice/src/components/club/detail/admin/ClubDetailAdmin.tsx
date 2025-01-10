@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ClubAPI } from '../../../../api/club-api';
+import { InvitationApi } from '../../../../api/invitation-api';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 import { ClubMemberForm } from '../../member/form/ClubMemberForm';
@@ -24,30 +25,41 @@ export function ClubDetailAdmin() {
 
 	const [opened, { toggle }] = useDisclosure();
 
-	const [{ data: clubDetails }, { data: clubMetadata }, { data: clubMembers }] =
-		useQueries([
-			{
-				queryKey: [StaticQueryKey.ClubDetails, slug],
-				queryFn: () => ClubAPI.getClub(slug),
-				enabled: Boolean(slug),
-			},
-			{
-				queryKey: [StaticQueryKey.ClubMetadata, slug],
-				queryFn: () => ClubAPI.getClubMetadata(slug),
-				enabled: Boolean(slug),
-			},
+	const [
+		{ data: clubDetails },
+		{ data: clubMetadata },
+		{ data: clubMembers },
+		{ data: invitations },
+	] = useQueries([
+		{
+			queryKey: [StaticQueryKey.ClubDetails, slug],
+			queryFn: () => ClubAPI.getClub(slug),
+			enabled: Boolean(slug),
+		},
+		{
+			queryKey: [StaticQueryKey.ClubMetadata, slug],
+			queryFn: () => ClubAPI.getClubMetadata(slug),
+			enabled: Boolean(slug),
+		},
 
-			{
-				queryKey: [StaticQueryKey.ClubMembers, slug],
-				queryFn: () => ClubAPI.getClubMembers(slug),
-				enabled: Boolean(slug),
-			},
-		]);
+		{
+			queryKey: [StaticQueryKey.ClubMembers, slug],
+			queryFn: () => ClubAPI.getClubMembers(slug),
+			enabled: Boolean(slug),
+		},
+
+		{
+			queryKey: ['club-invitations', slug],
+			queryFn: () => InvitationApi.getCreatedInvitations(),
+			enabled: Boolean(slug),
+		},
+	]);
 
 	return (
 		<div>
 			<pre>{JSON.stringify(clubDetails?.data, null, 2)}</pre>
 			<pre>{JSON.stringify(clubMetadata?.data, null, 2)}</pre>
+			<pre>{JSON.stringify(invitations?.data, null, 2)}</pre>
 
 			<Grid>
 				<Grid.Col span={6}>

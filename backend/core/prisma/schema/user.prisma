@@ -43,5 +43,9 @@ model UserProfile {
     updatedAt   DateTime @updatedAt
 
     participations Competitor[]
+    invitationsByProfile Invitation[] @relation(name: "invitedBy")
+    invitationsToProfile Invitation[] @relation(name: "invited")
+
     @@unique([id, firstName, lastName])
+    
 }

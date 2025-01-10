@@ -3,7 +3,10 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { CompetitionAPI } from '../../../../api/competition-api';
-import type { CompetitionCategory, CompetitionListItem } from '../../../../api/utils/common-types';
+import type {
+	CompetitionCategory,
+	CompetitionListItem,
+} from '../../../../api/utils/common-types';
 import { CompetitionDetailRegistrationRow } from './row/CompetitionDetailRegistrationRow';
 
 interface Props {

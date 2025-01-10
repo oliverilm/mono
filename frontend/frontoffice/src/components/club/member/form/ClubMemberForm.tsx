@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { getUserByNationalId } from '../../../../api/auth';
 import { ClubAPI } from '../../../../api/club-api';
+import { InvitationApi } from '../../../../api/invitation-api';
 import type { AppError } from '../../../../api/utils/types';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
@@ -109,18 +110,27 @@ export function ClubMemberForm() {
 					</>
 				) : (
 					<>
-						{result?.data.club && result?.data.club?.id === authStore.profile?.clubId ? (
+						{result?.data.club &&
+						result?.data.club?.id === authStore.profile?.clubId ? (
 							<Text>this user is already in your club</Text>
 						) : (
-							<Flex direction={"column"} gap={"sm"}>
-								<Text>
+							<Flex direction={'column'} gap={'sm'} justify={'center'}>
+								<Text ta={'center'}>
 									{result?.data.firstName} {result?.data.lastName}
 								</Text>
 								<Text>{result?.data.club?.name}</Text>
-								{result?.data.userId === null ? (
+								{result.data && result.data.userId === null ? (
 									<Button type="submit">Send club change request</Button>
 								) : (
-									<Button type="submit">Send an invite</Button>
+									<Button
+										onClick={() =>
+											InvitationApi.createInvitation({
+												profileId: result.data?.id ?? '',
+											})
+										}
+									>
+										Send an invite
+									</Button>
 								)}
 							</Flex>
 						)}

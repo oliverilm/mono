@@ -192,7 +192,7 @@ export const ClubService = {
 		return prisma.userProfile.create({
 			data: {
 				...data,
-				sex: idDetails.meta.gender === "m" ? Sex.Male : Sex.Female,
+				sex: idDetails.meta.gender === 'm' ? Sex.Male : Sex.Female,
 				clubId: userProfile.clubId,
 			},
 		});

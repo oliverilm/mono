@@ -2,7 +2,10 @@ import { Pagination, Stack, Table } from '@mantine/core';
 import { usePagination } from '@mantine/hooks';
 import { useQuery } from 'react-query';
 import { CompetitionAPI } from '../../../../api/competition-api';
-import type { CompetitionCategory, CompetitionListItem } from '../../../../api/utils/common-types';
+import type {
+	CompetitionCategory,
+	CompetitionListItem,
+} from '../../../../api/utils/common-types';
 
 interface Props {
 	competition: CompetitionListItem;

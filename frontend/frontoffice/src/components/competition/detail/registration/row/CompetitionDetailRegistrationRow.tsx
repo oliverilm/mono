@@ -6,7 +6,10 @@ import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from 'react-query';
 import { CompetitionAPI } from '../../../../../api/competition-api';
-import type { CompetitionCategory, PrivateCompetitor } from '../../../../../api/utils/common-types';
+import type {
+	CompetitionCategory,
+	PrivateCompetitor,
+} from '../../../../../api/utils/common-types';
 
 interface Props {
 	category: CompetitionCategory;

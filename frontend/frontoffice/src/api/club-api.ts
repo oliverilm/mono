@@ -1,8 +1,8 @@
 import type {
-    ClubCreate,
-    CreateMember,
-    Search,
-    SkipTake,
+	ClubCreate,
+	CreateMember,
+	Search,
+	SkipTake,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import type { Profile } from './auth';

@@ -147,7 +147,7 @@ export const UserService = {
 					userId,
 				},
 				data: {
-					sex: idDetails.meta.gender === "m" ? Sex.Male : Sex.Female,
+					sex: idDetails.meta.gender === 'm' ? Sex.Male : Sex.Female,
 					firstName: capitalizeFirstLetter(rest.firstName),
 					lastName: capitalizeFirstLetter(rest.lastName),
 					nationalId: rest.nationalId,
@@ -205,6 +205,7 @@ export const UserService = {
 				nationalId: true,
 				firstName: true,
 				lastName: true,
+				id: true,
 				club: {
 					select: {
 						name: true,

@@ -61,6 +61,7 @@ export interface NationalIdSearchResult {
 	dateOfBirth: string;
 	nationalIdType: string;
 	sex: string;
+	id: string;
 }
 
 export interface NationalIdSearchClub {

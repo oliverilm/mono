@@ -34,5 +34,5 @@ export function validateNationalIdAndDobOrThrow(data: {
 		throw new Error('Date of birth does not match the national id code');
 	}
 
-	return parsed
+	return parsed;
 }
