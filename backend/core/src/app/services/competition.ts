@@ -260,7 +260,7 @@ export const CompetitionService = {
 		}
 		const clubName = await getUserClubName(userProfile?.clubId);
 
-		if (userProfile?.userId && userProfile?.userId === data.competitorId) {
+		if (userProfile.id === data.competitorId) {
 			return prisma.competitor.create({
 				data: {
 					competitionId: data.competitionId,
@@ -550,8 +550,12 @@ export const CompetitionService = {
 		const competition = await prisma.competition.create({
 			data: {
 				slug,
-				clubName: club?.name,
 				...data,
+				club: {
+					connect: {
+						id: userProfile.clubId,
+					},
+				},
 
 				competitionAdmins: {
 					create: {

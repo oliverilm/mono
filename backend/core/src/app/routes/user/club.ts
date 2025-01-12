@@ -25,6 +25,18 @@ export default async function (fastify: FastifyInstance) {
 		return ClubService.createMember(createMemberPayload, userId, clubId);
 	});
 
+	fastify.get('/club/:slug/competitions', async (request) => {
+		const slug = slugSchema.parse(request.params);
+
+		const clubId = await ClubService.getClubIdBySlug(slug.slug);
+
+		return prisma.competition.findMany({
+			where: {
+				clubId,
+			},
+		});
+	});
+
 	fastify.get('/club/:slug/members', async (request) => {
 		const userId = getAssertedUserIdFromRequest(request);
 		const user = await UserService.getUserProfileByUserId(userId);

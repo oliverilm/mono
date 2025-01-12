@@ -5,12 +5,13 @@ import {
 	Flex,
 	useMantineColorScheme,
 } from '@mantine/core';
-import { ThemeToggle } from '../../../components/theme-toggle/ThemeToggle';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../../stores/auth';
-import { useEffect } from 'react';
-import { header } from './LayoutHeader.css';
 import { IconMenu2, IconX } from '@tabler/icons-react';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ThemeToggle } from '../../../components/theme-toggle/ThemeToggle';
+import { useAuthStore } from '../../../stores/auth';
+import { header } from './LayoutHeader.css';
+import { LayoutHeaderNotifications } from './notifications/LayoutHeaderNotifications';
 
 interface Props {
 	onNavbarToggle: () => void;
@@ -25,7 +26,7 @@ export function LayoutHeader({ onNavbarToggle, isNavMenuOpen }: Props) {
 		const scheme = localStorage.getItem('color-scheme');
 		setColorScheme((scheme as typeof colorScheme) || 'light');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [setColorScheme]);
 
 	useEffect(() => {
 		localStorage.setItem('color-scheme', colorScheme);
@@ -54,7 +55,7 @@ export function LayoutHeader({ onNavbarToggle, isNavMenuOpen }: Props) {
 			</Flex>
 
 			<Flex gap="sm" align={'center'}>
-				{!isAuthenticated && (
+				{!isAuthenticated ? (
 					<>
 						<Anchor component={Link} to="/login" underline="never">
 							Sign in
@@ -73,6 +74,8 @@ export function LayoutHeader({ onNavbarToggle, isNavMenuOpen }: Props) {
 							Sign up
 						</Anchor>
 					</>
+				) : (
+					<LayoutHeaderNotifications />
 				)}
 				<ThemeToggle />
 			</Flex>

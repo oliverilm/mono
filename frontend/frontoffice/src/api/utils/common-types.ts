@@ -113,3 +113,12 @@ export interface ClubMetadata {
 	isAdmin: boolean;
 	admins: ClubMetadataAdmin[];
 }
+
+export interface Invitation {
+	id: number;
+	clubId: string;
+	clubName: string;
+	isAccepted: boolean | null;
+	profileId: string;
+	invitedById: string;
+}

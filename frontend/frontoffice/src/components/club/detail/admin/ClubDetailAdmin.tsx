@@ -20,6 +20,15 @@ import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 import { ClubMemberForm } from '../../member/form/ClubMemberForm';
 
+const span = {
+	base: 12,
+	xl: 6,
+	lg: 6,
+	md: 0,
+	sm: 12,
+	xs: 12,
+};
+
 export function ClubDetailAdmin() {
 	const { slug } = useParams<'slug'>();
 
@@ -62,7 +71,7 @@ export function ClubDetailAdmin() {
 			<pre>{JSON.stringify(invitations?.data, null, 2)}</pre>
 
 			<Grid>
-				<Grid.Col span={6}>
+				<Grid.Col span={span}>
 					<ThemePaper light={'blue.1'} dark={'blue.9'} p={'sm'}>
 						<Flex justify={'space-between'} my={'xs'}>
 							<Title px="xs" size={'h3'}>
@@ -118,7 +127,7 @@ export function ClubDetailAdmin() {
 						</Table>
 					</ThemePaper>
 				</Grid.Col>
-				<Grid.Col span={6}>
+				<Grid.Col span={span}>
 					<ThemePaper light={'blue.1'} dark={'blue.9'} p={'sm'}>
 						competitions
 					</ThemePaper>

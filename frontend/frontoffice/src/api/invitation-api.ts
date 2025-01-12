@@ -5,9 +5,10 @@ import type {
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { client } from './client';
+import type { Invitation } from './utils/common-types';
 
 export const InvitationApi = {
-	getMyInvitations: async (): Promise<AxiosResponse<unknown>> => {
+	getMyInvitations: async (): Promise<AxiosResponse<Invitation[]>> => {
 		return client.get('/user/invitation/to');
 	},
 	getCreatedInvitations: async (): Promise<AxiosResponse<unknown>> => {

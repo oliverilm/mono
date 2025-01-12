@@ -1,7 +1,7 @@
 import {
-    invitatationCreateSchema,
-    invitationDecideSchema,
-    invitationQueryParamSchema,
+	invitatationCreateSchema,
+	invitationDecideSchema,
+	invitationQueryParamSchema,
 } from '@monorepo/utils';
 import type { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
@@ -96,7 +96,7 @@ export default async function (fastify: FastifyInstance) {
 
 		const invitation = await prisma.invitation.update({
 			where: {
-				id: query.id,
+				id: Number(query.id),
 				profileId: profile?.id,
 			},
 			data: {

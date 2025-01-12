@@ -7,7 +7,7 @@ export const invitatationCreateSchema = z.object({
 export type InvitationCreate = z.infer<typeof invitatationCreateSchema>;
 
 export const invitationQueryParamSchema = z.object({
-	id: z.number(),
+	id: z.string(),
 });
 
 export type InvitationQueryParam = z.infer<typeof invitationQueryParamSchema>;
