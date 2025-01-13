@@ -40,6 +40,9 @@ function updateCompetition(
 }
 
 export const CompetitionAPI = {
+	getCompetitorExport: (slug: string) => {
+		return client.post(`/user/competitions/${slug}/export`);
+	},
 	createCompetitionAdmin: (slug: string, data: CreateCompetitionAdmin) => {
 		return client.post(`/user/competitions/${slug}/admins`, data);
 	},

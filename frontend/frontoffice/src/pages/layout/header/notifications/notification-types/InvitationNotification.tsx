@@ -44,7 +44,7 @@ export function InvitationNotification({ invitation }: Props) {
 					onClick={() => {
 						decide({
 							id: String(invitation.id),
-							isAccepted: true,
+							isAccepted: false,
 						});
 					}}
 				>

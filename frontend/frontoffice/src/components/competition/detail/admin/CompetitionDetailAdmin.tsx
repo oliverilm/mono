@@ -1,5 +1,7 @@
 import { Button, Flex, Modal, useMantineColorScheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useMutation } from 'react-query';
+import { CompetitionAPI } from '../../../../api/competition-api';
 import type {
 	CompetitionListItem,
 	CompetitionMetadata,
@@ -23,6 +25,21 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 	const [categoriesOpen, { toggle: toggleCategories }] = useDisclosure();
 	const [linkOpen, { toggle: toggleLink }] = useDisclosure();
 	const [adminOpen, { toggle: toggleAdmin }] = useDisclosure();
+
+	const { mutate } = useMutation({
+		mutationFn: () => CompetitionAPI.getCompetitorExport(competition.slug),
+		onSuccess: (data) => {
+			// Create a blob and download the file
+			const blob = new Blob([JSON.stringify(data.data)], {
+				type: 'application/json',
+			});
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `${competition.slug}.json`;
+			a.click();
+		},
+	});
 
 	const myRole = metadata?.competitionAdmins?.find(
 		({ userId }) => authStore.profile?.userId === userId,
@@ -52,7 +69,7 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 						Add admin
 					</Button>
 
-					<Button size="xs" onClick={() => alert('not implemented')}>
+					<Button size="xs" onClick={() => mutate()}>
 						Export
 					</Button>
 				</Flex>

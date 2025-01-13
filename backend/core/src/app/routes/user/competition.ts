@@ -111,12 +111,25 @@ export default async function (fastify: FastifyInstance) {
 
 	fastify.get('/competitions/:slug/personal-competitors', (request) => {
 		const userId = getAssertedUserIdFromRequest(request);
-		const slug = slugSchema.parse(request.params); // TODO: not sure what to do with this
+		const slug = slugSchema.parse(request.params);
 
 		return CompetitionService.getPersonalCompetitors({
 			userId,
 			slug: slug.slug,
 		});
+	});
+
+	fastify.post('/competitions/:slug/export', (request) => {
+		const userId = getAssertedUserIdFromRequest(request);
+		const slug = slugSchema.parse(request.params);
+
+		return CompetitionService.getCompetitorExport(
+			{
+				format: 'JSON',
+			},
+			userId,
+			slug.slug,
+		);
 	});
 
 	fastify.post('/delete-competitor', async (request) => {

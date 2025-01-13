@@ -124,6 +124,59 @@ async function getUserClubName(clubId?: string | null) {
 }
 
 export const CompetitionService = {
+	getCompetitorExport: async (
+		{ format }: { format: 'JSON' | 'CSV' },
+		userId: string,
+		slug: string,
+	) => {
+		const competitionId =
+			await CompetitionService.getCompetitionIdFromSlug(slug);
+		const userIsAdmin = await CompetitionService.isAdmin(competitionId, userId);
+
+		if (!userIsAdmin) {
+			throw new Error('Unauthorized');
+		}
+
+		const competitors = await prisma.competitor.findMany({
+			where: {
+				competitionId,
+			},
+			select: {
+				clubName: true,
+				firstName: true,
+				lastName: true,
+				seed: true,
+				weight: true,
+				id: true,
+				competitionCategory: {
+					select: {
+						categoryName: true,
+						category: {
+							select: {
+								value: true,
+							},
+						},
+					},
+				},
+			},
+		});
+
+		const flat = competitors.map((competitor) => ({
+			...competitor,
+			competitionCategory: competitor.competitionCategory.categoryName,
+			competitionCategoryValue: competitor.competitionCategory.category.value,
+		}));
+
+		if (format === 'JSON') {
+			return flat;
+		}
+		if (format === 'CSV') {
+			const header = Object.keys(flat[0]).join(',');
+			const rows = flat.map((row) => Object.values(row).join(','));
+			return `${header}\n${rows.join('\n')}`;
+		}
+		return null;
+	},
 	getPersonalCompetitors: async ({
 		slug,
 		userId,
