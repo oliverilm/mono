@@ -65,10 +65,16 @@ export function ClubDetailAdmin() {
 	]);
 
 	return (
-		<div>
-			<pre>{JSON.stringify(clubDetails?.data, null, 2)}</pre>
-			<pre>{JSON.stringify(clubMetadata?.data, null, 2)}</pre>
-			<pre>{JSON.stringify(invitations?.data, null, 2)}</pre>
+		 <div>
+			<Flex justify={"center"} direction={"column"} align={"center"}>
+
+				<Title>
+					{clubDetails?.data?.name}
+				</Title>
+				<pre>{JSON.stringify(clubDetails?.data, null, 2)}</pre>
+				<pre>{JSON.stringify(clubMetadata?.data, null, 2)}</pre>
+				<pre>{JSON.stringify(invitations?.data, null, 2)}</pre>
+			</Flex>
 
 			<Grid>
 				<Grid.Col span={span}>

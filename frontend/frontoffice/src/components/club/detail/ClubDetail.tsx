@@ -19,8 +19,6 @@ export function ClubDetail() {
 
 	return (
 		<Stack>
-			<h1>Club Page</h1>
-
 			{clubMetadata?.data.isAdmin ? <ClubDetailAdmin /> : <ClubDetailPublic />}
 		</Stack>
 	);

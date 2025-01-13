@@ -68,7 +68,6 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 					<Button size="xs" onClick={toggleAdmin}>
 						Add admin
 					</Button>
-
 					<Button size="xs" onClick={() => mutate()}>
 						Export
 					</Button>
