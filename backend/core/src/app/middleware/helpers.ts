@@ -1,6 +1,6 @@
-import { Session } from '@prisma/client';
+import type { Session } from '@prisma/client';
 import dayjs from 'dayjs';
-import { FastifyRequest } from 'fastify';
+import type { FastifyRequest } from 'fastify';
 import { LRUCache } from 'lru-cache';
 import { SessionService } from '../services/session';
 

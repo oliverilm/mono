@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {

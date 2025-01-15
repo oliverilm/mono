@@ -254,4 +254,25 @@ export const ClubService = {
 
 		return club || null;
 	},
+
+	createClubAdmin: async (userId: string, clubId: string) => {
+		const isAdmin = await ClubService.isClubAdmin(userId, clubId);
+
+		if (!isAdmin) {
+			throw new Error('You are not an admin of any club');
+		}
+
+		const admin =  await prisma.clubAdmin.create({
+			data: {
+				userId,
+				clubId,
+				role: ClubRole.ADMIN,
+			},
+		});
+
+		if (admin) {
+			adminCache.set(`${userId}-${clubId}`, true);
+			adminCache.set(userId, true)
+		}
+	},
 };

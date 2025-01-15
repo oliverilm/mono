@@ -1,7 +1,7 @@
-import { FastifyInstance } from 'fastify';
-import { sessionAuth } from '../../middleware/auth';
+import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
+import { sessionAuth } from '../../middleware/auth';
 
-export default fastifyPlugin(async function (fastify: FastifyInstance) {
+export default fastifyPlugin(async (fastify: FastifyInstance) => {
 	fastify.addHook('onRequest', sessionAuth);
 });

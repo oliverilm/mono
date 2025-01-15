@@ -1,6 +1,6 @@
-import { FastifyInstance } from 'fastify';
-import { UserService } from '../../services/user';
 import { loginCredentialSchema } from '@monorepo/utils';
+import type { FastifyInstance } from 'fastify';
+import { UserService } from '../../services/user';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {

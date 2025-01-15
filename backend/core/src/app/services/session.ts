@@ -1,6 +1,6 @@
-import { Session } from '@prisma/client';
+import crypto from 'node:crypto';
+import type { Session } from '@prisma/client';
 import dayjs from 'dayjs';
-import crypto from 'crypto';
 import { prisma } from '../utils/db';
 
 export const SessionService = {
