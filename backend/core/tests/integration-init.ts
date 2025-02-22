@@ -2,7 +2,7 @@ import Fastify, { FastifyInstance } from 'fastify';
 import { app } from '../src/app/app';
 import { UserService, AuthenticationPayload } from '../src/app/services/user';
 import { ClubService } from '../src/app/services/club';
-import { beforeEach, vitest } from "vitest"
+import { beforeEach, vitest } from "vitest";
 import { prisma } from '../src/app/utils/db';
 
 export let testServer: FastifyInstance;
@@ -30,7 +30,6 @@ beforeEach(async () => {
         testServer = Fastify();
         testServer.register(app);
     })
-   
 });
 
 

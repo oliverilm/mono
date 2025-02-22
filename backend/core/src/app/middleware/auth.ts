@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import { prisma } from '../utils/db';
 import {
 	extractTokenFromHeader,
 	getValidSessionAndSaveToCache,
@@ -45,4 +46,28 @@ export async function optionalSessionAuth(request: FastifyRequest) {
 	}
 
 	request.userId = activeSession.userId;
+}
+
+
+export async function adminSessionAuth(request: FastifyRequest, reply: FastifyReply) {
+	await sessionAuth(request, reply)
+
+	if (!request.userId) {
+		reply.unauthorized('Unauthorized');
+	}
+
+	const user = await prisma.user.findFirst({
+		where: {
+			id: request.userId,
+		},
+		select: {
+			isAdmin: true,
+		},
+	});
+
+	if (!user?.isAdmin) {
+		reply.unauthorized('Unauthorized');
+	}
+
+	// else user is admin and continue
 }

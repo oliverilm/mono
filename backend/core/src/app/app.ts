@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 import cors from '@fastify/cors';
 import sensible from '@fastify/sensible';
 import type { FastifyInstance } from 'fastify';
+import adminRouter from './routes/admin/adminRouter';
 import publicRouter from './routes/public/publicRouter';
 import userRouter from './routes/user/userRouter';
 
@@ -30,4 +31,5 @@ export async function app(fastify: FastifyInstance) {
 	// register routers
 	fastify.register(publicRouter, { prefix: '/public' });
 	fastify.register(userRouter, { prefix: '/user' });
+	fastify.register(adminRouter, { prefix: '/admin' });
 }
