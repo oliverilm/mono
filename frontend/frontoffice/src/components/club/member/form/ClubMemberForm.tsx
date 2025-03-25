@@ -7,12 +7,12 @@ import {
 } from '@monorepo/utils';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { getUserByNationalId } from '../../../../api/auth';
 import { ClubAPI } from '../../../../api/club-api';
 import { InvitationApi } from '../../../../api/invitation-api';
 import type { AppError } from '../../../../api/utils/types';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
+import { Api } from '../../../../api';
 
 export function ClubMemberForm() {
 	const { slug } = useParams<'slug'>();
@@ -59,7 +59,7 @@ export function ClubMemberForm() {
 
 	const { data: result } = useQuery({
 		queryKey: ['national-id-user-search', form.values.nationalId],
-		queryFn: () => getUserByNationalId(form.values.nationalId),
+		queryFn: () => Api.auth.getUserByNationalId(form.values.nationalId),
 		enabled: isValidNationalId(
 			form.values.nationalIdType as NationalId,
 			form.values.nationalId,

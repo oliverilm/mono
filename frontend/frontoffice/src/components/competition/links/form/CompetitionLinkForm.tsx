@@ -2,10 +2,10 @@ import { Button, Flex, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { CreateCompetitionLink } from '@monorepo/utils';
 import { useMutation, useQueryClient } from 'react-query';
-import { CompetitionAPI } from '../../../../api/competition-api';
 import type { CompetitionListItem } from '../../../../api/utils/common-types';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
+import { Api } from '../../../../api';
 
 export interface Props {
 	competition: CompetitionListItem;
@@ -24,7 +24,7 @@ export function CompetitionLinkFrom({ competition, onDone }: Props) {
 
 	const { mutate } = useMutation(
 		(data: CreateCompetitionLink) =>
-			CompetitionAPI.createCompetitionLink(competition.slug, data),
+			Api.competition.createCompetitionLink(competition.slug, data),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries([

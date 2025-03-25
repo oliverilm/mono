@@ -262,7 +262,7 @@ export const ClubService = {
 			throw new Error('You are not an admin of any club');
 		}
 
-		const admin =  await prisma.clubAdmin.create({
+		const admin = await prisma.clubAdmin.create({
 			data: {
 				userId,
 				clubId,
@@ -272,7 +272,7 @@ export const ClubService = {
 
 		if (admin) {
 			adminCache.set(`${userId}-${clubId}`, true);
-			adminCache.set(userId, true)
+			adminCache.set(userId, true);
 		}
 	},
 };

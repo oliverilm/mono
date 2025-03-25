@@ -48,9 +48,11 @@ export async function optionalSessionAuth(request: FastifyRequest) {
 	request.userId = activeSession.userId;
 }
 
-
-export async function adminSessionAuth(request: FastifyRequest, reply: FastifyReply) {
-	await sessionAuth(request, reply)
+export async function adminSessionAuth(
+	request: FastifyRequest,
+	reply: FastifyReply,
+) {
+	await sessionAuth(request, reply);
 
 	if (!request.userId) {
 		reply.unauthorized('Unauthorized');

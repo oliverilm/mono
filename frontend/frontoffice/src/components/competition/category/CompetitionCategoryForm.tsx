@@ -3,10 +3,10 @@ import { useForm } from '@mantine/form';
 import type { CreateCompetitionCategory } from '@monorepo/utils';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { CompetitionAPI } from '../../../api/competition-api';
 import type { CompetitionListItem } from '../../../api/utils/common-types';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 import { useCommonStore } from '../../../stores/common';
+import { Api } from '../../../api';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -40,7 +40,7 @@ export function CompetitionCategoryForm({ competition, onDone }: Props) {
 
 	const { mutateAsync } = useMutation(
 		({ slug, data }: { slug: string; data: CreateCompetitionCategory }) =>
-			CompetitionAPI.createCompetitionCategory(slug, data),
+			Api.competition.createCompetitionCategory(slug, data),
 		{
 			onSuccess: () => {
 				form.reset();

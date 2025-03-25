@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { LS_TOKEN_KEY } from '../constants';
 import { useAuthStore } from '../stores/auth';
-import { getProfile } from '../api/auth';
+import { Api } from '../api';
 
 export function useSystemAuth() {
 	const authStore = useAuthStore();
@@ -14,7 +14,7 @@ export function useSystemAuth() {
 			return;
 		}
 
-		const profile = await getProfile();
+		const profile = await Api.auth.getProfile();
 
 		if (profile) {
 			authStore.setProfile(profile.data);

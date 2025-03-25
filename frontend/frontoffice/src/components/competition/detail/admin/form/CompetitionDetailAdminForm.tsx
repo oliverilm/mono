@@ -3,11 +3,11 @@ import { useForm } from '@mantine/form';
 import type { CreateCompetitionAdmin } from '@monorepo/utils';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-import { getUserByEmail } from '../../../../../api/auth';
 import type {
 	CompetitionListItem,
 	CompetitionMetadata,
 } from '../../../../../api/utils/common-types';
+import { Api } from '../../../../../api';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -26,7 +26,7 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 
 	const { data: matchingUsers } = useQuery({
 		queryKey: ['users-search', search],
-		queryFn: () => getUserByEmail(search),
+		queryFn: () => Api.auth.getUserByEmail(search),
 		enabled: search.length > 5,
 		select: (data) => {
 			if (data.data) {

@@ -3,11 +3,11 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import type { LoginCredentials } from '@monorepo/utils';
 import { useMutation } from 'react-query';
-import { login } from '../../api/auth';
 import { LS_TOKEN_KEY } from '../../constants';
 import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedirectToHome';
 import { useAuthStore } from '../../stores/auth';
 import { LayoutPage } from '../layout/page/LayoutPage';
+import { Api } from '../../api';
 
 export function LoginPage() {
 	useAuthenticatedRedirectToHome();
@@ -19,7 +19,7 @@ export function LoginPage() {
 		},
 	});
 
-	const { mutate } = useMutation(login, {
+	const { mutate } = useMutation(Api.auth.login, {
 		onSuccess: (data) => {
 			authStore.setProfile(data.data.profile);
 			localStorage.setItem(LS_TOKEN_KEY, data.data.token);
@@ -27,7 +27,7 @@ export function LoginPage() {
 		onError: (error) => {
 			notifications.show({
 				title: 'Error',
-				// @ts-expect-error
+				// @ts-expect-error -- test
 				message: error?.response?.data?.message,
 				color: 'red',
 			});

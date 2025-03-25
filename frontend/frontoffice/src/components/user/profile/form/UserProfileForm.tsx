@@ -1,8 +1,8 @@
 import { Button, Flex, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { NationalId, type UserPatch } from '@monorepo/utils';
-import { updateUser } from '../../../../api/auth';
 import { useAuthStore } from '../../../../stores/auth';
+import { Api } from '../../../../api';
 
 export function UserProfileForm() {
 	const authStore = useAuthStore();
@@ -20,7 +20,7 @@ export function UserProfileForm() {
 	const onSubmit = async (data: typeof form.values) => {
 		console.log(data);
 
-		const response = await updateUser(data);
+		const response = await Api.auth.updateUser(data);
 
 		authStore.setProfile(response.data);
 

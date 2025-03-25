@@ -2,12 +2,12 @@ import { Flex, Table, Text, TextInput, Title } from '@mantine/core';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-import { CompetitionAPI } from '../../../../api/competition-api';
 import type {
 	CompetitionCategory,
 	CompetitionListItem,
 } from '../../../../api/utils/common-types';
 import { CompetitionDetailRegistrationRow } from './row/CompetitionDetailRegistrationRow';
+import { Api } from '../../../../api';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -19,7 +19,7 @@ export function CompetitionDetailRegistration({
 }: Props) {
 	const { data: competitors } = useQuery({
 		queryKey: ['personal-competitors', competition.slug],
-		queryFn: () => CompetitionAPI.getPersonalCompetitors(competition.slug),
+		queryFn: () => Api.competition.getPersonalCompetitors(competition.slug),
 		enabled: Boolean(competition.slug),
 	});
 

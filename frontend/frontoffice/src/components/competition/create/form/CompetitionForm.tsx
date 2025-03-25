@@ -3,8 +3,8 @@ import { useForm } from '@mantine/form';
 import type { CreateCompetition } from '@monorepo/utils';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { CompetitionAPI } from '../../../../api/competition-api';
 import { useAuthStore } from '../../../../stores/auth';
+import { Api } from '../../../../api';
 interface Props {
 	onSubmit: () => void;
 }
@@ -18,7 +18,7 @@ export function CompetitionFrom({ onSubmit: onDone }: Props) {
 		},
 	});
 
-	const { mutate } = useMutation(CompetitionAPI.createCompetition, {
+	const { mutate } = useMutation(Api.competition.createCompetition, {
 		onSuccess: (data) => {
 			navigate(`/competitions/${data.data.slug}`);
 			queryClient.invalidateQueries([

@@ -1,5 +1,4 @@
 import { useForm } from '@mantine/form';
-import { createUser } from '../../api/auth';
 import { useAuthStore } from '../../stores/auth';
 import { Button, TextInput } from '@mantine/core';
 import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedirectToHome';
@@ -8,6 +7,7 @@ import { LoginCredentials } from '@monorepo/utils';
 import { LayoutPage } from '../layout/page/LayoutPage';
 import { useMutation } from 'react-query';
 import { notifications } from '@mantine/notifications';
+import { Api } from '../../api';
 
 export function RegisterPage() {
 	useAuthenticatedRedirectToHome();
@@ -20,7 +20,7 @@ export function RegisterPage() {
 		},
 	});
 
-	const { mutate } = useMutation(createUser, {
+	const { mutate } = useMutation(Api.auth.createUser, {
 		onSuccess: (data) => {
 			authStore.setProfile(data.data.profile);
 			localStorage.setItem(LS_TOKEN_KEY, data.data.token);
@@ -28,7 +28,7 @@ export function RegisterPage() {
 		onError: (error) => {
 			notifications.show({
 				title: 'Error',
-				// @ts-expect-error
+				// @ts-expect-error -- test
 				message: error?.response?.data?.message,
 				color: 'red',
 			});

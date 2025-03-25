@@ -1,11 +1,11 @@
 import { Pagination, Stack, Table } from '@mantine/core';
 import { usePagination } from '@mantine/hooks';
 import { useQuery } from 'react-query';
-import { CompetitionAPI } from '../../../../api/competition-api';
 import type {
 	CompetitionCategory,
 	CompetitionListItem,
 } from '../../../../api/utils/common-types';
+import { Api } from '../../../../api';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -22,7 +22,7 @@ export function CompetitionDetailCompetitors({
 	const { data } = useQuery({
 		queryKey: ['competitors', competition.slug, pagination.active],
 		queryFn: () =>
-			CompetitionAPI.getCompetitors(competition.slug, {
+			Api.competition.getCompetitors(competition.slug, {
 				skip: (pagination.active - 1) * TAKE,
 				take: TAKE,
 			}),

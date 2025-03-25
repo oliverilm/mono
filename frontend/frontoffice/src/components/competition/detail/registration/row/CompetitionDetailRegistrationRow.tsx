@@ -5,11 +5,11 @@ import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from 'react-query';
-import { CompetitionAPI } from '../../../../../api/competition-api';
 import type {
 	CompetitionCategory,
 	PrivateCompetitor,
 } from '../../../../../api/utils/common-types';
+import { Api } from '../../../../../api';
 
 interface Props {
 	category: CompetitionCategory;
@@ -26,7 +26,7 @@ export function CompetitionDetailRegistrationRow({
 
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
-		mutationFn: (id: number) => CompetitionAPI.deleteCompetitor({ id }),
+		mutationFn: (id: number) => Api.competition.deleteCompetitor({ id }),
 		onSuccess: (data) => {
 			queryClient.setQueryData(
 				['personal-competitors', category.competitionSlug],
@@ -99,7 +99,7 @@ export function ParticipationFormForCategory({
 
 	const { mutate } = useMutation({
 		mutationFn: (data: { data: CreateCompetitor; slug: string }) =>
-			CompetitionAPI.createCompetitor(data.slug, data.data),
+			Api.competition.createCompetitor(data.slug, data.data),
 		onSuccess: (data) => {
 			queryClient.setQueryData(
 				['personal-competitors', category.competitionSlug],

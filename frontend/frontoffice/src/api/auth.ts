@@ -2,6 +2,40 @@ import type { LoginCredentials, NationalId, UserPatch } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { addSkipTakeSearch, client } from './client';
 
+export class Auth {
+	static login(data: LoginCredentials): Promise<AxiosResponse<AuthResponse>> {
+		return client.post('/public/auth/login', data);
+	}
+
+	static getUserByNationalId(
+		nationalId: string,
+	): Promise<AxiosResponse<NationalIdSearchResult | null>> {
+		return client.get(`/user/user-by-national-id?search=${nationalId}`);
+	}
+
+	static getUserByEmail(
+		email: string,
+	): Promise<AxiosResponse<{ email: string; id: string }>> {
+		return client.get(
+			addSkipTakeSearch('/user/user-by-email', { search: email }),
+		);
+	}
+
+	static updateUser(data: UserPatch): Promise<AxiosResponse<Profile>> {
+		return client.patch('/user/profile', data);
+	}
+
+	static getProfile(): Promise<AxiosResponse<Profile>> {
+		return client.get('/user/profile');
+	}
+
+	static createUser(
+		data: LoginCredentials,
+	): Promise<AxiosResponse<AuthResponse>> {
+		return client.post('/public/auth/register', data);
+	}
+}
+
 export interface AuthResponse {
 	profile: Profile;
 	token: string;
@@ -22,36 +56,6 @@ export interface Profile {
 	updatedAt: string;
 }
 
-export async function login(
-	data: LoginCredentials,
-): Promise<AxiosResponse<AuthResponse>> {
-	return client.post('/public/auth/login', data);
-}
-
-export async function createUser(
-	data: LoginCredentials,
-): Promise<AxiosResponse<AuthResponse>> {
-	return client.post('/public/auth/register', data);
-}
-
-export async function getProfile(): Promise<AxiosResponse<Profile>> {
-	return client.get('/user/profile');
-}
-
-export async function updateUser(
-	data: UserPatch,
-): Promise<AxiosResponse<Profile>> {
-	return client.patch('/user/profile', data);
-}
-
-export async function getUserByEmail(
-	email: string,
-): Promise<AxiosResponse<{ email: string; id: string }>> {
-	return client.get(
-		addSkipTakeSearch('/user/user-by-email', { search: email }),
-	);
-}
-
 export interface NationalIdSearchResult {
 	userId: string | null;
 	nationalId: string;
@@ -67,10 +71,4 @@ export interface NationalIdSearchResult {
 export interface NationalIdSearchClub {
 	name: string;
 	id: string;
-}
-
-export async function getUserByNationalId(
-	nationalId: string,
-): Promise<AxiosResponse<NationalIdSearchResult | null>> {
-	return client.get(`/user/user-by-national-id?search=${nationalId}`);
 }

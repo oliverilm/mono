@@ -10,10 +10,11 @@ import {
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { ClubAPI } from '../../../api/club-api';
-import { CompetitionAPI } from '../../../api/competition-api';
 import { ClubForm } from '../../../components/club/form/ClubForm';
 import { CompetitionFrom } from '../../../components/competition/create/form/CompetitionForm';
+import { DevToolsButton } from '../../../components/dev-tools/DevToolsButton';
 import { useAuthStore } from '../../../stores/auth';
+import { Api } from '../../../api';
 
 export function LayoutNavbar() {
 	const [competitionFormOpened, { toggle: toggleCompetitionForm }] =
@@ -34,7 +35,7 @@ export function LayoutNavbar() {
 
 	const { data } = useQuery({
 		queryKey: ['competitions-private', authStore.isAuthenticated],
-		queryFn: () => CompetitionAPI.getPrivateCompetitions(),
+		queryFn: () => Api.competition.getPrivateCompetitions(),
 	});
 
 	const iconProps = { size: '1rem', stroke: 1.5 };
@@ -78,6 +79,10 @@ export function LayoutNavbar() {
 				>
 					<NavLink label="Create competition" onClick={toggleCompetitionForm} />
 					<NavLink label="Create club" onClick={toggleClubForm} />
+				</NavLink>
+
+				<NavLink label="Dev tools">
+					<DevToolsButton />
 				</NavLink>
 
 				<Modal

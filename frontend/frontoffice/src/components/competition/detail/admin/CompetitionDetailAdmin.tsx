@@ -1,7 +1,6 @@
 import { Button, Flex, Modal, useMantineColorScheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useMutation } from 'react-query';
-import { CompetitionAPI } from '../../../../api/competition-api';
 import type {
 	CompetitionListItem,
 	CompetitionMetadata,
@@ -11,6 +10,7 @@ import { CompetitionCategoryForm } from '../../category/CompetitionCategoryForm'
 import { CompetitionLinkFrom } from '../../links/form/CompetitionLinkForm';
 import { CompetitionUpdateForm } from '../../update/form/CompetitionUpdateForm';
 import { CompetitionDetailAdminForm } from './form/CompetitionDetailAdminForm';
+import { Api } from '../../../../api';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -27,7 +27,7 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 	const [adminOpen, { toggle: toggleAdmin }] = useDisclosure();
 
 	const { mutate } = useMutation({
-		mutationFn: () => CompetitionAPI.getCompetitorExport(competition.slug),
+		mutationFn: () => Api.competition.getCompetitorExport(competition.slug),
 		onSuccess: (data) => {
 			// Create a blob and download the file
 			const blob = new Blob([JSON.stringify(data.data)], {
