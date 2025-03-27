@@ -13,7 +13,6 @@ model User {
     clubAdmin           ClubAdmin?
     userProfile         UserProfile?
     sessions            Session[]
-
 }
 
 enum Sex {

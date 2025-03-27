@@ -13,11 +13,11 @@ export interface AuthenticationPayload {
 	token: Session['token'];
 }
 
-export const UserService = {
-	createUser: async ({
+export class UserService {
+	static async createUser({
 		email,
 		password,
-	}: LoginCredentials): Promise<AuthenticationPayload | undefined> => {
+	}: LoginCredentials): Promise<AuthenticationPayload | undefined> {
 		try {
 			const user = await prisma.user.create({
 				data: {
@@ -51,12 +51,12 @@ export const UserService = {
 
 			throw error;
 		}
-	},
+	}
 
-	login: async ({
+	static async login({
 		email,
 		password,
-	}: LoginCredentials): Promise<AuthenticationPayload> => {
+	}: LoginCredentials): Promise<AuthenticationPayload> {
 		const user = await prisma.user.findFirst({
 			where: {
 				email,
@@ -82,8 +82,8 @@ export const UserService = {
 			profile,
 			token,
 		};
-	},
-	getUserProfile: async (userId: string): Promise<UserProfile | null> => {
+	}
+	static async getUserProfile(userId: string): Promise<UserProfile | null> {
 		const profile = await prisma.userProfile.findUnique({
 			where: {
 				userId,
@@ -91,10 +91,10 @@ export const UserService = {
 		});
 
 		return profile;
-	},
-	updateUserProfile: async (
+	}
+	static async updateUserProfile(
 		payload: UserPatch,
-	): Promise<UserProfile | null> => {
+	): Promise<UserProfile | null> {
 		const { userId, ...rest } = payload;
 
 		const idDetails = validateNationalIdAndDobOrThrow({
@@ -161,21 +161,23 @@ export const UserService = {
 			tryHandleKnownErrors(error as Error);
 			return null;
 		}
-	},
+	}
 
-	getUserProfileByUserId: (id: string) =>
-		prisma.userProfile.findUnique({ where: { userId: id } }),
+	static getUserProfileByUserId(id: string) {
+		return prisma.userProfile.findUnique({ where: { userId: id } })
+	}
 
-	getUserProfileByProfileId: async (
+	static getUserProfileByProfileId(
 		profileId: string,
-	): Promise<UserProfile | null> =>
-		prisma.userProfile.findUnique({
+	): Promise<UserProfile | null> {
+		return prisma.userProfile.findUnique({
 			where: {
 				id: profileId,
 			},
-		}),
+		})
+	}
 
-	searchByEmailExactMatch: async (email: string) => {
+	static searchByEmailExactMatch(email: string) {
 		// perhaps can add caching here but maybe not important
 		return prisma.user.findUnique({
 			where: {
@@ -186,9 +188,9 @@ export const UserService = {
 				email: true,
 			},
 		});
-	},
+	}
 
-	searchByNationalIdExactMatch: async (nationalId: string, userId: string) => {
+	static async searchByNationalIdExactMatch(nationalId: string, userId: string) {
 		const isAdmin = await ClubService.isAnyClubAdmin(userId);
 
 		if (!isAdmin) {
@@ -217,5 +219,6 @@ export const UserService = {
 				sex: true,
 			},
 		});
-	},
-};
+	}
+}
+

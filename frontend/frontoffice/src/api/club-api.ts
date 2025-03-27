@@ -21,7 +21,7 @@ function createClub(data: ClubCreate) {
 
 function getClub(slug?: string) {
 	if (!slug) return Promise.resolve(null);
-	return client.get(`/public/club/${slug}`);
+	return client.get(`/public/clubs/get-by-slug/${slug}`);
 }
 
 export const ClubAPI = {
@@ -38,13 +38,13 @@ export const ClubAPI = {
 	getPublicClubs,
 	getClubById: (id?: string | null): Promise<AxiosResponse<Club> | null> => {
 		if (!id) return Promise.resolve(null);
-		return client.get(`/public/clubs/${id}`);
+		return client.get(`/public/clubs/get-by-id/${id}`);
 	},
 	getClubMetadata: (
 		slug?: string,
 	): Promise<AxiosResponse<ClubMetadata> | null> => {
 		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/club/${slug}/metadata`);
+		return client.get(`/public/clubs/${slug}/metadata`);
 	},
 	updateClub: () => {},
 	getProfilesInClub: () => {},

@@ -23,9 +23,9 @@ import type {
 
 export class Competition {
 	static getPublicCompetitions(
-		query: SkipTake & Search,
+		skipTake: SkipTake & Search,
 	): Promise<AxiosResponse<CompetitionListItem[]>> {
-		return client.get(addSkipTakeSearch('/public/competitions', query));
+		return client.get(addSkipTakeSearch('/public/competition', skipTake));
 	}
 	static updateCompetition(
 		data: UpdateCompetition,

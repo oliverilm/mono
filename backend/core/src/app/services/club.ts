@@ -9,6 +9,7 @@ import { LRUCache } from 'lru-cache';
 import { prisma } from '../utils/db';
 import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
 import { slugifyString } from '../utils/string';
+import { getSetReturn } from '../utils/cache';
 
 const adminCache = new LRUCache<string, boolean>({
 	max: 500,
@@ -20,21 +21,6 @@ const idCache = new LRUCache<string, string>({
 	ttl: 1000 * 60 * 60 * 24,
 });
 
-// TODO: validate if this works
-async function getSetReturn<T extends {}>(
-	cache: LRUCache<string, T>,
-	key: string,
-	value: T,
-): Promise<T> {
-	const bool = cache.get(key);
-	if (bool) {
-		return bool;
-	}
-
-	const awaited = await value;
-	cache.set(key, awaited);
-	return awaited;
-}
 
 export type SlugOrId =
 	| {

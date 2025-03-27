@@ -1,4 +1,3 @@
-import { Stack } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ClubAPI } from '../../../api/club-api';
@@ -17,9 +16,7 @@ export function ClubDetail() {
 		enabled: Boolean(slug),
 	});
 
-	return (
-		<Stack>
-			{clubMetadata?.data.isAdmin ? <ClubDetailAdmin /> : <ClubDetailPublic />}
-		</Stack>
-	);
+	if (clubMetadata?.data.isAdmin) return <ClubDetailAdmin />;
+
+	return <ClubDetailPublic />;
 }

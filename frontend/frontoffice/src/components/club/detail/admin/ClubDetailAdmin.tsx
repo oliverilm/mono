@@ -34,6 +34,9 @@ export function ClubDetailAdmin() {
 
 	const [opened, { toggle }] = useDisclosure();
 
+
+	// TODO: maybe these should be joined on the backend. Collect all the data and present as a single response.
+	// should be much faster in this case.
 	const [
 		{ data: clubDetails },
 		{ data: clubMetadata },
@@ -68,9 +71,11 @@ export function ClubDetailAdmin() {
 		<div>
 			<Flex justify={'center'} direction={'column'} align={'center'}>
 				<Title>{clubDetails?.data?.name}</Title>
-				<pre>{JSON.stringify(clubDetails?.data, null, 2)}</pre>
-				<pre>{JSON.stringify(clubMetadata?.data, null, 2)}</pre>
-				<pre>{JSON.stringify(invitations?.data, null, 2)}</pre>
+				<pre>{JSON.stringify({
+					clubDetails: clubDetails?.data,
+					clubMetadata: clubMetadata?.data,
+					invitations: invitations?.data
+				}, null, 2)}</pre>
 			</Flex>
 
 			<Grid>

@@ -3,10 +3,8 @@ import type {
 	CreateCompetitionAdmin,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
-	CreateCompetitor,
-	Search,
-	SkipTake,
-	UpdateCompetition,
+	CreateCompetitor, SkipTake,
+	UpdateCompetition
 } from '@monorepo/utils';
 import {
 	type Competition,
@@ -24,9 +22,16 @@ import { convertSkipTake } from '../utils/object';
 import { slugifyString } from '../utils/string';
 import { ClubService } from './club';
 import { UserService } from './user';
+import { getSetReturn } from '../utils/cache';
+import { hours } from '../utils/time';
 
-const cache = new LRUCache({
-	ttl: 1000 * 60 * 60, // 1 hour
+const isAdminCache = new LRUCache<string, boolean>({
+	ttl: hours(1),
+	max: 1000,
+});
+
+const competitionIdBySlugCache = new LRUCache<string, string>({
+	ttl: hours(1),
 	max: 1000,
 });
 
@@ -312,6 +317,11 @@ export const CompetitionService = {
 			throw new Error('Competition not found');
 		}
 		const clubName = await getUserClubName(userProfile?.clubId);
+		// TODO: validate if this judoka even can be registered here. 
+		// Otherwise this method could be abused.
+		// could possibly use the method defined above
+		// just insert the competitor id to the where clause.
+		// check if response is not empty, if so, then the competitor is valid.
 
 		if (userProfile.id === data.competitorId) {
 			return prisma.competitor.create({
@@ -441,7 +451,7 @@ export const CompetitionService = {
 		data: CreateCompetitionAdmin,
 		competitionAdminId: string,
 	) => {
-		const admin = await prisma.competitionAdmin.findFirst({
+		const isAdmin = await getSetReturn(isAdminCache, `${data.competitionId}-${competitionAdminId}`, (await prisma.competitionAdmin.findFirst({
 			where: {
 				userId: competitionAdminId,
 				competitionId: data.competitionId,
@@ -449,62 +459,41 @@ export const CompetitionService = {
 			select: {
 				role: true,
 			},
-		});
-
-		const isAdmin = admin?.role === CompetitionRole.OWNER;
+		}))?.role === CompetitionRole.OWNER);
 
 		if (!isAdmin) {
 			throw new Error('You are not an admin of this competition');
 		}
 
-		return prisma.competitionAdmin.create({
+		const newCompetitionAdmin = await prisma.competitionAdmin.create({
 			data: {
 				...data,
 				role: CompetitionRole.MANAGER,
 			},
 		});
+
+		isAdminCache.set(`${data.competitionId}-${data.userId}`, true)
+		return newCompetitionAdmin
 	},
 
 	isAdmin: async (competitionId: string, userId: string) => {
-		const cacheKey = `${competitionId}-${userId}`;
-		const cachedResult = cache.get(cacheKey);
-
-		if (cachedResult !== undefined) {
-			return cachedResult as boolean;
-		}
-
-		const isAdmin =
-			(await prisma.competitionAdmin.count({
-				where: {
-					competitionId,
-					userId,
-				},
-			})) > 0;
-
-		cache.set(cacheKey, isAdmin);
-		return isAdmin;
+		return getSetReturn(isAdminCache, `${competitionId}-${userId}`, (await prisma.competitionAdmin.count({
+			where: {
+				competitionId,
+				userId,
+			},
+		})) > 0)
 	},
 
 	getCompetitionIdFromSlug: async (competitionSlug: string) => {
-		if (cache.get(competitionSlug)) {
-			return cache.get(competitionSlug) as string;
-		}
-
-		const competition = await prisma.competition.findUnique({
+		return getSetReturn(competitionIdBySlugCache, competitionSlug, (await prisma.competition.findFirst({
 			where: {
 				slug: competitionSlug,
 			},
 			select: {
 				id: true,
 			},
-		});
-
-		if (!competition) {
-			throw new Error('Competition not found');
-		}
-
-		cache.set(competitionSlug, competition.id);
-		return competition.id;
+		}))?.id ?? '');
 	},
 	getCompetitionLinks: async function (competitionSlug: string) {
 		const competitionId = await this.getCompetitionIdFromSlug(competitionSlug);
@@ -623,26 +612,11 @@ export const CompetitionService = {
 			throw new Error('Something went wrong');
 		}
 
-		cache.set(competition.slug, competition.id);
+		competitionIdBySlugCache.set(competition.slug, competition.id);
+		isAdminCache.set(`${competition.id}-${userProfile.userId}`, true)
+
 		return competition;
 	},
-
-	list: async ({ search, ...skipTake }: SkipTake & Search) =>
-		prisma.competition.findMany({
-			where: {
-				isArchived: false,
-				isPublished: true,
-				...(search
-					? {
-							name: {
-								contains: search,
-							},
-						}
-					: {}),
-			},
-			...convertSkipTake(skipTake),
-		}),
-
 	updateCompetition: async function ({
 		data,
 		userId,
@@ -673,7 +647,7 @@ export const CompetitionService = {
 				data,
 			});
 
-			cache.set(competition.slug, competition.id);
+			competitionIdBySlugCache.set(competition.slug, competition.id);
 			return competition;
 		} catch (error) {
 			tryHandleKnownErrors(error as Error);
