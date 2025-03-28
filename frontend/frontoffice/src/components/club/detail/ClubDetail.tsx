@@ -1,10 +1,10 @@
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { ClubAPI } from '../../../api/club-api';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../stores/auth';
 import { ClubDetailAdmin } from './admin/ClubDetailAdmin';
 import { ClubDetailPublic } from './public/ClubDetailPublic';
+import { Api } from '../../../api';
 
 export function ClubDetail() {
 	const { slug } = useParams<'slug'>();
@@ -12,7 +12,7 @@ export function ClubDetail() {
 
 	const { data: clubMetadata } = useQuery({
 		queryKey: [StaticQueryKey.ClubMetadata, slug, userAuthStore.profile?.id],
-		queryFn: () => ClubAPI.getClubMetadata(slug),
+		queryFn: () => Api.club.getClubMetadata(slug),
 		enabled: Boolean(slug),
 	});
 

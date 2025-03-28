@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Profile } from '../api/auth';
+import type { Profile } from '../api/services/auth';
 import { LS_TOKEN_KEY } from '../constants';
 
 export type AuthStore = {

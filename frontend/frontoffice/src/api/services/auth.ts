@@ -1,6 +1,7 @@
-import type { LoginCredentials, NationalId, UserPatch } from '@monorepo/utils';
+import type { LoginCredentials, UserPatch } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
-import { addSkipTakeSearch, client } from './client';
+import { addSkipTakeSearch, client } from '../client';
+import { AuthResponse, NationalIdSearchResult, Profile } from '../utils/common-types';
 
 export class Auth {
 	static login(data: LoginCredentials): Promise<AxiosResponse<AuthResponse>> {
@@ -34,41 +35,4 @@ export class Auth {
 	): Promise<AxiosResponse<AuthResponse>> {
 		return client.post('/public/auth/register', data);
 	}
-}
-
-export interface AuthResponse {
-	profile: Profile;
-	token: string;
-}
-
-export interface Profile {
-	id: string;
-	firstName: string | null;
-	lastName: string | null;
-	nationalId: string | null;
-	nationalIdType: NationalId | null; // TODO
-	dateOfBirth: string | null;
-	sex: string;
-	userId: string;
-	clubId: string | null;
-	belt: string | null;
-	createdAt: string;
-	updatedAt: string;
-}
-
-export interface NationalIdSearchResult {
-	userId: string | null;
-	nationalId: string;
-	firstName: string;
-	lastName: string;
-	club: NationalIdSearchClub;
-	dateOfBirth: string;
-	nationalIdType: string;
-	sex: string;
-	id: string;
-}
-
-export interface NationalIdSearchClub {
-	name: string;
-	id: string;
 }

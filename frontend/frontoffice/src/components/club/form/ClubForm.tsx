@@ -2,8 +2,8 @@ import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { ClubCreate } from '@monorepo/utils';
 import { useMutation, useQueryClient } from 'react-query';
-import { ClubAPI } from '../../../api/club-api';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
+import { Api } from '../../../api';
 
 interface Props {
 	onSubmit: () => void;
@@ -19,7 +19,7 @@ export function ClubForm({ onSubmit: onDone }: Props) {
 
 	const queryClient = useQueryClient();
 
-	const { mutate } = useMutation(ClubAPI.createClub, {
+	const { mutate } = useMutation(Api.club.createClub, {
 		onSuccess: () => {
 			queryClient.invalidateQueries([StaticQueryKey.HomeClubs]);
 			onDone();

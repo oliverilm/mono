@@ -4,26 +4,29 @@ import type {
 	InvitationQueryParam,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
-import { client } from './client';
-import type { Invitation } from './utils/common-types';
+import { client } from '../client';
+import type { Invitation } from '../utils/common-types';
 
-export const InvitationApi = {
-	getMyInvitations: async (): Promise<AxiosResponse<Invitation[]>> => {
+export class InvitationApi {
+	static getMyInvitations(): Promise<AxiosResponse<Invitation[]>>  {
 		return client.get('/user/invitation/to');
-	},
-	getCreatedInvitations: async (): Promise<AxiosResponse<unknown>> => {
+	}
+
+	static getCreatedInvitations(): Promise<AxiosResponse<unknown>>  {
 		return client.get('/user/invitation/from');
-	},
-	createInvitation: async (
+	}
+	
+	static createInvitation(
 		data: InvitationCreate,
-	): Promise<AxiosResponse<unknown>> => {
+	): Promise<AxiosResponse<unknown>>  {
 		return client.post('/user/invitation', data);
-	},
-	decideInvitation: async (
+	}
+	
+	static decideInvitation(
 		data: InvitationQueryParam & InvitationDecide,
-	): Promise<AxiosResponse<unknown>> => {
+	): Promise<AxiosResponse<unknown>>  {
 		return client.post(`/user/invitation/decide/${data.id}`, {
 			isAccepted: data.isAccepted,
 		});
-	},
+	}
 };

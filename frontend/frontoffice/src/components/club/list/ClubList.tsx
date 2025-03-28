@@ -1,10 +1,10 @@
 import { Flex, Grid, Image, Title } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
-import { ClubAPI } from '../../../api/club-api';
 import { getRandomTestClubImage } from '../../../constants';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 import { ThemePaper } from '../../shared/theme-paper/ThemePaper';
+import { Api } from '../../../api';
 
 const span = {
 	xl: 4,
@@ -17,7 +17,7 @@ const span = {
 export function ClubList() {
 	const { data: clubs } = useQuery({
 		queryKey: [StaticQueryKey.HomeClubs],
-		queryFn: () => ClubAPI.getPublicClubs({ skip: 0, take: 25 }),
+		queryFn: () => Api.club.getPublicClubs({ skip: 0, take: 25 }),
 	});
 
 	return (

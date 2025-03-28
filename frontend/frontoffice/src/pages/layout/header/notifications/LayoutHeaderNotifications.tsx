@@ -3,7 +3,7 @@ import { useClickOutside, useDisclosure } from '@mantine/hooks';
 import { IconBell } from '@tabler/icons-react';
 import { useRef } from 'react';
 import { useQuery } from 'react-query';
-import { InvitationApi } from '../../../../api/invitation-api';
+import { InvitationApi } from '../../../../api/services/invitation';
 import { useAuthStore } from '../../../../stores/auth';
 import { InvitationNotification } from './notification-types/InvitationNotification';
 

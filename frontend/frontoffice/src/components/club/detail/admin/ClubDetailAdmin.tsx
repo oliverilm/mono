@@ -14,11 +14,10 @@ import { IconDotsVertical, IconPlus, IconUser } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { ClubAPI } from '../../../../api/club-api';
-import { InvitationApi } from '../../../../api/invitation-api';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 import { ClubMemberForm } from '../../member/form/ClubMemberForm';
+import { Api } from '../../../../api';
 
 const span = {
 	base: 12,
@@ -34,7 +33,6 @@ export function ClubDetailAdmin() {
 
 	const [opened, { toggle }] = useDisclosure();
 
-
 	// TODO: maybe these should be joined on the backend. Collect all the data and present as a single response.
 	// should be much faster in this case.
 	const [
@@ -45,24 +43,24 @@ export function ClubDetailAdmin() {
 	] = useQueries([
 		{
 			queryKey: [StaticQueryKey.ClubDetails, slug],
-			queryFn: () => ClubAPI.getClub(slug),
+			queryFn: () => Api.club.getClub(slug),
 			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [StaticQueryKey.ClubMetadata, slug],
-			queryFn: () => ClubAPI.getClubMetadata(slug),
+			queryFn: () => Api.club.getClubMetadata(slug),
 			enabled: Boolean(slug),
 		},
 
 		{
 			queryKey: [StaticQueryKey.ClubMembers, slug],
-			queryFn: () => ClubAPI.getClubMembers(slug),
+			queryFn: () => Api.club.getClubMembers(slug),
 			enabled: Boolean(slug),
 		},
 
 		{
 			queryKey: ['club-invitations', slug],
-			queryFn: () => InvitationApi.getCreatedInvitations(),
+			queryFn: () => Api.invitation.getCreatedInvitations(),
 			enabled: Boolean(slug),
 		},
 	]);

@@ -7,8 +7,7 @@ import {
 } from '@monorepo/utils';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { ClubAPI } from '../../../../api/club-api';
-import { InvitationApi } from '../../../../api/invitation-api';
+import { InvitationApi } from '../../../../api/services/invitation';
 import type { AppError } from '../../../../api/utils/types';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
@@ -46,7 +45,7 @@ export function ClubMemberForm() {
 	});
 
 	const { mutate } = useMutation({
-		mutationFn: (data: CreateMember) => ClubAPI.createMember(data, slug),
+		mutationFn: (data: CreateMember) => Api.club.createMember(data, slug),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: [StaticQueryKey.ClubMembers] });
 			console.log(data);

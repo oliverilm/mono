@@ -9,7 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { ClubAPI } from '../../../api/club-api';
+import { ClubAPI } from '../../../api/services/club';
 import { ClubForm } from '../../../components/club/form/ClubForm';
 import { CompetitionFrom } from '../../../components/competition/create/form/CompetitionForm';
 import { DevToolsButton } from '../../../components/dev-tools/DevToolsButton';

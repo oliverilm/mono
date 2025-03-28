@@ -11,7 +11,7 @@ import type {
 	UpdateCompetition,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
-import { addSkipTakeSearch, client } from './client';
+import { addSkipTakeSearch, client } from '../client';
 import type {
 	CompetitionCategory,
 	CompetitionListItem,
@@ -19,7 +19,7 @@ import type {
 	Competitor,
 	CompetitorResponse,
 	PrivateCompetitor,
-} from './utils/common-types';
+} from '../utils/common-types';
 
 export class Competition {
 	static getPublicCompetitions(
@@ -80,8 +80,6 @@ export class Competition {
 	static configureVisibility(slug: string, data: CompetitionVisibility) {
 		return client.post(`/competitions/${slug}/configure-visibility`, data);
 	}
-	static updateCompetitionCategory() {}
-	static deleteCompetitionCategory() {}
 
 	static getCompetitors(
 		slug: string,
@@ -105,9 +103,12 @@ export class Competition {
 	): Promise<AxiosResponse<Competitor>> {
 		return client.post(`/user/competitions/${slug}/competitors`, data);
 	}
+
+
+	static updateCompetitionCategory() {
+		throw new Error("Method not implemented.");
+	}
+	static deleteCompetitionCategory() {
+		throw new Error("Method not implemented.");
+	}
 }
-
-
-// function getPublicCamps(query: SkipTake & Search) {
-// 	return client.get(addSkipTakeSearch('/public/camps', query));
-// }

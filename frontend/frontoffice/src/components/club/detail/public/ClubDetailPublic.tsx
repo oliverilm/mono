@@ -1,7 +1,7 @@
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { ClubAPI } from '../../../../api/club-api';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
+import { Api } from '../../../../api';
 
 export function ClubDetailPublic() {
 	const { slug } = useParams<'slug'>();
@@ -9,12 +9,12 @@ export function ClubDetailPublic() {
 	const [{ data: clubDetails }, { data: clubMetadata }] = useQueries([
 		{
 			queryKey: [StaticQueryKey.ClubDetails, slug],
-			queryFn: () => ClubAPI.getClub(slug),
+			queryFn: () => Api.club.getClub(slug),
 			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [StaticQueryKey.ClubMetadata, slug],
-			queryFn: () => ClubAPI.getClubMetadata(slug),
+			queryFn: () => Api.club.getClubMetadata(slug),
 			enabled: Boolean(slug),
 		},
 	]);
