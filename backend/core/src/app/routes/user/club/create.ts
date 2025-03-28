@@ -3,21 +3,24 @@ import { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { tryHandleKnownErrors } from 'src/app/utils/error';
 import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
+import { withBody } from 'src/app/utils/route-helper';
 
 export default function (fastify: FastifyInstance) {
-	fastify.post('/create', async (request) => {
-		const payload = clubCreateSchema.parse(request.body);
-		try {
-			const response = await ClubService.create({
-				...payload,
-				userId: getAssertedUserIdFromRequest(request),
-			});
+	fastify.post(
+		'/create',
+		withBody(clubCreateSchema, async (request) => {
+			try {
+				const response = await ClubService.create({
+					...request.body,
+					userId: getAssertedUserIdFromRequest(request),
+				});
 
-			return response;
-		} catch (error) {
-			tryHandleKnownErrors(error as Error);
+				return response;
+			} catch (error) {
+				tryHandleKnownErrors(error as Error);
 
-			throw error;
-		}
-	});
+				throw error;
+			}
+		}),
+	);
 }

@@ -1,84 +1,16 @@
 import {
-	competitionVisibilitySchema,
-	createCompetitionAdminSchema,
-	createCompetitionCategorySchema,
-	createCompetitionLinkSchema,
-	createCompetitionSchema,
-	createCompetitorSchema,
-	deleteCompetitorSchema,
-	slugSchema,
-	updateCompetitionSchema,
+	competitionVisibilitySchema, deleteCompetitorSchema,
+	slugSchema
 } from '@monorepo/utils';
-import type { FastifyInstance, FastifyRequest } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { UserService } from 'src/app/services/user';
 import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
 import { CompetitionService } from '../../services/competition';
-import { getUserProfileFromRequest, prisma } from '../../utils/db';
+import { prisma } from '../../utils/db';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
-	fastify.post('/competitions', async (request) => {
-		const userProfile = await getUserProfileFromRequest(request);
-
-		if (!userProfile) {
-			throw new Error('User profile not found');
-		}
-
-		const data = createCompetitionSchema.parse(request.body);
-		return CompetitionService.createCompetition({ data, userProfile });
-	});
-
-	fastify.patch('/competitions', (request: FastifyRequest) => {
-		const data = updateCompetitionSchema.parse(request.body);
-
-		const userId = getAssertedUserIdFromRequest(request);
-		return CompetitionService.updateCompetition({ userId, data });
-	});
-
-	fastify.post('/competitions/:slug/competitors', (request) => {
-		const params = slugSchema.parse(request.params); // TODO: not sure what to do with this
-		const userId = getAssertedUserIdFromRequest(request);
-		const data = createCompetitorSchema.parse(request.body);
-
-		return CompetitionService.createCompetitor(data, userId);
-	});
-
-	fastify.post('/competitions/:slug/categories', async (request) => {
-		const body = createCompetitionCategorySchema.parse(request.body);
-		const competitionId = body.competitionId;
-		const userId = getAssertedUserIdFromRequest(request);
-
-		const isAdmin = await CompetitionService.isAdmin(competitionId, userId);
-
-		if (!isAdmin) {
-			throw new Error('User is not an admin');
-		}
-
-		return CompetitionService.createCompetitionCategory(body);
-	});
-
-	fastify.get('/competitions/:slug/categories', (request) => {
-		const slug = slugSchema.parse(request.params);
-
-		return CompetitionService.getCompetitionCategories(slug.slug);
-	});
-
-	fastify.post('/competitions/:slug/links', (request) => {
-		const slug = slugSchema.parse(request.params); // TODO: not sure what to do with this
-		const userId = getAssertedUserIdFromRequest(request);
-		const data = createCompetitionLinkSchema.parse(request.body);
-		return CompetitionService.createCompetitionLink(data, userId, slug.slug);
-	});
-
-	fastify.post('/competitions/:slug/admins', async (request) => {
-		const slug = slugSchema.parse(request.params);
-		const userId = getAssertedUserIdFromRequest(request);
-		const data = createCompetitionAdminSchema.parse(request.body);
-
-		return CompetitionService.createCompetitionAdmin(data, userId);
-	});
-
 	fastify.post('/competitions/:slug/configure-visibility', async (request) => {
 		const slug = slugSchema.parse(request.params);
 		const visibility = competitionVisibilitySchema.parse(request.body);

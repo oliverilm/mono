@@ -17,3 +17,29 @@ export function withBody<T extends z.ZodType>(
 		});
 	};
 }
+
+export function withParams<T extends z.ZodType>(
+	schema: T,
+	callback: RequestHandler<z.infer<T>>,
+) {
+	return (request: FastifyRequest) => {
+		const validatedParams = schema.parse(request.params);
+		return callback({
+			...request,
+			params: validatedParams,
+		});
+	};
+}
+
+export function withQuery<T extends z.ZodType>(
+	schema: T,
+	callback: RequestHandler<z.infer<T>>,
+) {
+	return (request: FastifyRequest) => {
+		const validatedQuery = schema.parse(request.query);
+		return callback({
+			...request,
+			query: validatedQuery,
+		});
+	};
+}

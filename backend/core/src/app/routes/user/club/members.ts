@@ -4,20 +4,23 @@ import { ClubService } from 'src/app/services/club';
 import { UserService } from 'src/app/services/user';
 import { prisma } from 'src/app/utils/db';
 import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
+import { withBody } from 'src/app/utils/route-helper';
 
 export default function (fastify: FastifyInstance) {
-	fastify.post('/:slug/members', async (request) => {
-		const createMemberPayload = createMemberSchema.parse(request.body);
-		const userId = getAssertedUserIdFromRequest(request);
-		const slug = slugSchema.parse(request.params);
-		const clubId = (await ClubService.getClubByIdOrSlug(slug))?.id;
+	fastify.post(
+		'/:slug/members',
+		withBody(createMemberSchema, async (request) => {
+			const userId = getAssertedUserIdFromRequest(request);
+			const slug = slugSchema.parse(request.params);
+			const clubId = (await ClubService.getClubByIdOrSlug(slug))?.id;
 
-		if (!clubId) {
-			throw new Error('Club not found');
-		}
+			if (!clubId) {
+				throw new Error('Club not found');
+			}
 
-		return ClubService.createMember(createMemberPayload, userId, clubId);
-	});
+			return ClubService.createMember(request.body, userId, clubId);
+		}),
+	);
 
 	fastify.get('/:slug/members', async (request) => {
 		const userId = getAssertedUserIdFromRequest(request);
