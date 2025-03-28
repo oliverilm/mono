@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { Profile } from '../api/services/auth';
 import { LS_TOKEN_KEY } from '../constants';
+import type { Profile } from '../api/utils/common-types';
 
 export type AuthStore = {
 	profile: Profile | null;

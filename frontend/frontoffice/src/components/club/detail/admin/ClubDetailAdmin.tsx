@@ -33,7 +33,7 @@ export function ClubDetailAdmin() {
 
 	const [opened, { toggle }] = useDisclosure();
 
-	// TODO: maybe these should be joined on the backend. Collect all the data and present as a single response.
+	// TODO: maybe these should be joined in the backend. Collect all the data and present as a single response.
 	// should be much faster in this case.
 	const [
 		{ data: clubDetails },

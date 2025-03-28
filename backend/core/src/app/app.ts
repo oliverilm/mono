@@ -9,7 +9,7 @@ import sensible from '@fastify/sensible';
 import type { FastifyInstance } from 'fastify';
 import adminRouter from './routes/admin/adminRouter';
 import publicRouter from './routes/public/publicRouter';
-import userRouter from './routes/user/userRouter';
+import userRouter from './routes/user/_router';
 
 /* eslint-disable-next-line */
 

@@ -45,12 +45,9 @@ export default async function (fastify: FastifyInstance) {
 	});
 
 	fastify.post('/competitions/:slug/categories', async (request) => {
-		const slug = slugSchema.parse(request.params);
 		const body = createCompetitionCategorySchema.parse(request.body);
+		const competitionId = body.competitionId;
 		const userId = getAssertedUserIdFromRequest(request);
-		const competitionId = await CompetitionService.getCompetitionIdFromSlug(
-			slug.slug,
-		);
 
 		const isAdmin = await CompetitionService.isAdmin(competitionId, userId);
 
@@ -58,7 +55,7 @@ export default async function (fastify: FastifyInstance) {
 			throw new Error('User is not an admin');
 		}
 
-		return CompetitionService.createCompetitionCategory(slug.slug, body);
+		return CompetitionService.createCompetitionCategory(body);
 	});
 
 	fastify.get('/competitions/:slug/categories', (request) => {

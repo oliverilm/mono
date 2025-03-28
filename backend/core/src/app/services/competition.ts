@@ -252,7 +252,6 @@ export const CompetitionService = {
 		});
 	},
 	createCompetitionCategory: async (
-		slug: string,
 		data: CreateCompetitionCategory,
 	) => {
 		try {
@@ -265,7 +264,7 @@ export const CompetitionService = {
 					},
 					competition: {
 						connect: {
-							slug,
+							id: data.competitionId,
 						},
 					},
 					sex: data.sex,
