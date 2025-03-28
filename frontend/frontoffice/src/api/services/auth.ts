@@ -1,7 +1,11 @@
 import type { LoginCredentials, UserPatch } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { addSkipTakeSearch, client } from '../client';
-import { AuthResponse, NationalIdSearchResult, Profile } from '../utils/common-types';
+import {
+	AuthResponse,
+	NationalIdSearchResult,
+	Profile,
+} from '../utils/common-types';
 
 export class Auth {
 	static login(data: LoginCredentials): Promise<AxiosResponse<AuthResponse>> {

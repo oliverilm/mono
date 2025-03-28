@@ -21,7 +21,6 @@ const idCache = new LRUCache<string, string>({
 	ttl: 1000 * 60 * 60 * 24,
 });
 
-
 export type SlugOrId =
 	| {
 			id: string;

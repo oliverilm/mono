@@ -13,6 +13,10 @@ const commonCache = new LRUCache<string, Category[]>({
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {
 	fastify.get('/categories', async () => {
-		return getSetReturn(commonCache, "categories", (await prisma.category.findMany()))
+		return getSetReturn(
+			commonCache,
+			'categories',
+			await prisma.category.findMany(),
+		);
 	});
 }

@@ -9,5 +9,5 @@ export class Api {
 	public static club = ClubAPI;
 	public static competition = Competition;
 	public static invitation = InvitationApi;
-	public static camp = CampsAPI
+	public static camp = CampsAPI;
 }

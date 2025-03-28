@@ -6,6 +6,6 @@ export default function (fastify: FastifyInstance) {
 	// TODO: this might also be a slug.
 	fastify.get('/get-by-slug/:id', (request) => {
 		const id = idSchema.parse(request.params);
-		return ClubService.getClubByIdOrSlug({ slug: id.id});
+		return ClubService.getClubByIdOrSlug({ slug: id.id });
 	});
 }

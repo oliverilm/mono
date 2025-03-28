@@ -1,7 +1,7 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance } from 'fastify';
 
 export default function (fastify: FastifyInstance) {
-    fastify.register(import('./competitions'));
-    fastify.register(import('./create'));
-    fastify.register(import('./members'));
+	fastify.register(import('./competitions'));
+	fastify.register(import('./create'));
+	fastify.register(import('./members'));
 }

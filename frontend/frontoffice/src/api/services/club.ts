@@ -18,7 +18,9 @@ export class ClubAPI {
 		return client.post('/user/club/create', data);
 	}
 
-	static getClubMembers(slug?: string): Promise<AxiosResponse<Profile[]> | null> {
+	static getClubMembers(
+		slug?: string,
+	): Promise<AxiosResponse<Profile[]> | null> {
 		if (!slug) return Promise.resolve(null);
 		return client.get(`/user/club/${slug}/members`);
 	}
@@ -47,36 +49,30 @@ export class ClubAPI {
 	}
 
 	static updateClub() {
-        throw new Error("Method not implemented.");
+		throw new Error('Method not implemented.');
 	}
 
 	static getProfilesInClub() {
-		throw new Error("Method not implemented.");
-
+		throw new Error('Method not implemented.');
 	}
 
 	static applyToClub() {
-		throw new Error("Method not implemented.");
-
+		throw new Error('Method not implemented.');
 	}
 
 	static acceptApplicationToClub() {
-		throw new Error("Method not implemented.");
-
+		throw new Error('Method not implemented.');
 	}
 
 	static declineApplicationToClub() {
-		throw new Error("Method not implemented.");
-
+		throw new Error('Method not implemented.');
 	}
 
 	static createGhostProfileToClub() {
-		throw new Error("Method not implemented.");
-
+		throw new Error('Method not implemented.');
 	}
 
 	static removeGhostProfileFromClub() {
-		throw new Error("Method not implemented.");
-
+		throw new Error('Method not implemented.');
 	}
-};
+}

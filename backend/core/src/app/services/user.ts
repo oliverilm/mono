@@ -164,7 +164,7 @@ export class UserService {
 	}
 
 	static getUserProfileByUserId(id: string) {
-		return prisma.userProfile.findUnique({ where: { userId: id } })
+		return prisma.userProfile.findUnique({ where: { userId: id } });
 	}
 
 	static getUserProfileByProfileId(
@@ -174,7 +174,7 @@ export class UserService {
 			where: {
 				id: profileId,
 			},
-		})
+		});
 	}
 
 	static searchByEmailExactMatch(email: string) {
@@ -190,7 +190,10 @@ export class UserService {
 		});
 	}
 
-	static async searchByNationalIdExactMatch(nationalId: string, userId: string) {
+	static async searchByNationalIdExactMatch(
+		nationalId: string,
+		userId: string,
+	) {
 		const isAdmin = await ClubService.isAnyClubAdmin(userId);
 
 		if (!isAdmin) {
@@ -221,4 +224,3 @@ export class UserService {
 		});
 	}
 }
-

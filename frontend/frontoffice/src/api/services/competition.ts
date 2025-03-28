@@ -44,7 +44,9 @@ export class Competition {
 	static deleteCompetitor(data: DeleteCompetitor) {
 		return client.post('/user/delete-competitor', data);
 	}
-	static getPrivateCompetitions(): Promise<AxiosResponse<CompetitionListItem[]>> {
+	static getPrivateCompetitions(): Promise<
+		AxiosResponse<CompetitionListItem[]>
+	> {
 		return client.get('/user/competitions/private');
 	}
 	static getCompetition(competitionSlug?: string) {
@@ -104,11 +106,10 @@ export class Competition {
 		return client.post(`/user/competitions/${slug}/competitors`, data);
 	}
 
-
 	static updateCompetitionCategory() {
-		throw new Error("Method not implemented.");
+		throw new Error('Method not implemented.');
 	}
 	static deleteCompetitionCategory() {
-		throw new Error("Method not implemented.");
+		throw new Error('Method not implemented.');
 	}
 }

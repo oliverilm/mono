@@ -3,8 +3,9 @@ import type {
 	CreateCompetitionAdmin,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
-	CreateCompetitor, SkipTake,
-	UpdateCompetition
+	CreateCompetitor,
+	SkipTake,
+	UpdateCompetition,
 } from '@monorepo/utils';
 import {
 	type Competition,
@@ -251,9 +252,7 @@ export const CompetitionService = {
 			},
 		});
 	},
-	createCompetitionCategory: async (
-		data: CreateCompetitionCategory,
-	) => {
+	createCompetitionCategory: async (data: CreateCompetitionCategory) => {
 		try {
 			const result = await prisma.competitionCategory.create({
 				data: {
@@ -316,7 +315,7 @@ export const CompetitionService = {
 			throw new Error('Competition not found');
 		}
 		const clubName = await getUserClubName(userProfile?.clubId);
-		// TODO: validate if this judoka even can be registered here. 
+		// TODO: validate if this judoka even can be registered here.
 		// Otherwise this method could be abused.
 		// could possibly use the method defined above
 		// just insert the competitor id to the where clause.
@@ -450,15 +449,21 @@ export const CompetitionService = {
 		data: CreateCompetitionAdmin,
 		competitionAdminId: string,
 	) => {
-		const isAdmin = await getSetReturn(isAdminCache, `${data.competitionId}-${competitionAdminId}`, (await prisma.competitionAdmin.findFirst({
-			where: {
-				userId: competitionAdminId,
-				competitionId: data.competitionId,
-			},
-			select: {
-				role: true,
-			},
-		}))?.role === CompetitionRole.OWNER);
+		const isAdmin = await getSetReturn(
+			isAdminCache,
+			`${data.competitionId}-${competitionAdminId}`,
+			(
+				await prisma.competitionAdmin.findFirst({
+					where: {
+						userId: competitionAdminId,
+						competitionId: data.competitionId,
+					},
+					select: {
+						role: true,
+					},
+				})
+			)?.role === CompetitionRole.OWNER,
+		);
 
 		if (!isAdmin) {
 			throw new Error('You are not an admin of this competition');
@@ -471,28 +476,38 @@ export const CompetitionService = {
 			},
 		});
 
-		isAdminCache.set(`${data.competitionId}-${data.userId}`, true)
-		return newCompetitionAdmin
+		isAdminCache.set(`${data.competitionId}-${data.userId}`, true);
+		return newCompetitionAdmin;
 	},
 
 	isAdmin: async (competitionId: string, userId: string) => {
-		return getSetReturn(isAdminCache, `${competitionId}-${userId}`, (await prisma.competitionAdmin.count({
-			where: {
-				competitionId,
-				userId,
-			},
-		})) > 0)
+		return getSetReturn(
+			isAdminCache,
+			`${competitionId}-${userId}`,
+			(await prisma.competitionAdmin.count({
+				where: {
+					competitionId,
+					userId,
+				},
+			})) > 0,
+		);
 	},
 
 	getCompetitionIdFromSlug: async (competitionSlug: string) => {
-		return getSetReturn(competitionIdBySlugCache, competitionSlug, (await prisma.competition.findFirst({
-			where: {
-				slug: competitionSlug,
-			},
-			select: {
-				id: true,
-			},
-		}))?.id ?? '');
+		return getSetReturn(
+			competitionIdBySlugCache,
+			competitionSlug,
+			(
+				await prisma.competition.findFirst({
+					where: {
+						slug: competitionSlug,
+					},
+					select: {
+						id: true,
+					},
+				})
+			)?.id ?? '',
+		);
 	},
 	getCompetitionLinks: async function (competitionSlug: string) {
 		const competitionId = await this.getCompetitionIdFromSlug(competitionSlug);
@@ -612,7 +627,7 @@ export const CompetitionService = {
 		}
 
 		competitionIdBySlugCache.set(competition.slug, competition.id);
-		isAdminCache.set(`${competition.id}-${userProfile.userId}`, true)
+		isAdminCache.set(`${competition.id}-${userProfile.userId}`, true);
 
 		return competition;
 	},

@@ -69,11 +69,17 @@ export function ClubDetailAdmin() {
 		<div>
 			<Flex justify={'center'} direction={'column'} align={'center'}>
 				<Title>{clubDetails?.data?.name}</Title>
-				<pre>{JSON.stringify({
-					clubDetails: clubDetails?.data,
-					clubMetadata: clubMetadata?.data,
-					invitations: invitations?.data
-				}, null, 2)}</pre>
+				<pre>
+					{JSON.stringify(
+						{
+							clubDetails: clubDetails?.data,
+							clubMetadata: clubMetadata?.data,
+							invitations: invitations?.data,
+						},
+						null,
+						2,
+					)}
+				</pre>
 			</Flex>
 
 			<Grid>

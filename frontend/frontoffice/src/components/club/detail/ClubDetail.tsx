@@ -15,7 +15,7 @@ export function ClubDetail() {
 		queryFn: () => Api.club.getClubMetadata(slug),
 		enabled: Boolean(slug),
 		cacheTime: Infinity,
-		staleTime: Infinity
+		staleTime: Infinity,
 	});
 
 	if (clubMetadata?.data.isAdmin) return <ClubDetailAdmin />;

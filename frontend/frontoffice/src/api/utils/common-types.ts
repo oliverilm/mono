@@ -1,4 +1,4 @@
-import { NationalId } from "@monorepo/utils";
+import { NationalId } from '@monorepo/utils';
 
 export interface CompetitionListItem {
 	id: string;
@@ -124,7 +124,6 @@ export interface Invitation {
 	profileId: string;
 	invitedById: string;
 }
-
 
 export interface AuthResponse {
 	profile: Profile;
