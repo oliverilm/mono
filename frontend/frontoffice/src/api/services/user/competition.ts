@@ -1,20 +1,20 @@
 import type {
-	CompetitionVisibility,
-	CreateCompetition,
-	CreateCompetitionAdmin,
-	CreateCompetitionCategory,
-	CreateCompetitionLink,
-	CreateCompetitor,
-	DeleteCompetitor,
-	UpdateCompetition,
+    CompetitionVisibility,
+    CreateCompetition,
+    CreateCompetitionAdmin,
+    CreateCompetitionCategory,
+    CreateCompetitionLink,
+    CreateCompetitor,
+    DeleteCompetitor,
+    UpdateCompetition,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { client } from '../../client';
 import {
-	PrivateCompetitor,
-	CompetitionListItem,
-	CompetitionCategory,
-	Competitor,
+    PrivateCompetitor,
+    CompetitionListItem,
+    CompetitionCategory,
+    Competitor,
 } from '../../utils/common-types';
 
 export class UserCompetition {
@@ -43,7 +43,7 @@ export class UserCompetition {
 		return client.post(`/user/competitions/${slug}/admins`, data);
 	}
 	static createCompetitionLink(slug: string, data: CreateCompetitionLink) {
-		return client.post(`/user/competitions/${slug}/links`, data);
+		return client.post(`/user/competition/link/create`, data);
 	}
 	static deleteCompetitor(data: DeleteCompetitor) {
 		return client.post('/user/delete-competitor', data);

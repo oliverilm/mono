@@ -2,10 +2,10 @@ import type { Search, SkipTake } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { client, addSkipTakeSearch } from '../../client';
 import {
-	CompetitionListItem,
-	CompetitionMetadata,
-	CompetitionCategory,
-	CompetitorResponse,
+    CompetitionListItem,
+    CompetitionMetadata,
+    CompetitionCategory,
+    CompetitorResponse,
 } from '../../utils/common-types';
 
 export class PublicCompetition {
@@ -15,21 +15,21 @@ export class PublicCompetition {
 		return client.get(addSkipTakeSearch('/public/competition', skipTake));
 	}
 
-	static getCompetition(competitionSlug?: string) {
-		if (!competitionSlug) return Promise.resolve(null);
-		return client.get(`/public/competition/${competitionSlug}`);
+	static getCompetition(slug?: string) {
+		if (!slug) return Promise.resolve(null);
+		return client.get(`/public/competition/${slug}`);
 	}
 	static getCompetitionMetadata(
 		slug?: string,
 	): Promise<AxiosResponse<CompetitionMetadata> | null> {
 		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/competitions/${slug}/metadata`);
+		return client.get(`/public/competition/metadata/${slug}`);
 	}
 	static getCompetitionCategories(
 		slug?: string,
 	): Promise<AxiosResponse<CompetitionCategory[]> | null> {
 		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/competitions/${slug}/categories`);
+		return client.get(`/public/competition/get-categories/${slug}`);
 	}
 
 	static getCompetitors(
@@ -38,7 +38,7 @@ export class PublicCompetition {
 	): Promise<AxiosResponse<CompetitorResponse> | null> {
 		return client.get(
 			addSkipTakeSearch(
-				`/public/competitions/competitor${slug}/competitors`,
+				`/public/competition/get-competitors/${slug}`,
 				skipTake,
 			),
 		);

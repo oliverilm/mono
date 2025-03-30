@@ -10,15 +10,16 @@ import { prisma } from '../utils/db';
 import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
 import { slugifyString } from '../utils/string';
 import { getSetReturn } from '../utils/cache';
+import { hours } from '../utils/time';
 
 const adminCache = new LRUCache<string, boolean>({
 	max: 500,
-	ttl: 1000 * 60 * 60 * 24,
+	ttl: hours(24),
 });
 
 const idCache = new LRUCache<string, string>({
 	max: 500,
-	ttl: 1000 * 60 * 60 * 24,
+	ttl: hours(24),
 });
 
 export type SlugOrId =
