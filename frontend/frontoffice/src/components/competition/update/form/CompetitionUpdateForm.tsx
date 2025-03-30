@@ -35,7 +35,7 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 	});
 
 	const { mutate } = useMutation({
-		mutationFn: Api.competition.updateCompetition,
+		mutationFn: Api.user.competition.updateCompetition,
 		onSuccess: (data) => {
 			if (data.data.isPublished !== competition.isPublished) {
 				queryClient.invalidateQueries([

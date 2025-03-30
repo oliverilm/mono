@@ -26,7 +26,7 @@ export function CompetitionPage() {
 	] = useQueries([
 		{
 			queryKey: [StaticQueryKey.CompetitionDetail, slug],
-			queryFn: () => Api.competition.getCompetition(slug),
+			queryFn: () => Api.public.competition.getCompetition(slug),
 			enabled: Boolean(slug),
 		},
 		{
@@ -35,12 +35,12 @@ export function CompetitionPage() {
 				slug,
 				authStore.isAuthenticated,
 			],
-			queryFn: () => Api.competition.getCompetitionMetadata(slug),
+			queryFn: () => Api.public.competition.getCompetitionMetadata(slug),
 			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [StaticQueryKey.CompetitionCategories, slug],
-			queryFn: () => Api.competition.getCompetitionCategories(slug),
+			queryFn: () => Api.public.competition.getCompetitionCategories(slug),
 			refetchOnMount: false,
 			refetchOnWindowFocus: false,
 			refetchOnReconnect: false,

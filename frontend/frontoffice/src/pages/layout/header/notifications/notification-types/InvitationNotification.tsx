@@ -1,7 +1,7 @@
 import { Button, Flex, Text, Title } from '@mantine/core';
 import { useMutation, useQueryClient } from 'react-query';
-import { InvitationApi } from '../../../../../api/services/user/invitation';
 import type { Invitation } from '../../../../../api/utils/common-types';
+import { Api } from '../../../../../api';
 
 interface Props {
 	invitation: Invitation;
@@ -10,7 +10,7 @@ export function InvitationNotification({ invitation }: Props) {
 	const queryClient = useQueryClient();
 
 	const { mutate: decide } = useMutation({
-		mutationFn: InvitationApi.decideInvitation,
+		mutationFn: Api.user.invitation.decideInvitation,
 		onSuccess: invalidateQueries,
 	});
 

@@ -26,7 +26,7 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 
 	const { data: matchingUsers } = useQuery({
 		queryKey: ['users-search', search],
-		queryFn: () => Api.auth.getUserByEmail(search),
+		queryFn: () => Api.user.auth.getUserByEmail(search),
 		enabled: search.length > 5,
 		select: (data) => {
 			if (data.data) {

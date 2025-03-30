@@ -7,7 +7,6 @@ import {
 } from '@monorepo/utils';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { InvitationApi } from '../../../../api/services/user/invitation';
 import type { AppError } from '../../../../api/utils/types';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
@@ -45,7 +44,7 @@ export function ClubMemberForm() {
 	});
 
 	const { mutate } = useMutation({
-		mutationFn: (data: CreateMember) => Api.club.createMember(data, slug),
+		mutationFn: (data: CreateMember) => Api.user.club.createMember(data, slug),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: [StaticQueryKey.ClubMembers] });
 			console.log(data);
@@ -58,7 +57,7 @@ export function ClubMemberForm() {
 
 	const { data: result } = useQuery({
 		queryKey: ['national-id-user-search', form.values.nationalId],
-		queryFn: () => Api.auth.getUserByNationalId(form.values.nationalId),
+		queryFn: () => Api.user.auth.getUserByNationalId(form.values.nationalId),
 		enabled: isValidNationalId(
 			form.values.nationalIdType as NationalId,
 			form.values.nationalId,
@@ -123,7 +122,7 @@ export function ClubMemberForm() {
 								) : (
 									<Button
 										onClick={() =>
-											InvitationApi.createInvitation({
+											Api.user.invitation.createInvitation({
 												profileId: result.data?.id ?? '',
 											})
 										}

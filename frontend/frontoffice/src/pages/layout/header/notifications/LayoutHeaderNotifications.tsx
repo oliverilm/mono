@@ -3,9 +3,9 @@ import { useClickOutside, useDisclosure } from '@mantine/hooks';
 import { IconBell } from '@tabler/icons-react';
 import { useRef } from 'react';
 import { useQuery } from 'react-query';
-import { InvitationApi } from '../../../../api/services/user/invitation';
 import { useAuthStore } from '../../../../stores/auth';
 import { InvitationNotification } from './notification-types/InvitationNotification';
+import { Api } from '../../../../api';
 
 export function LayoutHeaderNotifications() {
 	const { isAuthenticated } = useAuthStore();
@@ -16,7 +16,7 @@ export function LayoutHeaderNotifications() {
 
 	const { data: invitations } = useQuery({
 		queryKey: ['my-invitations'],
-		queryFn: () => InvitationApi.getMyInvitations(),
+		queryFn: () => Api.user.invitation.getMyInvitations(),
 		enabled: isAuthenticated,
 	});
 

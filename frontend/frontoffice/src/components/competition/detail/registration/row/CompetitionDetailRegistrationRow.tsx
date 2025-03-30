@@ -26,7 +26,7 @@ export function CompetitionDetailRegistrationRow({
 
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
-		mutationFn: (id: number) => Api.competition.deleteCompetitor({ id }),
+		mutationFn: (id: number) => Api.user.competition.deleteCompetitor({ id }),
 		onSuccess: (data) => {
 			queryClient.setQueryData(
 				['personal-competitors', category.competitionSlug],
@@ -99,7 +99,7 @@ export function ParticipationFormForCategory({
 
 	const { mutate } = useMutation({
 		mutationFn: (data: { data: CreateCompetitor; slug: string }) =>
-			Api.competition.createCompetitor(data.slug, data.data),
+			Api.user.competition.createCompetitor(data.slug, data.data),
 		onSuccess: (data) => {
 			queryClient.setQueryData(
 				['personal-competitors', category.competitionSlug],

@@ -20,7 +20,7 @@ export function RegisterPage() {
 		},
 	});
 
-	const { mutate } = useMutation(Api.auth.createUser, {
+	const { mutate } = useMutation(Api.public.auth.createUser, {
 		onSuccess: (data) => {
 			authStore.setProfile(data.data.profile);
 			localStorage.setItem(LS_TOKEN_KEY, data.data.token);

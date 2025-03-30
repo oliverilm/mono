@@ -19,7 +19,7 @@ export function LoginPage() {
 		},
 	});
 
-	const { mutate } = useMutation(Api.auth.login, {
+	const { mutate } = useMutation(Api.public.auth.login, {
 		onSuccess: (data) => {
 			authStore.setProfile(data.data.profile);
 			localStorage.setItem(LS_TOKEN_KEY, data.data.token);

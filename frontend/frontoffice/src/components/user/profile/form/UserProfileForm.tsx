@@ -20,7 +20,7 @@ export function UserProfileForm() {
 	const onSubmit = async (data: typeof form.values) => {
 		console.log(data);
 
-		const response = await Api.auth.updateUser(data);
+		const response = await Api.user.auth.updateUser(data);
 
 		authStore.setProfile(response.data);
 

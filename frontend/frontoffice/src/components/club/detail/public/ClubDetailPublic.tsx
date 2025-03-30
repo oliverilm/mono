@@ -9,12 +9,12 @@ export function ClubDetailPublic() {
 	const [{ data: clubDetails }, { data: clubMetadata }] = useQueries([
 		{
 			queryKey: [StaticQueryKey.ClubDetails, slug],
-			queryFn: () => Api.club.getClub(slug),
+			queryFn: () => Api.public.club.getClub(slug),
 			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [StaticQueryKey.ClubMetadata, slug],
-			queryFn: () => Api.club.getClubMetadata(slug),
+			queryFn: () => Api.public.club.getClubMetadata(slug),
 			enabled: Boolean(slug),
 		},
 	]);

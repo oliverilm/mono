@@ -17,7 +17,7 @@ const span = {
 export function ClubList() {
 	const { data: clubs } = useQuery({
 		queryKey: [StaticQueryKey.HomeClubs],
-		queryFn: () => Api.club.getPublicClubs({ skip: 0, take: 25 }),
+		queryFn: () => Api.public.club.getPublicClubs({ skip: 0, take: 25 }),
 	});
 
 	return (

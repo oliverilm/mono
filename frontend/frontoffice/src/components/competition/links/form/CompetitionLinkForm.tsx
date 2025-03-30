@@ -24,7 +24,7 @@ export function CompetitionLinkFrom({ competition, onDone }: Props) {
 
 	const { mutate } = useMutation(
 		(data: CreateCompetitionLink) =>
-			Api.competition.createCompetitionLink(competition.slug, data),
+			Api.user.competition.createCompetitionLink(competition.slug, data),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries([

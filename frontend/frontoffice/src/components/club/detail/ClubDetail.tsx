@@ -12,7 +12,7 @@ export function ClubDetail() {
 
 	const { data: clubMetadata } = useQuery({
 		queryKey: [StaticQueryKey.ClubMetadata, slug, userAuthStore.profile?.id],
-		queryFn: () => Api.club.getClubMetadata(slug),
+		queryFn: () => Api.public.club.getClubMetadata(slug),
 		enabled: Boolean(slug),
 		cacheTime: Infinity,
 		staleTime: Infinity,

@@ -43,24 +43,24 @@ export function ClubDetailAdmin() {
 	] = useQueries([
 		{
 			queryKey: [StaticQueryKey.ClubDetails, slug],
-			queryFn: () => Api.club.getClub(slug),
+			queryFn: () => Api.public.club.getClub(slug),
 			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [StaticQueryKey.ClubMetadata, slug],
-			queryFn: () => Api.club.getClubMetadata(slug),
+			queryFn: () => Api.public.club.getClubMetadata(slug),
 			enabled: Boolean(slug),
 		},
 
 		{
 			queryKey: [StaticQueryKey.ClubMembers, slug],
-			queryFn: () => Api.club.getClubMembers(slug),
+			queryFn: () => Api.user.club.getClubMembers(slug),
 			enabled: Boolean(slug),
 		},
 
 		{
 			queryKey: ['club-invitations', slug],
-			queryFn: () => Api.invitation.getCreatedInvitations(),
+			queryFn: () => Api.user.invitation.getCreatedInvitations(),
 			enabled: Boolean(slug),
 		},
 	]);

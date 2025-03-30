@@ -40,7 +40,7 @@ export function CompetitionCategoryForm({ competition, onDone }: Props) {
 
 	const { mutateAsync } = useMutation(
 		({ slug, data }: { slug: string; data: CreateCompetitionCategory }) =>
-			Api.competition.createCompetitionCategory(slug, data),
+			Api.user.competition.createCompetitionCategory(slug, data),
 		{
 			onSuccess: () => {
 				form.reset();

@@ -15,7 +15,7 @@ export function useSystemAuth() {
 			return;
 		}
 
-		const profile = await Api.auth.getProfile();
+		const profile = await Api.user.auth.getProfile();
 
 		if (profile) {
 			authStore.setProfile(profile.data);

@@ -27,7 +27,7 @@ export function CompetitionDetailAdmin({ competition, metadata }: Props) {
 	const [adminOpen, { toggle: toggleAdmin }] = useDisclosure();
 
 	const { mutate } = useMutation({
-		mutationFn: () => Api.competition.getCompetitorExport(competition.slug),
+		mutationFn: () => Api.user.competition.getCompetitorExport(competition.slug),
 		onSuccess: (data) => {
 			// Create a blob and download the file
 			const blob = new Blob([JSON.stringify(data.data)], {

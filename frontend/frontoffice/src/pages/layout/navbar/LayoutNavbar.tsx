@@ -9,7 +9,6 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { ClubAPI } from '../../../api/services/club';
 import { ClubForm } from '../../../components/club/form/ClubForm';
 import { CompetitionFrom } from '../../../components/competition/create/form/CompetitionForm';
 import { DevToolsButton } from '../../../components/dev-tools/DevToolsButton';
@@ -29,13 +28,13 @@ export function LayoutNavbar() {
 	// figure out how to do it better, maybe select the user club slub with the profile  request
 	const { data: userClubData } = useQuery({
 		queryKey: ['user-club', userClub],
-		queryFn: () => ClubAPI.getClubById(userClub),
+		queryFn: () => Api.public.club.getClubById(userClub),
 		enabled: !!userClub,
 	});
 
 	const { data } = useQuery({
 		queryKey: ['competitions-private', authStore.isAuthenticated],
-		queryFn: () => Api.competition.getPrivateCompetitions(),
+		queryFn: () => Api.user.competition.getPrivateCompetitions(),
 	});
 
 	const iconProps = { size: '1rem', stroke: 1.5 };

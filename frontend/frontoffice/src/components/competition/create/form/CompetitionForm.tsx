@@ -18,7 +18,7 @@ export function CompetitionFrom({ onSubmit: onDone }: Props) {
 		},
 	});
 
-	const { mutate } = useMutation(Api.competition.createCompetition, {
+	const { mutate } = useMutation(Api.user.competition.createCompetition, {
 		onSuccess: (data) => {
 			navigate(`/competitions/${data.data.slug}`);
 			queryClient.invalidateQueries([

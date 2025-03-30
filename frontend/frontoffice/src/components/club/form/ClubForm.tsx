@@ -19,7 +19,7 @@ export function ClubForm({ onSubmit: onDone }: Props) {
 
 	const queryClient = useQueryClient();
 
-	const { mutate } = useMutation(Api.club.createClub, {
+	const { mutate } = useMutation(Api.user.club.createClub, {
 		onSuccess: () => {
 			queryClient.invalidateQueries([StaticQueryKey.HomeClubs]);
 			onDone();
