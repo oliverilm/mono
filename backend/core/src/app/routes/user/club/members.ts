@@ -8,7 +8,7 @@ import { withBody } from 'src/app/utils/route-helper';
 
 export default function (fastify: FastifyInstance) {
 	fastify.post(
-		'/:slug/members',
+		'/members/:slug',
 		withBody(createMemberSchema, async (request) => {
 			const userId = getAssertedUserIdFromRequest(request);
 			const slug = slugSchema.parse(request.params);

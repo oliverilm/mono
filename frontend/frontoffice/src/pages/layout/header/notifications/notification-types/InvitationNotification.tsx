@@ -1,6 +1,6 @@
 import { Button, Flex, Text, Title } from '@mantine/core';
 import { useMutation, useQueryClient } from 'react-query';
-import { InvitationApi } from '../../../../../api/services/invitation';
+import { InvitationApi } from '../../../../../api/services/user/invitation';
 import type { Invitation } from '../../../../../api/utils/common-types';
 
 interface Props {

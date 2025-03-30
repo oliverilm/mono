@@ -8,6 +8,6 @@ export default function (fastify: FastifyInstance) {
 		const slug = slugSchema.parse(request.params);
 		const clubId = await ClubService.getClubIdBySlug(slug.slug);
 
-		return ClubRepository.getClubCompetitions(clubId)
+		return ClubRepository.getClubCompetitions(clubId);
 	});
 }

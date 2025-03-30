@@ -7,7 +7,7 @@ import {
 } from '@monorepo/utils';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { InvitationApi } from '../../../../api/services/invitation';
+import { InvitationApi } from '../../../../api/services/user/invitation';
 import type { AppError } from '../../../../api/utils/types';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';

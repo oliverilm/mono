@@ -1,17 +1,9 @@
-import type { LoginCredentials, UserPatch } from '@monorepo/utils';
+import type { UserPatch } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
-import { addSkipTakeSearch, client } from '../client';
-import {
-	AuthResponse,
-	NationalIdSearchResult,
-	Profile,
-} from '../utils/common-types';
+import { client, addSkipTakeSearch } from '../../client';
+import { NationalIdSearchResult, Profile } from '../../utils/common-types';
 
-export class Auth {
-	static login(data: LoginCredentials): Promise<AxiosResponse<AuthResponse>> {
-		return client.post('/public/auth/login', data);
-	}
-
+export class UserAuth {
 	static getUserByNationalId(
 		nationalId: string,
 	): Promise<AxiosResponse<NationalIdSearchResult | null>> {
@@ -32,11 +24,5 @@ export class Auth {
 
 	static getProfile(): Promise<AxiosResponse<Profile>> {
 		return client.get('/user/profile');
-	}
-
-	static createUser(
-		data: LoginCredentials,
-	): Promise<AxiosResponse<AuthResponse>> {
-		return client.post('/public/auth/register', data);
 	}
 }

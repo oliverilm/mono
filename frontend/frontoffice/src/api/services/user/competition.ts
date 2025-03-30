@@ -6,27 +6,31 @@ import type {
 	CreateCompetitionLink,
 	CreateCompetitor,
 	DeleteCompetitor,
-	Search,
-	SkipTake,
 	UpdateCompetition,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
-import { addSkipTakeSearch, client } from '../client';
-import type {
-	CompetitionCategory,
-	CompetitionListItem,
-	CompetitionMetadata,
-	Competitor,
-	CompetitorResponse,
+import { client } from '../../client';
+import {
 	PrivateCompetitor,
-} from '../utils/common-types';
+	CompetitionListItem,
+	CompetitionCategory,
+	Competitor,
+} from '../../utils/common-types';
 
-export class Competition {
-	static getPublicCompetitions(
-		skipTake: SkipTake & Search,
-	): Promise<AxiosResponse<CompetitionListItem[]>> {
-		return client.get(addSkipTakeSearch('/public/competition', skipTake));
+export class UserCompetition {
+	static getPersonalCompetitors(
+		slug?: string,
+	): Promise<AxiosResponse<PrivateCompetitor[]> | null> {
+		if (!slug) return Promise.resolve(null);
+		return client.get(`/user/competition/${slug}/personal-competitors`);
 	}
+
+	static createCompetition(
+		data: CreateCompetition,
+	): Promise<AxiosResponse<CompetitionListItem>> {
+		return client.post('/user/competitions', data);
+	}
+
 	static updateCompetition(
 		data: UpdateCompetition,
 	): Promise<AxiosResponse<CompetitionListItem>> {
@@ -49,28 +53,7 @@ export class Competition {
 	> {
 		return client.get('/user/competitions/private');
 	}
-	static getCompetition(competitionSlug?: string) {
-		if (!competitionSlug) return Promise.resolve(null);
-		return client.get(`/public/competitions/${competitionSlug}`);
-	}
-	static getCompetitionMetadata(
-		slug?: string,
-	): Promise<AxiosResponse<CompetitionMetadata> | null> {
-		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/competitions/${slug}/metadata`);
-	}
-	static createCompetition(
-		data: CreateCompetition,
-	): Promise<AxiosResponse<CompetitionListItem>> {
-		return client.post('/user/competitions', data);
-	}
 
-	static getCompetitionCategories(
-		slug?: string,
-	): Promise<AxiosResponse<CompetitionCategory[]> | null> {
-		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/competitions/${slug}/categories`);
-	}
 	static createCompetitionCategory(
 		slug: string,
 		data: CreateCompetitionCategory,
@@ -81,22 +64,6 @@ export class Competition {
 	// TODO: maybe this should be a patch instead and also connected with update
 	static configureVisibility(slug: string, data: CompetitionVisibility) {
 		return client.post(`/competitions/${slug}/configure-visibility`, data);
-	}
-
-	static getCompetitors(
-		slug: string,
-		skipTake: SkipTake,
-	): Promise<AxiosResponse<CompetitorResponse> | null> {
-		return client.get(
-			addSkipTakeSearch(`/public/competitions/${slug}/competitors`, skipTake),
-		);
-	}
-
-	static getPersonalCompetitors(
-		slug?: string,
-	): Promise<AxiosResponse<PrivateCompetitor[]> | null> {
-		if (!slug) return Promise.resolve(null);
-		return client.get(`/user/competitions/${slug}/personal-competitors`);
 	}
 
 	static createCompetitor(

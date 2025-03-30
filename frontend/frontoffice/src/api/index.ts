@@ -1,13 +1,9 @@
-import { Auth } from './services/auth';
-import { CampsAPI } from './services/camps';
-import { ClubAPI } from './services/club';
-import { Competition } from './services/competition';
-import { InvitationApi } from './services/invitation';
+import { Admin } from './services/admin';
+import { Public } from './services/public';
+import { User } from './services/user';
 
 export class Api {
-	public static auth = Auth;
-	public static club = ClubAPI;
-	public static competition = Competition;
-	public static invitation = InvitationApi;
-	public static camp = CampsAPI;
+	public static public = Public;
+	public static user = User;
+	public static admin = Admin;
 }

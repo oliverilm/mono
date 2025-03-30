@@ -4,7 +4,7 @@ import { Notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
 import { useQueries } from 'react-query';
 import { Outlet } from 'react-router-dom';
-import { CommonAPI } from '../../api/services/common.js';
+import { CommonAPI } from '../../api/services/public/common.js';
 import type { Category } from '../../api/utils/common-types.ts';
 import { HEADER_HEIGHT } from '../../constants.ts';
 import { useAuthStore } from '../../stores/auth.ts';

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Category } from '../api/services/common';
+import { Category } from '../api/services/public/common';
 
 interface CommonStore {
 	categories: Category[];

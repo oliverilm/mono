@@ -101,6 +101,7 @@ export const ClubService = {
 				})
 			)?.id ?? '',
 		),
+
 	getClubByIdOrSlug: (slugOrId: SlugOrId): Promise<Club | null> | null => {
 		if ('id' in slugOrId) {
 			return prisma.club.findUnique({

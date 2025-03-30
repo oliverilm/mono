@@ -4,10 +4,10 @@ import type {
 	InvitationQueryParam,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
-import { client } from '../client';
-import type { Invitation } from '../utils/common-types';
+import { client } from '../../client';
+import type { Invitation } from '../../utils/common-types';
 
-export class InvitationApi {
+export class UserInvitation {
 	static getMyInvitations(): Promise<AxiosResponse<Invitation[]>> {
 		return client.get('/user/invitation/to');
 	}

@@ -1,19 +1,9 @@
-import type {
-	ClubCreate,
-	CreateMember,
-	Search,
-	SkipTake,
-} from '@monorepo/utils';
+import type { ClubCreate, CreateMember } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
-import { addSkipTakeSearch, client } from '../client';
-import type { Club, ClubMetadata, Profile } from '../utils/common-types';
+import { client } from '../../client';
+import { Profile } from '../../utils/common-types';
 
-export class ClubAPI {
-	static getClub(slug?: string) {
-		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/clubs/get-by-slug/${slug}`);
-	}
-
+export class UserClub {
 	static createClub(data: ClubCreate) {
 		return client.post('/user/club/create', data);
 	}
@@ -28,24 +18,6 @@ export class ClubAPI {
 	static createMember(data: CreateMember, slug?: string) {
 		if (!slug) return Promise.resolve(null);
 		return client.post(`/user/club/${slug}/members`, data);
-	}
-
-	static getPublicClubs(
-		query: SkipTake & Search,
-	): Promise<AxiosResponse<Club[]>> {
-		return client.get(addSkipTakeSearch('/public/clubs', query));
-	}
-
-	static getClubById(id?: string | null): Promise<AxiosResponse<Club> | null> {
-		if (!id) return Promise.resolve(null);
-		return client.get(`/public/clubs/get-by-id/${id}`);
-	}
-
-	static getClubMetadata(
-		slug?: string,
-	): Promise<AxiosResponse<ClubMetadata> | null> {
-		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/clubs/${slug}/metadata`);
 	}
 
 	static updateClub() {
