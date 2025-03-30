@@ -2,7 +2,7 @@ import { clubCreateSchema } from '@monorepo/utils';
 import { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { tryHandleKnownErrors } from 'src/app/utils/error';
-import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
+import { requestUserId } from 'src/app/utils/request';
 import { withBody } from 'src/app/utils/route-helper';
 
 export default function (fastify: FastifyInstance) {
@@ -12,7 +12,7 @@ export default function (fastify: FastifyInstance) {
 			try {
 				const response = await ClubService.create({
 					...request.body,
-					userId: getAssertedUserIdFromRequest(request),
+					userId: requestUserId(request),
 				});
 
 				return response;

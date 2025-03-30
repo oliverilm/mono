@@ -1,57 +1,67 @@
 import type {
-    CompetitionVisibility,
-    CreateCompetition,
-    CreateCompetitionAdmin,
-    CreateCompetitionCategory,
-    CreateCompetitionLink,
-    CreateCompetitor,
-    DeleteCompetitor,
-    UpdateCompetition,
+	CompetitionVisibility,
+	CreateCompetition,
+	CreateCompetitionAdmin,
+	CreateCompetitionCategory,
+	CreateCompetitionLink,
+	CreateCompetitor,
+	DeleteCompetitor,
+	UpdateCompetition,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { client } from '../../client';
 import {
-    PrivateCompetitor,
-    CompetitionListItem,
-    CompetitionCategory,
-    Competitor,
+	PrivateCompetitor,
+	CompetitionListItem,
+	CompetitionCategory,
+	Competitor,
 } from '../../utils/common-types';
 
+// POST /user/competition/category/create
+// GET /user/competition/category/list/:slug
+// POST /user/competition/competitor/competitors
+// DELETE /user/competition/competitor/delete
+// POST /user/competition/link/create
 export class UserCompetition {
+	// POST /user/competition/admin/
+
+	// GET /user/competition/competitor/get-personal/:slug
 	static getPersonalCompetitors(
 		slug?: string,
 	): Promise<AxiosResponse<PrivateCompetitor[]> | null> {
 		if (!slug) return Promise.resolve(null);
-		return client.get(`/user/competition/${slug}/personal-competitors`);
+		return client.get(`/user/competition/competitor/get-personal/${slug}`);
 	}
 
+	// POST /user/competition/
 	static createCompetition(
 		data: CreateCompetition,
 	): Promise<AxiosResponse<CompetitionListItem>> {
 		return client.post('/user/competitions', data);
 	}
 
+	// PATCH /user/competition/
 	static updateCompetition(
 		data: UpdateCompetition,
 	): Promise<AxiosResponse<CompetitionListItem>> {
 		return client.patch('/user/competitions', data);
 	}
 	static getCompetitorExport(slug: string) {
-		return client.post(`/user/competitions/${slug}/export`);
+		return client.post(`/user/competitions/export/${slug}`);
 	}
 	static createCompetitionAdmin(slug: string, data: CreateCompetitionAdmin) {
 		return client.post(`/user/competitions/${slug}/admins`, data);
 	}
-	static createCompetitionLink(slug: string, data: CreateCompetitionLink) {
+	static createCompetitionLink(data: CreateCompetitionLink) {
 		return client.post(`/user/competition/link/create`, data);
 	}
 	static deleteCompetitor(data: DeleteCompetitor) {
-		return client.post('/user/delete-competitor', data);
+		return client.post('/user/competition/competitor/delete', data);
 	}
 	static getPrivateCompetitions(): Promise<
 		AxiosResponse<CompetitionListItem[]>
 	> {
-		return client.get('/user/competitions/private');
+		return client.get('/user/competition/get-private');
 	}
 
 	static createCompetitionCategory(
@@ -70,7 +80,7 @@ export class UserCompetition {
 		slug: string,
 		data: CreateCompetitor,
 	): Promise<AxiosResponse<Competitor>> {
-		return client.post(`/user/competitions/${slug}/competitors`, data);
+		return client.post(`/user/competition/competitor/create`, data);
 	}
 
 	static updateCompetitionCategory() {

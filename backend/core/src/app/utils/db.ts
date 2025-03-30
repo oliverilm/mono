@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import type { FastifyRequest } from 'fastify';
-import { getAssertedUserIdFromRequest } from './request';
+import { requestUserId } from './request';
 
 export const prisma = new PrismaClient();
 
 export function getUserProfileFromRequest(request: FastifyRequest) {
-	const userId = getAssertedUserIdFromRequest(request);
+	const userId = requestUserId(request);
 	return prisma.userProfile.findUnique({ where: { userId } });
 }

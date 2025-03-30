@@ -1,14 +1,14 @@
 import { createCompetitionCategorySchema } from '@monorepo/utils';
 import { FastifyInstance } from 'fastify';
 import { CompetitionService } from 'src/app/services/competition';
-import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
+import { requestUserId } from 'src/app/utils/request';
 import { withBody } from 'src/app/utils/route-helper';
 
 export default function (fastify: FastifyInstance) {
 	fastify.post(
 		'/create',
 		withBody(createCompetitionCategorySchema, async (request) => {
-			const userId = getAssertedUserIdFromRequest(request);
+			const userId = requestUserId(request);
 			const isAdmin = await CompetitionService.isAdmin(
 				request.body.competitionId,
 				userId,

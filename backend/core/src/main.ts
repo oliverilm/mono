@@ -9,14 +9,13 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const server = Fastify({
 	logger: true,
 });
-await server.register(fastifyPrintRoutes)
+await server.register(fastifyPrintRoutes);
 
 // Register your application as a normal plugin.
 server.register(app);
 
 // Start listening.
 server.listen({ port, host }, (err) => {
-
 	if (err) {
 		server.log.error(err);
 		process.exit(1);

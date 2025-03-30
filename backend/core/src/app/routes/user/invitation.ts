@@ -7,13 +7,13 @@ import type { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { prisma } from 'src/app/utils/db';
 import { UserService } from '../../services/user';
-import { getAssertedUserIdFromRequest } from '../../utils/request';
+import { requestUserId } from '../../utils/request';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
 	fastify.get('/invitation/to', async (request) => {
 		const profile = await UserService.getUserProfileByUserId(
-			getAssertedUserIdFromRequest(request),
+			requestUserId(request),
 		);
 		return prisma.invitation.findMany({
 			where: {
@@ -25,7 +25,7 @@ export default async function (fastify: FastifyInstance) {
 
 	fastify.post('/invitation', async (request) => {
 		const payload = invitatationCreateSchema.parse(request.body);
-		const userId = getAssertedUserIdFromRequest(request);
+		const userId = requestUserId(request);
 		const profile = await UserService.getUserProfileByUserId(userId);
 		if (!profile) {
 			throw new Error('Profile not found');
@@ -65,7 +65,7 @@ export default async function (fastify: FastifyInstance) {
 	 * This endpoint is used to get all invitations that the user or its club has created
 	 */
 	fastify.get('/invitation/from', async (request) => {
-		const userId = getAssertedUserIdFromRequest(request);
+		const userId = requestUserId(request);
 		const profile = await UserService.getUserProfileByUserId(userId);
 
 		if (!profile) {
@@ -85,7 +85,7 @@ export default async function (fastify: FastifyInstance) {
 	});
 
 	fastify.post('/invitation/decide/:id', async (request) => {
-		const userId = getAssertedUserIdFromRequest(request);
+		const userId = requestUserId(request);
 		const profile = await UserService.getUserProfileByUserId(userId);
 		const query = invitationQueryParamSchema.parse(request.params);
 		const payload = invitationDecideSchema.parse(request.body);

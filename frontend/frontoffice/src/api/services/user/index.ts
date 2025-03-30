@@ -10,7 +10,6 @@ export class User {
 	public static competition = UserCompetition;
 }
 
-
 /* 
 ╔═══════════╤═══════════════════════════════════════════╗
 ║ Method(s) │ Path                                      ║

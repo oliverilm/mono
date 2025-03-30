@@ -3,6 +3,8 @@ import { FastifyInstance } from 'fastify';
 export default function (fastify: FastifyInstance) {
 	fastify.register(import('./create'));
 	fastify.register(import('./update'));
+	fastify.register(import('./export'));
+	fastify.register(import('./get-private'));
 
 	fastify.register(import('./category/_router'), { prefix: '/category' });
 	fastify.register(import('./competitor/_router'), { prefix: '/competitor' });

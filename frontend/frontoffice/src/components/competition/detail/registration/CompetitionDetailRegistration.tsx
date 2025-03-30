@@ -19,7 +19,8 @@ export function CompetitionDetailRegistration({
 }: Props) {
 	const { data: competitors } = useQuery({
 		queryKey: ['personal-competitors', competition.slug],
-		queryFn: () => Api.user.competition.getPersonalCompetitors(competition.slug),
+		queryFn: () =>
+			Api.user.competition.getPersonalCompetitors(competition.slug),
 		enabled: Boolean(competition.slug),
 	});
 

@@ -1,19 +1,19 @@
 import { searchSchema, userPatchSchema } from '@monorepo/utils';
 import type { FastifyInstance } from 'fastify';
 import { UserService } from '../../services/user';
-import { getAssertedUserIdFromRequest } from '../../utils/request';
+import { requestUserId } from '../../utils/request';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
 	fastify.get('/profile', (request) => {
-		return UserService.getUserProfile(getAssertedUserIdFromRequest(request));
+		return UserService.getUserProfile(requestUserId(request));
 	});
 
 	fastify.patch('/profile', (request) => {
 		const payload = userPatchSchema.parse(request.body);
 		return UserService.updateUserProfile({
 			...payload,
-			userId: getAssertedUserIdFromRequest(request),
+			userId: requestUserId(request),
 		});
 	});
 
@@ -32,7 +32,7 @@ export default async function (fastify: FastifyInstance) {
 		}
 		return UserService.searchByNationalIdExactMatch(
 			searchParam.search,
-			getAssertedUserIdFromRequest(request),
+			requestUserId(request),
 		);
 	});
 }

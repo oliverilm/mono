@@ -8,7 +8,8 @@ import { Api } from '../../../api';
 export function CompetitionCarousel() {
 	const { data: competitions } = useQuery({
 		queryKey: [StaticQueryKey.HomeCompetitions],
-		queryFn: () => Api.public.competition.getPublicCompetitions({ skip: 0, take: 25 }),
+		queryFn: () =>
+			Api.public.competition.getPublicCompetitions({ skip: 0, take: 25 }),
 	});
 
 	const slideSize = useMatches({

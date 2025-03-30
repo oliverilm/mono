@@ -17,25 +17,22 @@ export function CompetitionLinkFrom({ competition, onDone }: Props) {
 
 	const form = useForm<CreateCompetitionLink>({
 		initialValues: {
+			competitionId: competition.id,
 			label: '',
 			url: '',
 		},
 	});
 
-	const { mutate } = useMutation(
-		(data: CreateCompetitionLink) =>
-			Api.user.competition.createCompetitionLink(competition.slug, data),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries([
-					StaticQueryKey.CompetitionMetadata,
-					competition.slug,
-					authStore.isAuthenticated,
-				]);
-				onDone();
-			},
+	const { mutate } = useMutation(Api.user.competition.createCompetitionLink, {
+		onSuccess: () => {
+			queryClient.invalidateQueries([
+				StaticQueryKey.CompetitionMetadata,
+				competition.slug,
+				authStore.isAuthenticated,
+			]);
+			onDone();
 		},
-	);
+	});
 
 	const onSubmit = (values: typeof form.values) => {
 		mutate(values);

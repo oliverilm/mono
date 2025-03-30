@@ -1,6 +1,6 @@
 import { idSchema, skipTakeSchema, slugSchema } from '@monorepo/utils';
 import type { FastifyInstance } from 'fastify';
-import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
+import { requestUserId } from 'src/app/utils/request';
 import { ClubService } from '../../services/club';
 
 // PUBLIC ENDPOINTS
@@ -28,7 +28,7 @@ export default async function (fastify: FastifyInstance) {
 			throw new Error('Club not found');
 		}
 
-		const userId = getAssertedUserIdFromRequest(request);
+		const userId = requestUserId(request);
 
 		const [isAdmin, admins] = await Promise.all([
 			userId ? ClubService.isClubAdmin(userId, club.id) : false,

@@ -39,6 +39,7 @@ export type CreateCompetitionCategory = z.infer<
 >;
 
 export const createCompetitionLinkSchema = z.object({
+	competitionId: z.string(),
 	url: z.string(),
 	label: z.string(),
 });

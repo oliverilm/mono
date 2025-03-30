@@ -236,9 +236,8 @@ export const CompetitionService = {
 	createCompetitionLink: async function (
 		data: CreateCompetitionLink,
 		userId: string,
-		slug: string,
 	) {
-		const competitionId = await this.getCompetitionIdFromSlug(slug);
+		const { competitionId } = data;
 		const isAdmin = await this.isAdmin(competitionId, userId);
 
 		if (!isAdmin) {

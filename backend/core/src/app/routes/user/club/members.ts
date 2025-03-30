@@ -3,14 +3,14 @@ import { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { UserService } from 'src/app/services/user';
 import { prisma } from 'src/app/utils/db';
-import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
+import { requestUserId } from 'src/app/utils/request';
 import { withBody } from 'src/app/utils/route-helper';
 
 export default function (fastify: FastifyInstance) {
 	fastify.post(
 		'/members/:slug',
 		withBody(createMemberSchema, async (request) => {
-			const userId = getAssertedUserIdFromRequest(request);
+			const userId = requestUserId(request);
 			const slug = slugSchema.parse(request.params);
 			const clubId = (await ClubService.getClubByIdOrSlug(slug))?.id;
 
@@ -23,7 +23,7 @@ export default function (fastify: FastifyInstance) {
 	);
 
 	fastify.get('/:slug/members', async (request) => {
-		const userId = getAssertedUserIdFromRequest(request);
+		const userId = requestUserId(request);
 		const user = await UserService.getUserProfileByUserId(userId);
 		const slug = slugSchema.parse(request.params);
 

@@ -3,14 +3,14 @@ import { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { UserService } from 'src/app/services/user';
 import { prisma } from 'src/app/utils/db';
-import { getAssertedUserIdFromRequest } from 'src/app/utils/request';
+import { requestUserId } from 'src/app/utils/request';
 import { withBody } from 'src/app/utils/route-helper';
 
 export default function (fastify: FastifyInstance) {
-	fastify.delete(
+	fastify.post(
 		'/delete',
 		withBody(deleteCompetitorSchema, async (request) => {
-			const userId = getAssertedUserIdFromRequest(request);
+			const userId = requestUserId(request);
 
 			const { id } = request.body;
 			const competitor = await prisma.competitor.findUnique({

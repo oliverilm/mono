@@ -12,18 +12,18 @@ export class PublicClub {
 	static getPublicClubs(
 		query: SkipTake & Search,
 	): Promise<AxiosResponse<Club[]>> {
-		return client.get(addSkipTakeSearch('/public/clubs', query));
+		return client.get(addSkipTakeSearch('/public/club', query));
 	}
 
 	static getClubById(id?: string | null): Promise<AxiosResponse<Club> | null> {
 		if (!id) return Promise.resolve(null);
-		return client.get(`/public/clubs/get-by-id/${id}`);
+		return client.get(`/public/club/get-by-id/${id}`);
 	}
 
 	static getClubMetadata(
 		slug?: string,
 	): Promise<AxiosResponse<ClubMetadata> | null> {
 		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/clubs/${slug}/metadata`);
+		return client.get(`/public/club/metadata/${slug}`);
 	}
 }
