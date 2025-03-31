@@ -2,7 +2,13 @@ import type { UserPatch } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { client, addSkipTakeSearch } from '../../client';
 import { NationalIdSearchResult, Profile } from '../../utils/common-types';
-
+export interface UserSearchResult { email: string; id: string, userProfile: {
+	firstName: string | null;
+	lastName: string | null;
+	club: {
+		name: string
+	}
+} }
 export class UserAuth {
 	static getUserByNationalId(
 		nationalId: string,
@@ -12,7 +18,7 @@ export class UserAuth {
 
 	static getUserByEmail(
 		email: string,
-	): Promise<AxiosResponse<{ email: string; id: string }>> {
+	): Promise<AxiosResponse<UserSearchResult>> {
 		return client.get(
 			addSkipTakeSearch('/user/user-by-email', { search: email }),
 		);

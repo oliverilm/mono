@@ -30,6 +30,7 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 		enabled: search.length > 5,
 		select: (data) => {
 			if (data.data) {
+				// TODO: return regular data and beatifully show the user to the dropdown
 				return [
 					{
 						value: data?.data?.id,
@@ -66,6 +67,7 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 					}
 					searchable
 					onSearchChange={(e) => setSearch(e)}
+
 					searchValue={search}
 				/>
 

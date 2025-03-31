@@ -186,8 +186,20 @@ export class UserService {
 			select: {
 				id: true,
 				email: true,
+				userProfile: {
+					select: {
+						firstName: true,
+						lastName: true,
+						club: {
+							select: {
+								name: true,
+							},
+						},
+					},
+				},
+				}
 			},
-		});
+		);
 	}
 
 	static async searchByNationalIdExactMatch(
