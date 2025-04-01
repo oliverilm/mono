@@ -1,10 +1,13 @@
 import { loginCredentialSchema } from '@monorepo/utils';
 import { FastifyInstance } from 'fastify';
 import { UserService } from 'src/app/services/user';
+import { withBody } from 'src/app/utils/route-helper';
 
 export default function (fastify: FastifyInstance) {
-	fastify.post('/login', (request) => {
-		const loginCredentials = loginCredentialSchema.parse(request.body);
-		return UserService.login(loginCredentials);
-	});
+	fastify.post(
+		'/login',
+		withBody(loginCredentialSchema, (request) =>
+			UserService.login(request.body),
+		),
+	);
 }

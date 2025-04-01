@@ -197,9 +197,8 @@ export class UserService {
 						},
 					},
 				},
-				}
 			},
-		);
+		});
 	}
 
 	static async searchByNationalIdExactMatch(

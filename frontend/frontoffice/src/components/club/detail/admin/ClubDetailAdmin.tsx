@@ -1,23 +1,10 @@
-import {
-	ActionIcon,
-	Badge,
-	Divider,
-	Flex,
-	Grid,
-	Modal,
-	Table,
-	Text,
-	Title,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconDotsVertical, IconPlus, IconUser } from '@tabler/icons-react';
-import dayjs from 'dayjs';
+import { Flex, Grid, Title } from '@mantine/core';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
-import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
-import { ClubMemberForm } from '../../member/form/ClubMemberForm';
 import { Api } from '../../../../api';
+import { ClubDetailAdminMembers } from './members/ClubDetailAdminMembers';
+import { ClubDetailAdminCompetitions } from './competitions/ClubDetailAdminCompetitions';
 
 const span = {
 	base: 12,
@@ -30,8 +17,6 @@ const span = {
 
 export function ClubDetailAdmin() {
 	const { slug } = useParams<'slug'>();
-
-	const [opened, { toggle }] = useDisclosure();
 
 	// TODO: maybe these should be joined in the backend. Collect all the data and present as a single response.
 	// should be much faster in this case.
@@ -84,73 +69,15 @@ export function ClubDetailAdmin() {
 
 			<Grid>
 				<Grid.Col span={span}>
-					<ThemePaper light={'blue.1'} dark={'blue.9'} p={'sm'}>
-						<Flex justify={'space-between'} my={'xs'}>
-							<Title px="xs" size={'h3'}>
-								Members
-							</Title>
-							<Flex gap={'sm'}>
-								<ActionIcon variant="transparent">
-									<IconDotsVertical />
-								</ActionIcon>
-								<ActionIcon onClick={toggle} variant="transparent">
-									<IconPlus />
-								</ActionIcon>
-							</Flex>
-						</Flex>
-						<Divider my={'xs'} py={'1px'} bg={'gray.3'} />
-						<Table>
-							<Table.Tbody>
-								{clubMembers?.data.map((member) => (
-									<Table.Tr key={member.id}>
-										<Table.Td>
-											<Flex align={'center'} gap={'sm'}>
-												<Text>
-													{member.firstName} {member.lastName}
-												</Text>
-												{member.userId && (
-													<ActionIcon size={'sm'} variant="transparent">
-														<IconUser />
-													</ActionIcon>
-												)}
-
-												{member.userId !== null &&
-													clubMetadata?.data.admins
-														.map((admin) => admin.userId)
-														.includes(member.userId) && (
-														<Badge variant="outline" color={'red'}>
-															admin
-														</Badge>
-													)}
-											</Flex>
-										</Table.Td>
-										<Table.Td>{member.belt}</Table.Td>
-										<Table.Td>{dayjs(member.dateOfBirth).year()}</Table.Td>
-										<Table.Td>{member.belt}</Table.Td>
-										<Table.Td>{member.sex}</Table.Td>
-										<Table.Td align="right">
-											<ActionIcon size={'sm'} variant="transparent">
-												<IconDotsVertical />
-											</ActionIcon>
-										</Table.Td>
-									</Table.Tr>
-								))}
-							</Table.Tbody>
-						</Table>
-					</ThemePaper>
+					<ClubDetailAdminMembers
+						clubMembers={clubMembers?.data}
+						clubMetadata={clubMetadata?.data}
+					/>
 				</Grid.Col>
 				<Grid.Col span={span}>
-					<ThemePaper light={'blue.1'} dark={'blue.9'} p={'sm'}>
-						competitions
-					</ThemePaper>
+					<ClubDetailAdminCompetitions />
 				</Grid.Col>
 			</Grid>
-
-			{clubMetadata?.data.isAdmin && (
-				<Modal opened={opened} onClose={toggle}>
-					<ClubMemberForm />
-				</Modal>
-			)}
 		</div>
 	);
 }

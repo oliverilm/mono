@@ -67,7 +67,6 @@ export function CompetitionDetailAdminForm({ competition }: Props) {
 					}
 					searchable
 					onSearchChange={(e) => setSearch(e)}
-
 					searchValue={search}
 				/>
 

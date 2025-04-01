@@ -17,7 +17,7 @@ export function withBody<T extends z.ZodType>(
 		});
 	};
 }
-
+// For params validation
 export function withParams<T extends z.ZodType>(
 	schema: T,
 	callback: RequestHandler<z.infer<T>>,
@@ -39,7 +39,7 @@ export function withQuery<T extends z.ZodType>(
 		const validatedQuery = schema.parse(request.query);
 		return callback({
 			...request,
-			query: validatedQuery,
+			query: validatedQuery as z.infer<T>,
 		});
 	};
 }
