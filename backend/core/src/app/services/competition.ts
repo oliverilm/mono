@@ -8,122 +8,31 @@ import type {
 	UpdateCompetition,
 } from '@monorepo/utils';
 import {
-	type Competition,
-	type CompetitionCategory,
-	CompetitionCategorySex,
 	CompetitionRole,
 	type Competitor,
-	Sex,
 	type UserProfile,
 } from '@prisma/client';
-import { LRUCache } from 'lru-cache';
+import { ClubDb } from '../db/club.db';
+import { CompetitionDb } from '../db/competition.db';
+import { createCache } from '../utils/cache';
 import { prisma } from '../utils/db';
 import { tryHandleKnownErrors } from '../utils/error';
 import { convertSkipTake } from '../utils/object';
 import { slugifyString } from '../utils/string';
+import { hours } from '../utils/time';
 import { ClubService } from './club';
 import { UserService } from './user';
-import { getSetReturn } from '../utils/cache';
-import { hours } from '../utils/time';
 
-const isAdminCache = new LRUCache<string, boolean>({
-	ttl: hours(1),
-	max: 1000,
-});
-
-const competitionIdBySlugCache = new LRUCache<string, string>({
-	ttl: hours(1),
-	max: 1000,
-});
-
-function queryActiveParticipations({
-	competition,
-	categories,
-	userId,
-	clubId,
-}: {
-	competition: Competition;
-	clubId?: string;
-	userId?: string;
-	categories: CompetitionCategory[];
-}) {
-	return prisma.userProfile.findMany({
-		select: {
-			id: true,
-			firstName: true,
-			lastName: true,
-			sex: true,
-			dateOfBirth: true,
-			participations: {
-				where: {
-					competitionId: competition.id,
-				},
-				select: {
-					id: true,
-					weight: true,
-					seed: true,
-					competitionCategory: {
-						select: {
-							id: true,
-							categoryName: true,
-						},
-					},
-				},
-			},
-		},
-		where: {
-			...(clubId ? { clubId } : {}),
-			...(userId ? { userId } : {}),
-			OR: categories.map(({ sex, smallestYearAllowed, largestYearAllowed }) => {
-				let smallest: Date;
-				let largest: Date;
-
-				if (smallestYearAllowed < largestYearAllowed) {
-					smallest = new Date(smallestYearAllowed, 0, 1, 0, 0, 0);
-					largest = new Date(largestYearAllowed, 11, 31, 23, 59, 59);
-				} else {
-					largest = new Date(smallestYearAllowed, 0, 1, 0, 0, 0);
-					smallest = new Date(largestYearAllowed, 11, 31, 23, 59, 59);
-				}
-
-				const filter = {
-					dateOfBirth: {
-						lte: largest,
-						gte: smallest,
-					},
-				};
-
-				const categorySexAsProfileSex = (() => {
-					if (sex === CompetitionCategorySex.Male) {
-						return Sex.Male;
-					}
-
-					if (sex === CompetitionCategorySex.Female) {
-						return Sex.Female;
-					}
-				})();
-
-				if (categorySexAsProfileSex) {
-					Object.assign(filter, { sex: categorySexAsProfileSex });
-				}
-
-				return filter;
-			}),
-		},
-	});
-}
+const { set: setAdminCacheValue, withCache: withAdminCache } =
+	createCache<boolean>({ ttl: hours(5) });
+const { set: setCompetitionCacheValue, withCache: withCompetitionCache } =
+	createCache<string>({ ttl: hours(1) });
 
 async function getUserClubName(clubId?: string | null) {
 	if (!clubId) return 'Individual';
 
-	const club = await prisma.club.findUnique({
-		where: {
-			id: clubId,
-		},
-		select: {
-			name: true,
-		},
-	});
+	// todo: could only get clubs name
+	const club = await ClubDb.getById(clubId);
 
 	if (!club) return 'Individual';
 	return club.name;
@@ -137,35 +46,14 @@ export const CompetitionService = {
 	) => {
 		const competitionId =
 			await CompetitionService.getCompetitionIdFromSlug(slug);
+
 		const userIsAdmin = await CompetitionService.isAdmin(competitionId, userId);
 
 		if (!userIsAdmin) {
 			throw new Error('Unauthorized');
 		}
 
-		const competitors = await prisma.competitor.findMany({
-			where: {
-				competitionId,
-			},
-			select: {
-				clubName: true,
-				firstName: true,
-				lastName: true,
-				seed: true,
-				weight: true,
-				id: true,
-				competitionCategory: {
-					select: {
-						categoryName: true,
-						category: {
-							select: {
-								value: true,
-							},
-						},
-					},
-				},
-			},
-		});
+		const competitors = await CompetitionDb.getCompetitors(competitionId);
 
 		const flat = competitors.map((competitor) => ({
 			...competitor,
@@ -191,13 +79,8 @@ export const CompetitionService = {
 		userId: string;
 	}) => {
 		// prerequisite: is competition slug valid and competition is open
-		const competition = await CompetitionService.get(slug);
-
-		if (!competition) {
-			throw new Error('Can not fetch entities, competition slug is invalid');
-		}
-
-		const categories = await CompetitionService.getCompetitionCategories(slug);
+		const competition = await CompetitionDb.getCompetitionBySlug(slug);
+		const categories = await CompetitionDb.getCompetitionCategoriesBySlug(slug);
 
 		// 1. check get user club and club role
 		const profile = await UserService.getUserProfile(userId);
@@ -208,7 +91,7 @@ export const CompetitionService = {
 
 		if (!profile.clubId) {
 			// wants to register as individual
-			return queryActiveParticipations({
+			return CompetitionDb.queryActiveParticipations({
 				competition,
 				categories,
 				userId,
@@ -219,14 +102,14 @@ export const CompetitionService = {
 
 		if (!isClubAdmin) {
 			// also wants to register as an individual
-			return queryActiveParticipations({
+			return CompetitionDb.queryActiveParticipations({
 				competition,
 				categories,
 				userId,
 			});
 		}
 
-		return queryActiveParticipations({
+		return CompetitionDb.queryActiveParticipations({
 			competition,
 			categories,
 			clubId: profile.clubId,
@@ -253,37 +136,13 @@ export const CompetitionService = {
 	},
 	createCompetitionCategory: async (data: CreateCompetitionCategory) => {
 		try {
-			const result = await prisma.competitionCategory.create({
-				data: {
-					category: {
-						connect: {
-							id: data.categoryId,
-						},
-					},
-					competition: {
-						connect: {
-							id: data.competitionId,
-						},
-					},
-					sex: data.sex,
-					largestYearAllowed: data.largestYearAllowed,
-					smallestYearAllowed: data.smallestYearAllowed,
-					weights: data.weights,
-				},
-			});
-
-			return result;
+			return await CompetitionDb.createCompetitionCategory(data);
 		} catch (error) {
 			tryHandleKnownErrors(error as Error);
 			throw error;
 		}
 	},
-	getCompetitionCategories: async (slug: string) =>
-		prisma.competitionCategory.findMany({
-			where: {
-				competitionSlug: slug,
-			},
-		}),
+
 	createCompetitor: async (
 		data: CreateCompetitor,
 		userId: string,
@@ -295,20 +154,10 @@ export const CompetitionService = {
 			throw new Error('User profile not found');
 		}
 
-		const competition = await prisma.competition.findUnique({
-			where: {
-				id: data.competitionId,
-				isPublished: true,
-				isArchived: false,
-				registrationEndAt: {
-					gt: new Date(),
-				},
-			},
-			select: {
-				name: true,
-				slug: true,
-			},
-		});
+		const competition =
+			await CompetitionDb.getOpenCompetitionForRegistrationById(
+				data.competitionId,
+			);
 
 		if (!competition) {
 			throw new Error('Competition not found');
@@ -427,29 +276,12 @@ export const CompetitionService = {
 			},
 		};
 	},
-	privateCompetitions: async (userId: string) => {
-		const adminInCompetitions = await prisma.competitionAdmin.findMany({
-			where: {
-				userId,
-				competition: {
-					isArchived: false,
-					isPublished: false,
-				},
-			},
-			select: {
-				competition: true,
-			},
-		});
-
-		return adminInCompetitions.map(({ competition }) => competition);
-	},
 
 	createCompetitionAdmin: async (
 		data: CreateCompetitionAdmin,
 		competitionAdminId: string,
 	) => {
-		const isAdmin = await getSetReturn(
-			isAdminCache,
+		const isAdmin = await withAdminCache(
 			`${data.competitionId}-${competitionAdminId}`,
 			(
 				await prisma.competitionAdmin.findFirst({
@@ -475,54 +307,26 @@ export const CompetitionService = {
 			},
 		});
 
-		isAdminCache.set(`${data.competitionId}-${data.userId}`, true);
+		setAdminCacheValue(`${data.competitionId}-${data.userId}`, true);
 		return newCompetitionAdmin;
 	},
 
 	isAdmin: async (competitionId: string, userId: string) => {
-		return getSetReturn(
-			isAdminCache,
+		return withAdminCache(
 			`${competitionId}-${userId}`,
-			(await prisma.competitionAdmin.count({
-				where: {
-					competitionId,
-					userId,
-				},
-			})) > 0,
+			CompetitionDb.isUserCompetitionAdmin(userId, competitionId),
 		);
 	},
 
 	getCompetitionIdFromSlug: async (competitionSlug: string) => {
-		return getSetReturn(
-			competitionIdBySlugCache,
+		return withCompetitionCache(
 			competitionSlug,
-			(
-				await prisma.competition.findFirst({
-					where: {
-						slug: competitionSlug,
-					},
-					select: {
-						id: true,
-					},
-				})
-			)?.id ?? '',
+			await CompetitionDb.getCompetitionIdBySlug(competitionSlug),
 		);
 	},
 	getCompetitionLinks: async function (competitionSlug: string) {
 		const competitionId = await this.getCompetitionIdFromSlug(competitionSlug);
-
-		const links = await prisma.competitionLink.findMany({
-			where: {
-				competitionId,
-			},
-			select: {
-				id: true,
-				label: true,
-				url: true,
-			},
-		});
-
-		return links;
+		return CompetitionDb.getCompetitionExternalLinks(competitionId);
 	},
 
 	getCompetitionAdmins: async function (
@@ -535,21 +339,8 @@ export const CompetitionService = {
 		const isAdmin = await this.isAdmin(competitionId, userId);
 
 		if (isAdmin) {
-			const admins = await prisma.competitionAdmin.findMany({
-				where: {
-					competitionId,
-				},
-				select: {
-					id: true,
-					user: {
-						select: {
-							id: true,
-							email: true,
-						},
-					},
-					role: true,
-				},
-			});
+			const admins = await CompetitionDb.getCompetitionAdmins(competitionId);
+
 			return {
 				competitionAdmins: admins.map((admin) => {
 					return {
@@ -566,21 +357,11 @@ export const CompetitionService = {
 			competitionAdmins: [],
 		};
 	},
-	get: async (competitionSlug: string) => {
-		// TODO: could add caching here aswell
-		return prisma.competition.findUnique({
-			where: {
-				slug: competitionSlug,
-			},
-		});
-	},
 
 	createCompetition: async ({
 		data,
 		userProfile,
 	}: { data: CreateCompetition; userProfile: UserProfile }) => {
-		const slug = slugifyString(data.name);
-
 		if (!userProfile.userId) {
 			throw new Error('User not found');
 		}
@@ -589,44 +370,18 @@ export const CompetitionService = {
 			throw new Error('User does not belong to a club');
 		}
 
-		const club = await prisma.club.findUnique({
-			where: {
-				id: userProfile.clubId,
-			},
-			select: {
-				name: true,
-			},
-		});
-
-		if (!club) {
-			throw new Error('Invalid club');
-		}
-
-		const competition = await prisma.competition.create({
-			data: {
-				slug,
-				...data,
-				club: {
-					connect: {
-						id: userProfile.clubId,
-					},
-				},
-
-				competitionAdmins: {
-					create: {
-						userId: userProfile.userId,
-						role: CompetitionRole.OWNER,
-					},
-				},
-			},
+		const competition = await CompetitionDb.create({
+			...data,
+			userId: userProfile.userId,
+			clubId: userProfile.clubId,
 		});
 
 		if (!competition) {
 			throw new Error('Something went wrong');
 		}
 
-		competitionIdBySlugCache.set(competition.slug, competition.id);
-		isAdminCache.set(`${competition.id}-${userProfile.userId}`, true);
+		setCompetitionCacheValue(competition.slug, competition.id);
+		setAdminCacheValue(`${competition.id}-${userProfile.userId}`, true);
 
 		return competition;
 	},
@@ -660,7 +415,7 @@ export const CompetitionService = {
 				data,
 			});
 
-			competitionIdBySlugCache.set(competition.slug, competition.id);
+			setCompetitionCacheValue(competition.slug, competition.id);
 			return competition;
 		} catch (error) {
 			tryHandleKnownErrors(error as Error);

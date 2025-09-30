@@ -5,22 +5,15 @@ import type {
 	UserIdObject,
 } from '@monorepo/utils';
 import { type Club, ClubRole, Sex } from '@prisma/client';
-import { LRUCache } from 'lru-cache';
+import { ClubDb } from '../db/club.db';
+import { createCache } from '../utils/cache';
 import { prisma } from '../utils/db';
 import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
 import { slugifyString } from '../utils/string';
-import { getSetReturn } from '../utils/cache';
-import { hours } from '../utils/time';
 
-const adminCache = new LRUCache<string, boolean>({
-	max: 500,
-	ttl: hours(24),
-});
-
-const idCache = new LRUCache<string, string>({
-	max: 500,
-	ttl: hours(24),
-});
+const { set: setAdminCacheValue, withCache: withAdminCache } =
+	createCache<boolean>();
+const { withCache: withIdCache } = createCache<string>();
 
 export type SlugOrId =
 	| {
@@ -30,28 +23,7 @@ export type SlugOrId =
 
 export const ClubService = {
 	getClubAdmins: async (clubId: string) => {
-		const admins = await prisma.clubAdmin.findMany({
-			where: {
-				clubId,
-			},
-			select: {
-				userId: true,
-				user: {
-					select: {
-						id: true,
-						email: true,
-						userProfile: {
-							select: {
-								id: true,
-								firstName: true,
-								lastName: true,
-							},
-						},
-					},
-				},
-				role: true,
-			},
-		});
+		const admins = await ClubDb.getAdmins(clubId);
 
 		return admins.map((admin) => ({
 			email: admin.user.email,
@@ -62,14 +34,9 @@ export const ClubService = {
 		}));
 	},
 	isAnyClubAdmin: async (userId: string): Promise<boolean> => {
-		return getSetReturn(
-			adminCache,
+		return withAdminCache(
 			userId,
-			(await prisma.clubAdmin.count({
-				where: {
-					userId,
-				},
-			})) > 0,
+			(await ClubDb.getUserClubAdminStatusCount(userId)) > 0,
 		);
 	},
 	isClubAdmin: async (
@@ -78,56 +45,27 @@ export const ClubService = {
 	): Promise<boolean> => {
 		if (!clubId) return Promise.resolve(false);
 
-		return getSetReturn(
-			adminCache,
+		return withAdminCache(
 			`${userId}-${clubId}`,
-			(await prisma.clubAdmin.count({
-				where: {
-					userId,
-					clubId,
-				},
-			})) > 0,
+			(await ClubDb.getUserClubAdminStatusCountForClub(userId, clubId)) > 0,
 		);
 	},
 
 	getClubIdBySlug: async (slug: string) =>
-		getSetReturn(
-			idCache,
-			slug,
-			(
-				await prisma.club.findFirst({
-					where: {
-						slug,
-					},
-				})
-			)?.id ?? '',
-		),
+		withIdCache(slug, (await ClubDb.getBySlug(slug))?.id ?? ''),
 
 	getClubByIdOrSlug: (slugOrId: SlugOrId): Promise<Club | null> | null => {
 		if ('id' in slugOrId) {
-			return prisma.club.findUnique({
-				where: {
-					id: slugOrId.id,
-				},
-			});
+			return ClubDb.getById(slugOrId.id);
 		}
 		if ('slug' in slugOrId) {
-			return prisma.club.findFirst({
-				where: {
-					slug: slugOrId.slug,
-				},
-			});
+			return ClubDb.getBySlug(slugOrId.slug);
 		}
 		return null;
 	},
-	getClubList: ({ take = 25, skip = 0 }: SkipTake): Promise<Club[]> =>
-		prisma.club.findMany({
-			take: Number(take),
-			skip: Number(skip),
-			orderBy: {
-				id: 'desc',
-			},
-		}),
+
+	// TODO: REMOVE
+	getClubList: (input: SkipTake): Promise<Club[]> => ClubDb.getClubList(input),
 
 	createMember: async (data: CreateMember, userId: string, clubId: string) => {
 		// member is not already a part of some other club
@@ -147,7 +85,7 @@ export const ClubService = {
 			throw new Error('You are not an admin of any club');
 		}
 
-		const userProfile = await prisma.userProfile.findUnique({
+		const userProfile = await prisma.userProfile.findUniqueOrThrow({
 			where: {
 				userId,
 			},
@@ -156,12 +94,7 @@ export const ClubService = {
 			},
 		});
 
-		if (!userProfile) {
-			throw new Error('userProfile does not exist');
-		}
-
 		// TODO: validate target profiles availability
-
 		const existingUserProfile = await prisma.userProfile.findFirst({
 			where: {
 				nationalId: data.nationalId,
@@ -258,8 +191,8 @@ export const ClubService = {
 		});
 
 		if (admin) {
-			adminCache.set(`${userId}-${clubId}`, true);
-			adminCache.set(userId, true);
+			setAdminCacheValue(`${userId}-${clubId}`, true);
+			setAdminCacheValue(userId, true);
 		}
 	},
 };

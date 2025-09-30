@@ -1,12 +1,12 @@
 import {
-    Table,
-    Text,
-    Flex,
-    ActionIcon,
-    Badge,
-    Divider,
-    Title,
-    Modal,
+	Table,
+	Text,
+	Flex,
+	ActionIcon,
+	Badge,
+	Divider,
+	Title,
+	Modal,
 } from '@mantine/core';
 import { IconUser, IconDotsVertical, IconPlus } from '@tabler/icons-react';
 import dayjs from 'dayjs';

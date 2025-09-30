@@ -1,5 +1,5 @@
 import { skipTakeSchema } from '@monorepo/utils';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 
 export default function (fastify: FastifyInstance) {

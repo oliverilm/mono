@@ -1,11 +1,10 @@
 import {
-  createUserWithEmail,
   registerTestUserAndRetrieveToken,
   TEST_CLUB_NAME,
   TEST_EMAIL,
-  testServer,
+  testServer
 } from '../../../integration-init';
-import { describe, it, expect } from "vitest"
+import { describe, it, expect } from "vitest";
 import { expectAnyString, expectToBeIsoTimestamp } from '../../../utils/helpers';
 import { CreateCompetition } from '@monorepo/utils';
 import { CompetitionRole } from '@prisma/client';
@@ -23,7 +22,7 @@ describe('Competition related actions', () => {
 
     const response = await testServer.inject({
       method: 'POST',
-      url: '/user/competitions',
+      url: '/user/competition/create',
       headers: {
         Authorization: `Bearer ${token}`,
       },

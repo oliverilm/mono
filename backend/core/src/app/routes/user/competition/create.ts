@@ -1,5 +1,5 @@
 import { createCompetitionSchema } from '@monorepo/utils';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { CompetitionService } from 'src/app/services/competition';
 import { getUserProfileFromRequest } from 'src/app/utils/db';
 import { withBody } from 'src/app/utils/route-helper';

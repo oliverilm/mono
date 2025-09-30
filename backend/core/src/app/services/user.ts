@@ -13,12 +13,23 @@ export interface AuthenticationPayload {
 	token: Session['token'];
 }
 
-export class UserService {
-	static async createUser({
+export namespace UserService {
+	export async function createUser({
 		email,
 		password,
 	}: LoginCredentials): Promise<AuthenticationPayload | undefined> {
 		try {
+			const isEmailUnique =
+				(await prisma.user.count({
+					where: {
+						email,
+					},
+				})) === 0;
+
+			if (!isEmailUnique) {
+				throw new Error('something went wrong');
+			}
+
 			const user = await prisma.user.create({
 				data: {
 					email,
@@ -26,11 +37,7 @@ export class UserService {
 				},
 			});
 
-			if (!user) {
-				throw new Error('something went wrong');
-			}
-
-			const [profile, sess] = await Promise.all([
+			const [profile, session] = await Promise.all([
 				prisma.userProfile.create({
 					data: {
 						userId: user.id,
@@ -41,7 +48,7 @@ export class UserService {
 
 			return {
 				profile,
-				token: sess.token,
+				token: session.token,
 			};
 		} catch (error) {
 			// @ts-expect-error --un
@@ -53,7 +60,7 @@ export class UserService {
 		}
 	}
 
-	static async login({
+	export async function login({
 		email,
 		password,
 	}: LoginCredentials): Promise<AuthenticationPayload> {
@@ -83,7 +90,9 @@ export class UserService {
 			token,
 		};
 	}
-	static async getUserProfile(userId: string): Promise<UserProfile | null> {
+	export async function getUserProfile(
+		userId: string,
+	): Promise<UserProfile | null> {
 		const profile = await prisma.userProfile.findUnique({
 			where: {
 				userId,
@@ -92,7 +101,7 @@ export class UserService {
 
 		return profile;
 	}
-	static async updateUserProfile(
+	export async function updateUserProfile(
 		payload: UserPatch,
 	): Promise<UserProfile | null> {
 		const { userId, ...rest } = payload;
@@ -163,11 +172,11 @@ export class UserService {
 		}
 	}
 
-	static getUserProfileByUserId(id: string) {
+	export function getUserProfileByUserId(id: string) {
 		return prisma.userProfile.findUnique({ where: { userId: id } });
 	}
 
-	static getUserProfileByProfileId(
+	export function getUserProfileByProfileId(
 		profileId: string,
 	): Promise<UserProfile | null> {
 		return prisma.userProfile.findUnique({
@@ -177,7 +186,7 @@ export class UserService {
 		});
 	}
 
-	static searchByEmailExactMatch(email: string) {
+	export function searchByEmailExactMatch(email: string) {
 		// perhaps can add caching here but maybe not important
 		return prisma.user.findUnique({
 			where: {
@@ -201,7 +210,7 @@ export class UserService {
 		});
 	}
 
-	static async searchByNationalIdExactMatch(
+	export async function searchByNationalIdExactMatch(
 		nationalId: string,
 		userId: string,
 	) {

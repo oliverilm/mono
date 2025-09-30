@@ -1,5 +1,5 @@
-import { FastifyRequest } from 'fastify';
-import { z } from 'zod';
+import type { FastifyRequest } from 'fastify';
+import type { z } from 'zod';
 
 type RequestHandler<T> = (
 	request: FastifyRequest & { body: T },

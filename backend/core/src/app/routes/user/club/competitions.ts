@@ -1,5 +1,5 @@
 import { slugSchema } from '@monorepo/utils';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { ClubRepository } from 'src/repositories/club';
 

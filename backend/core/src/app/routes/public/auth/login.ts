@@ -1,5 +1,5 @@
 import { loginCredentialSchema } from '@monorepo/utils';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { UserService } from 'src/app/services/user';
 import { withBody } from 'src/app/utils/route-helper';
 

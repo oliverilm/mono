@@ -1,5 +1,5 @@
 import { slugSchema } from '@monorepo/utils';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { CompetitionService } from 'src/app/services/competition';
 
 export default function (fastify: FastifyInstance) {

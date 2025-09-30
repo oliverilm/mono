@@ -1,5 +1,5 @@
 import { clubCreateSchema } from '@monorepo/utils';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { tryHandleKnownErrors } from 'src/app/utils/error';
 import { requestUserId } from 'src/app/utils/request';
