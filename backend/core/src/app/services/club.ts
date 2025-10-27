@@ -10,19 +10,13 @@ import { createCache } from '../utils/cache';
 import { prisma } from '../utils/db';
 import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
 import { slugifyString } from '../utils/string';
+import type { SlugOrId } from '../utils/types';
 
-const { set: setAdminCacheValue, withCache: withAdminCache } =
-	createCache<boolean>();
+const { cache: adminCache, withCache: withAdminCache } = createCache<boolean>();
 const { withCache: withIdCache } = createCache<string>();
 
-export type SlugOrId =
-	| {
-			id: string;
-	  }
-	| { slug: string };
-
-export const ClubService = {
-	getClubAdmins: async (clubId: string) => {
+export namespace ClubService {
+	export async function getClubAdmins(clubId: string) {
 		const admins = await ClubDb.getAdmins(clubId);
 
 		return admins.map((admin) => ({
@@ -32,42 +26,42 @@ export const ClubService = {
 			role: admin.role,
 			userId: admin.userId,
 		}));
-	},
-	isAnyClubAdmin: async (userId: string): Promise<boolean> => {
+	}
+	export async function isAnyClubAdmin(userId: string): Promise<boolean> {
 		return withAdminCache(
 			userId,
-			(await ClubDb.getUserClubAdminStatusCount(userId)) > 0,
+			async () => (await ClubDb.getUserClubAdminStatusCount(userId)) > 0,
 		);
-	},
-	isClubAdmin: async (
+	}
+	export async function isClubAdmin(
 		userId: string,
 		clubId?: string | null,
-	): Promise<boolean> => {
+	): Promise<boolean> {
 		if (!clubId) return Promise.resolve(false);
 
-		return withAdminCache(
-			`${userId}-${clubId}`,
-			(await ClubDb.getUserClubAdminStatusCountForClub(userId, clubId)) > 0,
-		);
-	},
+		const getter = async () => (await ClubDb.getUserClubAdminStatusCountForClub(userId, clubId)) > 0
 
-	getClubIdBySlug: async (slug: string) =>
-		withIdCache(slug, (await ClubDb.getBySlug(slug))?.id ?? ''),
+		return withAdminCache(`${userId}-${clubId}`, getter);
+	}
 
-	getClubByIdOrSlug: (slugOrId: SlugOrId): Promise<Club | null> | null => {
-		if ('id' in slugOrId) {
-			return ClubDb.getById(slugOrId.id);
-		}
-		if ('slug' in slugOrId) {
-			return ClubDb.getBySlug(slugOrId.slug);
-		}
-		return null;
-	},
+	export async function getClubIdBySlug(slug: string) {
+		const getter = async () => (await ClubDb.getBySlug(slug))?.id ?? '';
+		return withIdCache(slug, getter);
+	}
 
+	export async function getClubByIdOrSlug(slugOrId: SlugOrId): Promise<Club> {
+		return ClubDb.getClubBySlugOrId(slugOrId);
+	}
 	// TODO: REMOVE
-	getClubList: (input: SkipTake): Promise<Club[]> => ClubDb.getClubList(input),
+	export function getClubList(input: SkipTake): Promise<Club[]> {
+		return ClubDb.getClubList(input);
+	}
 
-	createMember: async (data: CreateMember, userId: string, clubId: string) => {
+	export async function createMember(
+		data: CreateMember,
+		userId: string,
+		clubId: string,
+	) {
 		// member is not already a part of some other club
 		// if user exists, dont allow to create the member
 		// 	the user should be presented with a button to invite them / automatically added to the club
@@ -116,24 +110,25 @@ export const ClubService = {
 				clubId: userProfile.clubId,
 			},
 		});
-	},
-	create: async ({
+	}
+	
+	export async function create({
 		name,
 		country,
 		userId,
-	}: ClubCreate & UserIdObject): Promise<Club | null> => {
+	}: ClubCreate & UserIdObject): Promise<Club | null> {
 		// PS: this action should require a subscription later on
 		// if user is subscribed then allow them to create a club
 
 		// the price should be dependant on the avg hosting bill in zone or something like that
 
-		const user = await prisma.userProfile.findUnique({
+		const user = await prisma.userProfile.findFirstOrThrow({
 			where: {
 				userId,
 			},
 		});
 
-		if (user?.clubId !== null) {
+		if (user.clubId !== null) {
 			throw new Error('User already belongs to a club');
 		}
 
@@ -173,9 +168,9 @@ export const ClubService = {
 		});
 
 		return club || null;
-	},
+	}
 
-	createClubAdmin: async (userId: string, clubId: string) => {
+	export async function createClubAdmin(userId: string, clubId: string) {
 		const isAdmin = await ClubService.isClubAdmin(userId, clubId);
 
 		if (!isAdmin) {
@@ -191,8 +186,8 @@ export const ClubService = {
 		});
 
 		if (admin) {
-			setAdminCacheValue(`${userId}-${clubId}`, true);
-			setAdminCacheValue(userId, true);
+			adminCache.set(`${userId}-${clubId}`, true);
+			adminCache.set(userId, true);
 		}
-	},
-};
+	}
+}

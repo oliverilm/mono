@@ -23,9 +23,10 @@ import { hours } from '../utils/time';
 import { ClubService } from './club';
 import { UserService } from './user';
 
-const { set: setAdminCacheValue, withCache: withAdminCache } =
-	createCache<boolean>({ ttl: hours(5) });
-const { set: setCompetitionCacheValue, withCache: withCompetitionCache } =
+const { cache: adminCache, withCache: withAdminCache } = createCache<boolean>({
+	ttl: hours(5),
+});
+const { cache: competitionCache, withCache: withCompetitionCache } =
 	createCache<string>({ ttl: hours(1) });
 
 async function getUserClubName(clubId?: string | null) {
@@ -33,17 +34,15 @@ async function getUserClubName(clubId?: string | null) {
 
 	// todo: could only get clubs name
 	const club = await ClubDb.getById(clubId);
-
-	if (!club) return 'Individual';
 	return club.name;
 }
 
-export const CompetitionService = {
-	getCompetitorExport: async (
+export namespace CompetitionService {
+	export async function getCompetitorExport(
 		{ format }: { format: 'JSON' | 'CSV' },
 		userId: string,
 		slug: string,
-	) => {
+	) {
 		const competitionId =
 			await CompetitionService.getCompetitionIdFromSlug(slug);
 
@@ -70,14 +69,14 @@ export const CompetitionService = {
 			return `${header}\n${rows.join('\n')}`;
 		}
 		return null;
-	},
-	getPersonalCompetitors: async ({
+	}
+	export async function getPersonalCompetitors({
 		slug,
 		userId,
 	}: {
 		slug: string;
 		userId: string;
-	}) => {
+	}) {
 		// prerequisite: is competition slug valid and competition is open
 		const competition = await CompetitionDb.getCompetitionBySlug(slug);
 		const categories = await CompetitionDb.getCompetitionCategoriesBySlug(slug);
@@ -114,14 +113,14 @@ export const CompetitionService = {
 			categories,
 			clubId: profile.clubId,
 		});
-	},
+	}
 
-	createCompetitionLink: async function (
+	export async function createCompetitionLink(
 		data: CreateCompetitionLink,
 		userId: string,
 	) {
 		const { competitionId } = data;
-		const isAdmin = await this.isAdmin(competitionId, userId);
+		const isAdmin = await CompetitionService.isAdmin(competitionId, userId);
 
 		if (!isAdmin) {
 			throw new Error('User is not an admin');
@@ -133,20 +132,22 @@ export const CompetitionService = {
 				url: data.url,
 			},
 		});
-	},
-	createCompetitionCategory: async (data: CreateCompetitionCategory) => {
+	}
+	export async function createCompetitionCategory(
+		data: CreateCompetitionCategory,
+	) {
 		try {
 			return await CompetitionDb.createCompetitionCategory(data);
 		} catch (error) {
 			tryHandleKnownErrors(error as Error);
 			throw error;
 		}
-	},
+	}
 
-	createCompetitor: async (
+	export async function createCompetitor(
 		data: CreateCompetitor,
 		userId: string,
-	): Promise<null | Competitor> => {
+	): Promise<null | Competitor> {
 		// TODO: throw everything from here to a transaction maybe
 		const userProfile = await UserService.getUserProfile(userId);
 
@@ -241,8 +242,8 @@ export const CompetitionService = {
 
 			throw error;
 		}
-	},
-	listCompetitors: async (slug: string, skipTake: SkipTake) => {
+	}
+	export async function listCompetitors(slug: string, skipTake: SkipTake) {
 		const competitors = prisma.competitor.findMany({
 			where: {
 				competitionSlug: slug,
@@ -275,28 +276,18 @@ export const CompetitionService = {
 				count: awaitedMetadata,
 			},
 		};
-	},
+	}
 
-	createCompetitionAdmin: async (
+	export async function createCompetitionAdmin(
 		data: CreateCompetitionAdmin,
-		competitionAdminId: string,
-	) => {
-		const isAdmin = await withAdminCache(
-			`${data.competitionId}-${competitionAdminId}`,
-			(
-				await prisma.competitionAdmin.findFirst({
-					where: {
-						userId: competitionAdminId,
-						competitionId: data.competitionId,
-					},
-					select: {
-						role: true,
-					},
-				})
-			)?.role === CompetitionRole.OWNER,
+		userId: string,
+	) {
+		const isOwner = await withAdminCache(
+			`${data.competitionId}-${userId}`,
+			() => CompetitionDb.isUserCompetitionOwner(userId, data.competitionId),
 		);
 
-		if (!isAdmin) {
+		if (!isOwner) {
 			throw new Error('You are not an admin of this competition');
 		}
 
@@ -307,36 +298,36 @@ export const CompetitionService = {
 			},
 		});
 
-		setAdminCacheValue(`${data.competitionId}-${data.userId}`, true);
+		adminCache.set(`${data.competitionId}-${data.userId}`, true);
 		return newCompetitionAdmin;
-	},
+	}
 
-	isAdmin: async (competitionId: string, userId: string) => {
-		return withAdminCache(
-			`${competitionId}-${userId}`,
+	export async function isAdmin(competitionId: string, userId: string) {
+		return withAdminCache(`${competitionId}-${userId}`, () =>
 			CompetitionDb.isUserCompetitionAdmin(userId, competitionId),
 		);
-	},
+	}
 
-	getCompetitionIdFromSlug: async (competitionSlug: string) => {
-		return withCompetitionCache(
-			competitionSlug,
-			await CompetitionDb.getCompetitionIdBySlug(competitionSlug),
+	export async function getCompetitionIdFromSlug(competitionSlug: string) {
+		return withCompetitionCache(competitionSlug, () =>
+			CompetitionDb.getCompetitionIdBySlug(competitionSlug),
 		);
-	},
-	getCompetitionLinks: async function (competitionSlug: string) {
-		const competitionId = await this.getCompetitionIdFromSlug(competitionSlug);
+	}
+	export async function getCompetitionLinks(competitionSlug: string) {
+		const competitionId =
+			await CompetitionService.getCompetitionIdFromSlug(competitionSlug);
 		return CompetitionDb.getCompetitionExternalLinks(competitionId);
-	},
+	}
 
-	getCompetitionAdmins: async function (
+	export async function getCompetitionAdmins(
 		competitionSlug: string,
 		userId?: string,
 	) {
 		if (!userId) return {};
 
-		const competitionId = await this.getCompetitionIdFromSlug(competitionSlug);
-		const isAdmin = await this.isAdmin(competitionId, userId);
+		const competitionId =
+			await CompetitionService.getCompetitionIdFromSlug(competitionSlug);
+		const isAdmin = await CompetitionService.isAdmin(competitionId, userId);
 
 		if (isAdmin) {
 			const admins = await CompetitionDb.getCompetitionAdmins(competitionId);
@@ -356,46 +347,47 @@ export const CompetitionService = {
 		return {
 			competitionAdmins: [],
 		};
-	},
+	}
 
-	createCompetition: async ({
+	export async function createCompetition({
 		data,
-		userProfile,
-	}: { data: CreateCompetition; userProfile: UserProfile }) => {
-		if (!userProfile.userId) {
+		userProfile: { userId, clubId },
+	}: { data: CreateCompetition; userProfile: UserProfile }) {
+		if (!userId) {
 			throw new Error('User not found');
 		}
 
-		if (!userProfile.clubId) {
+		if (!clubId) {
 			throw new Error('User does not belong to a club');
 		}
 
 		const competition = await CompetitionDb.create({
 			...data,
-			userId: userProfile.userId,
-			clubId: userProfile.clubId,
+			userId,
+			clubId,
 		});
 
 		if (!competition) {
 			throw new Error('Something went wrong');
 		}
 
-		setCompetitionCacheValue(competition.slug, competition.id);
-		setAdminCacheValue(`${competition.id}-${userProfile.userId}`, true);
+		competitionCache.set(competition.slug, competition.id);
+		adminCache.set(`${competition.id}-${userId}`, true);
 
 		return competition;
-	},
-	updateCompetition: async function ({
+	}
+	export async function updateCompetition({
 		data,
 		userId,
 	}: { data: UpdateCompetition; userId: string }) {
-		const isAdmin = this.isAdmin(data.id, userId);
+		const isAdmin = CompetitionService.isAdmin(data.id, userId);
 
 		if (!isAdmin) {
 			throw new Error('You are not an admin of this competition');
 		}
 
 		if (data.name) {
+			// TODO: name must be unique, validate this here aswell, not just in the competition creation
 			Object.assign(data, { slug: slugifyString(data.name) });
 		}
 		if (data.startingAt) {
@@ -415,10 +407,10 @@ export const CompetitionService = {
 				data,
 			});
 
-			setCompetitionCacheValue(competition.slug, competition.id);
+			competitionCache.set(competition.slug, competition.id);
 			return competition;
 		} catch (error) {
 			tryHandleKnownErrors(error as Error);
 		}
-	},
-};
+	}
+}

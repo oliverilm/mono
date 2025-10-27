@@ -2,6 +2,7 @@ import type { Search, SkipTake } from '@monorepo/utils';
 import axios from 'axios';
 import { LS_TOKEN_KEY } from '../constants';
 
+
 export const client = axios.create({
 	baseURL: 'http://localhost:3000',
 });

@@ -1,13 +1,14 @@
+import { randomUUID } from 'node:crypto';
 import type {
-    CreateCompetition,
-    CreateCompetitionCategory,
+	CreateCompetition,
+	CreateCompetitionCategory,
 } from '@monorepo/utils';
 import {
-    type Competition,
-    type CompetitionCategory,
-    CompetitionCategorySex,
-    CompetitionRole,
-    Sex,
+	type Competition,
+	type CompetitionCategory,
+	CompetitionCategorySex,
+	CompetitionRole,
+	Sex,
 } from '@prisma/client';
 import { prisma } from '../utils/db';
 import { slugifyString } from '../utils/string';
@@ -229,12 +230,41 @@ export namespace CompetitionDb {
 		});
 	}
 
-	export function create({
+	/**
+	 * probably an overkill method of getting a unique slug
+	 * @param name
+	 * @returns
+	 */
+	export async function getUniqueSlug(name: string): Promise<string> {
+		const uniqueValueStack = ['', new Date().getFullYear().toString()]; // add members
+		let uniqueSlug: string | undefined;
+		let index = 0;
+
+		do {
+			if (!uniqueValueStack.at(index)) {
+				break;
+			}
+
+			const slug = slugifyString(
+				[name, ...uniqueValueStack.slice(0, index)].join('_'),
+			);
+			const isUniqueSlug = await prisma.competition.count({ where: { slug } });
+
+			if (isUniqueSlug) {
+				return slug;
+			}
+			index++;
+		} while (uniqueSlug === undefined);
+
+		return randomUUID().toString();
+	}
+
+	export async function create({
 		userId,
 		clubId,
 		...data
 	}: CreateCompetition & { clubId: string; userId: string }) {
-		const slug = slugifyString(data.name);
+		const slug = await getUniqueSlug(data.name);
 
 		return prisma.competition.create({
 			data: {
@@ -271,5 +301,20 @@ export namespace CompetitionDb {
 		});
 
 		return result.map(({ competition }) => competition);
+	}
+
+	export async function isUserCompetitionOwner(
+		userId: string,
+		competitionId: string,
+	) {
+		return (
+			(await prisma.competitionAdmin.count({
+				where: {
+					userId,
+					competitionId,
+					role: CompetitionRole.OWNER,
+				},
+			})) > 0
+		);
 	}
 }

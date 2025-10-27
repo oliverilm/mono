@@ -1,10 +1,10 @@
 import { Flex, Grid, Title } from '@mantine/core';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { Api } from '../../../../api';
-import { ClubDetailAdminMembers } from './members/ClubDetailAdminMembers';
+import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { ClubDetailAdminCompetitions } from './competitions/ClubDetailAdminCompetitions';
+import { ClubDetailAdminMembers } from './members/ClubDetailAdminMembers';
 
 const span = {
 	base: 12,
@@ -28,12 +28,12 @@ export function ClubDetailAdmin() {
 	] = useQueries([
 		{
 			queryKey: [StaticQueryKey.ClubDetails, slug],
-			queryFn: () => Api.public.club.getClub(slug),
+			queryFn: () => Api.publicApi.club.getClub(slug),
 			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [StaticQueryKey.ClubMetadata, slug],
-			queryFn: () => Api.public.club.getClubMetadata(slug),
+			queryFn: () => Api.publicApi.club.getClubMetadata(slug),
 			enabled: Boolean(slug),
 		},
 

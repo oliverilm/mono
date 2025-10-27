@@ -1,29 +1,32 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import type { Search, SkipTake } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
-import { client, addSkipTakeSearch } from '../../client';
-import { Club, ClubMetadata } from '../../utils/common-types';
+import { addSkipTakeSearch, client } from '../../client';
+import type { Club, ClubMetadata } from '../../utils/common-types';
 
-export class PublicClub {
-	static getClub(slug?: string) {
+export namespace PublicClub {
+	const PREFIX = "/public/club";
+
+	export function getClub(slug?: string) {
 		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/club/get-by-slug/${slug}`);
+		return client.get(`${PREFIX}/get-by-slug/${slug}`);
 	}
 
-	static getPublicClubs(
+	export function getPublicClubs(
 		query: SkipTake & Search,
 	): Promise<AxiosResponse<Club[]>> {
-		return client.get(addSkipTakeSearch('/public/club', query));
+		return client.get(addSkipTakeSearch(`${PREFIX}`, query));
 	}
 
-	static getClubById(id?: string | null): Promise<AxiosResponse<Club> | null> {
+	export function getClubById(id?: string | null): Promise<AxiosResponse<Club> | null> {
 		if (!id) return Promise.resolve(null);
-		return client.get(`/public/club/get-by-id/${id}`);
+		return client.get(`${PREFIX}/get-by-id/${id}`);
 	}
 
-	static getClubMetadata(
+	export function getClubMetadata(
 		slug?: string,
 	): Promise<AxiosResponse<ClubMetadata> | null> {
 		if (!slug) return Promise.resolve(null);
-		return client.get(`/public/club/metadata/${slug}`);
+		return client.get(`${PREFIX}/metadata/${slug}`);
 	}
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import type {
 	InvitationCreate,
 	InvitationDecide,
@@ -7,22 +8,22 @@ import type { AxiosResponse } from 'axios';
 import { client } from '../../client';
 import type { Invitation } from '../../utils/common-types';
 
-export class UserInvitation {
-	static getMyInvitations(): Promise<AxiosResponse<Invitation[]>> {
+export namespace UserInvitation {
+	export function getMyInvitations(): Promise<AxiosResponse<Invitation[]>> {
 		return client.get('/user/invitation/to');
 	}
 
-	static getCreatedInvitations(): Promise<AxiosResponse<unknown>> {
+	export function getCreatedInvitations(): Promise<AxiosResponse<unknown>> {
 		return client.get('/user/invitation/from');
 	}
 
-	static createInvitation(
+	export function createInvitation(
 		data: InvitationCreate,
 	): Promise<AxiosResponse<unknown>> {
 		return client.post('/user/invitation', data);
 	}
 
-	static decideInvitation(
+	export function decideInvitation(
 		data: InvitationQueryParam & InvitationDecide,
 	): Promise<AxiosResponse<unknown>> {
 		return client.post(`/user/invitation/decide/${data.id}`, {

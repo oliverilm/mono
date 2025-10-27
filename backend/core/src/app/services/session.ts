@@ -3,8 +3,8 @@ import type { Session } from '@prisma/client';
 import dayjs from 'dayjs';
 import { prisma } from '../utils/db';
 
-export const SessionService = {
-	createSession(userId: string): Promise<Session> {
+export namespace SessionService {
+	export function createSession(userId: string): Promise<Session> {
 		return prisma.session.create({
 			data: {
 				expiresAt: dayjs().add(3, 'day').toDate(),
@@ -12,9 +12,9 @@ export const SessionService = {
 				userId,
 			},
 		});
-	},
+	}
 
-	getUserSessionFromToken(token: string): Promise<Session | null> {
+	export function getUserSessionFromToken(token: string): Promise<Session | null> {
 		return prisma.session.findFirst({
 			where: {
 				token,
@@ -23,5 +23,5 @@ export const SessionService = {
 				},
 			},
 		});
-	},
+	}
 };

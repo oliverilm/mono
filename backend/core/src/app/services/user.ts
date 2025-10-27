@@ -5,7 +5,7 @@ import { tryHandleKnownErrors } from '../utils/error';
 import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
 import { capitalizeFirstLetter } from '../utils/string';
 import { ClubService } from './club';
-import securify from './securify';
+import { SecurityService } from './securify';
 import { SessionService } from './session';
 
 export interface AuthenticationPayload {
@@ -33,7 +33,7 @@ export namespace UserService {
 			const user = await prisma.user.create({
 				data: {
 					email,
-					password: securify.hashPassword(password),
+					password: SecurityService.hashPassword(password),
 				},
 			});
 
@@ -64,24 +64,20 @@ export namespace UserService {
 		email,
 		password,
 	}: LoginCredentials): Promise<AuthenticationPayload> {
-		const user = await prisma.user.findFirst({
+		const user = await prisma.user.findFirstOrThrow({
 			where: {
 				email,
-				password: securify.hashPassword(password),
+				password: SecurityService.hashPassword(password),
 			},
 		});
 
-		if (!user) {
-			throw new Error('Invalid credentials');
-		}
+		console.log({user})
 
-		const profile = await prisma.userProfile.findUnique({
+		const profile = await prisma.userProfile.findFirstOrThrow({
 			where: {
 				userId: user.id,
 			},
 		});
-
-		if (!profile) throw new Error('aaa');
 
 		const token = (await SessionService.createSession(user.id)).token;
 

@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from '@mantine/core';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
+import { Api } from '../../api';
 import { getCompetitionBannerColorAndStatus } from '../../components/competition/carousel/card/CompetitionCarouselCard.utils';
 import { CompetitionDetailAdmin } from '../../components/competition/detail/admin/CompetitionDetailAdmin';
 import { CompetitionDetailCompetitors } from '../../components/competition/detail/competitors/CompetitionDetailCompetitors';
@@ -13,7 +14,6 @@ import { HEADER_HEIGHT, getRandomTestCompetitionImage } from '../../constants';
 import { StaticQueryKey } from '../../providers/query-provider/keys';
 import { useAuthStore } from '../../stores/auth';
 import { LayoutPage } from '../layout/page/LayoutPage';
-import { Api } from '../../api';
 
 export function CompetitionPage() {
 	const { slug } = useParams<'slug'>();
@@ -26,7 +26,7 @@ export function CompetitionPage() {
 	] = useQueries([
 		{
 			queryKey: [StaticQueryKey.CompetitionDetail, slug],
-			queryFn: () => Api.public.competition.getCompetition(slug),
+			queryFn: () => Api.publicApi.competition.getCompetition(slug),
 			enabled: Boolean(slug),
 		},
 		{
@@ -35,12 +35,12 @@ export function CompetitionPage() {
 				slug,
 				authStore.isAuthenticated,
 			],
-			queryFn: () => Api.public.competition.getCompetitionMetadata(slug),
+			queryFn: () => Api.publicApi.competition.getCompetitionMetadata(slug),
 			enabled: Boolean(slug),
 		},
 		{
 			queryKey: [StaticQueryKey.CompetitionCategories, slug],
-			queryFn: () => Api.public.competition.getCompetitionCategories(slug),
+			queryFn: () => Api.publicApi.competition.getCompetitionCategories(slug),
 			refetchOnMount: false,
 			refetchOnWindowFocus: false,
 			refetchOnReconnect: false,

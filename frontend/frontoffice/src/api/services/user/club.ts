@@ -1,50 +1,51 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import type { ClubCreate, CreateMember } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { client } from '../../client';
-import { Profile } from '../../utils/common-types';
+import type { Profile } from '../../utils/common-types';
 
-export class UserClub {
-	static createClub(data: ClubCreate) {
+export namespace UserClub {
+	export function createClub(data: ClubCreate) {
 		return client.post('/user/club/create', data);
 	}
 
-	static getClubMembers(
+	export function getClubMembers(
 		slug?: string,
 	): Promise<AxiosResponse<Profile[]> | null> {
 		if (!slug) return Promise.resolve(null);
 		return client.get(`/user/club/${slug}/members`);
 	}
 
-	static createMember(data: CreateMember, slug?: string) {
+	export function createMember(data: CreateMember, slug?: string) {
 		if (!slug) return Promise.resolve(null);
 		return client.post(`/user/club/${slug}/members`, data);
 	}
 
-	static updateClub() {
+	export function updateClub() {
 		throw new Error('Method not implemented.');
 	}
 
-	static getProfilesInClub() {
+	export function getProfilesInClub() {
 		throw new Error('Method not implemented.');
 	}
 
-	static applyToClub() {
+	export function applyToClub() {
 		throw new Error('Method not implemented.');
 	}
 
-	static acceptApplicationToClub() {
+	export function acceptApplicationToClub() {
 		throw new Error('Method not implemented.');
 	}
 
-	static declineApplicationToClub() {
+	export function declineApplicationToClub() {
 		throw new Error('Method not implemented.');
 	}
 
-	static createGhostProfileToClub() {
+	export function createGhostProfileToClub() {
 		throw new Error('Method not implemented.');
 	}
 
-	static removeGhostProfileFromClub() {
+	export function removeGhostProfileFromClub() {
 		throw new Error('Method not implemented.');
 	}
 }

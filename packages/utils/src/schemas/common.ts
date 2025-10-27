@@ -3,9 +3,10 @@ import { z } from 'zod';
 const stringOrNumberSchema = z.union([z.number(), z.string()]);
 
 export const skipTakeSchema = z.object({
-	skip: stringOrNumberSchema.optional(),
-	take: stringOrNumberSchema.optional(),
+	skip: stringOrNumberSchema.optional().default(0),
+	take: stringOrNumberSchema.optional().default(10),
 });
+
 export type SkipTake = z.infer<typeof skipTakeSchema>;
 
 export const searchSchema = z.object({

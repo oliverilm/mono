@@ -2,23 +2,22 @@ import { createCompetitionCategorySchema } from '@monorepo/utils';
 import type { FastifyInstance } from 'fastify';
 import { CompetitionService } from 'src/app/services/competition';
 import { requestUserId } from 'src/app/utils/request';
-import { withBody } from 'src/app/utils/route-helper';
+import { createTypedFastify } from '../../../../utils/fastify-typed';
 
 export default function (fastify: FastifyInstance) {
-	fastify.post(
-		'/create',
-		withBody(createCompetitionCategorySchema, async (request) => {
-			const userId = requestUserId(request);
-			const isAdmin = await CompetitionService.isAdmin(
-				request.body.competitionId,
-				userId,
-			);
+	const tf = createTypedFastify(fastify);
 
-			if (!isAdmin) {
-				throw new Error('User is not an admin');
-			}
+	tf.body(createCompetitionCategorySchema).post('/create', async (request) => {
+		const userId = requestUserId(request);
+		const isAdmin = await CompetitionService.isAdmin(
+			request.body.competitionId,
+			userId,
+		);
 
-			return CompetitionService.createCompetitionCategory(request.body);
-		}),
-	);
+		if (!isAdmin) {
+			throw new Error('User is not an admin on this competition');
+		}
+
+		return CompetitionService.createCompetitionCategory(request.body);
+	});
 }

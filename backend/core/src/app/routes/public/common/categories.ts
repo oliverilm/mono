@@ -8,6 +8,6 @@ const { withCache } = createCache<Category[]>();
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {
 	fastify.get('/categories', async () => {
-		return withCache('categories', await prisma.category.findMany());
+		return withCache('categories', prisma.category.findMany);
 	});
 }

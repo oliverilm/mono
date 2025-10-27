@@ -4,13 +4,13 @@ import { Notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
 import { useQueries } from 'react-query';
 import { Outlet } from 'react-router-dom';
+import { Api } from '../../api/index.ts';
 import type { Category } from '../../api/utils/common-types.ts';
 import { HEADER_HEIGHT } from '../../constants.ts';
 import { useAuthStore } from '../../stores/auth.ts';
 import { useCommonStore } from '../../stores/common.ts';
 import { LayoutHeader } from './header/LayoutHeader.tsx';
 import { LayoutNavbar } from './navbar/LayoutNavbar.tsx';
-import { Api } from '../../api/index.ts';
 
 export function Layout() {
 	const { setColorScheme, colorScheme } = useMantineColorScheme();
@@ -21,7 +21,7 @@ export function Layout() {
 	// todo: save competition categories to the store
 	useQueries([
 		{
-			queryFn: Api.public.common.getCategories,
+			queryFn: Api.publicApi.common.getCategories,
 			queryKey: ['common-categories'],
 			refetchOnWindowFocus: false,
 			cacheTime: Number.POSITIVE_INFINITY,

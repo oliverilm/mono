@@ -1,19 +1,19 @@
 import { AppShell, Modal, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-	IconChevronRight,
-	IconCup,
-	IconHome,
-	IconLogout,
-	IconPassword,
+    IconChevronRight,
+    IconCup,
+    IconHome,
+    IconLogout,
+    IconPassword,
 } from '@tabler/icons-react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import { Api } from '../../../api';
 import { ClubForm } from '../../../components/club/form/ClubForm';
 import { CompetitionFrom } from '../../../components/competition/create/form/CompetitionForm';
 import { DevToolsButton } from '../../../components/dev-tools/DevToolsButton';
 import { useAuthStore } from '../../../stores/auth';
-import { Api } from '../../../api';
 
 export function LayoutNavbar() {
 	const [competitionFormOpened, { toggle: toggleCompetitionForm }] =
@@ -28,7 +28,7 @@ export function LayoutNavbar() {
 	// figure out how to do it better, maybe select the user club slub with the profile  request
 	const { data: userClubData } = useQuery({
 		queryKey: ['user-club', userClub],
-		queryFn: () => Api.public.club.getClubById(userClub),
+		queryFn: () => Api.publicApi.club.getClubById(userClub),
 		enabled: !!userClub,
 	});
 

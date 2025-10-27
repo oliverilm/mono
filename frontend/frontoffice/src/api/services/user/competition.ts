@@ -1,92 +1,82 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import type {
-	CompetitionVisibility,
 	CreateCompetition,
 	CreateCompetitionAdmin,
 	CreateCompetitionCategory,
 	CreateCompetitionLink,
 	CreateCompetitor,
 	DeleteCompetitor,
-	UpdateCompetition,
+	UpdateCompetition
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { client } from '../../client';
-import {
-	PrivateCompetitor,
-	CompetitionListItem,
+import type {
 	CompetitionCategory,
+	CompetitionListItem,
 	Competitor,
+	PrivateCompetitor,
 } from '../../utils/common-types';
 
-// POST /user/competition/category/create
-// GET /user/competition/category/list/:slug
-// POST /user/competition/competitor/competitors
-// DELETE /user/competition/competitor/delete
-// POST /user/competition/link/create
-export class UserCompetition {
-	// POST /user/competition/admin/
+export namespace UserCompetition {
+	const prefix = "/user/competition"
 
 	// GET /user/competition/competitor/get-personal/:slug
-	static getPersonalCompetitors(
+	export function getPersonalCompetitors(
 		slug?: string,
 	): Promise<AxiosResponse<PrivateCompetitor[]> | null> {
 		if (!slug) return Promise.resolve(null);
-		return client.get(`/user/competition/competitor/get-personal/${slug}`);
+		return client.get(`${prefix}/competitor/get-personal/${slug}`);
 	}
 
 	// POST /user/competition/
-	static createCompetition(
+	export function createCompetition(
 		data: CreateCompetition,
 	): Promise<AxiosResponse<CompetitionListItem>> {
-		return client.post('/user/competitions', data);
+		return client.post(prefix, data);
 	}
 
 	// PATCH /user/competition/
-	static updateCompetition(
+	export function updateCompetition(
 		data: UpdateCompetition,
 	): Promise<AxiosResponse<CompetitionListItem>> {
-		return client.patch('/user/competitions', data);
+		return client.patch(prefix, data);
 	}
-	static getCompetitorExport(slug: string) {
-		return client.post(`/user/competitions/export/${slug}`);
+	export function getCompetitorExport(slug: string) {
+		return client.post(`${prefix}/export/${slug}`);
 	}
-	static createCompetitionAdmin(slug: string, data: CreateCompetitionAdmin) {
-		return client.post(`/user/competitions/${slug}/admins`, data);
+	export function createCompetitionAdmin(slug: string, data: CreateCompetitionAdmin) {
+		return client.post(`${prefix}/${slug}/admins`, data);
 	}
-	static createCompetitionLink(data: CreateCompetitionLink) {
-		return client.post(`/user/competition/link/create`, data);
+	export function createCompetitionLink(data: CreateCompetitionLink) {
+		return client.post(`${prefix}/link/create`, data);
 	}
-	static deleteCompetitor(data: DeleteCompetitor) {
-		return client.post('/user/competition/competitor/delete', data);
+	export function deleteCompetitor(data: DeleteCompetitor) {
+		return client.post(`${prefix}/competitor/delete`, data);
 	}
-	static getPrivateCompetitions(): Promise<
+	export function getPrivateCompetitions(): Promise<
 		AxiosResponse<CompetitionListItem[]>
 	> {
-		return client.get('/user/competition/get-private');
+		return client.get(`${prefix}/get-private`);
 	}
 
-	static createCompetitionCategory(
+	export function createCompetitionCategory(
 		slug: string,
 		data: CreateCompetitionCategory,
 	): Promise<AxiosResponse<CompetitionCategory>> {
-		return client.post(`/user/competitions/${slug}/categories`, data);
+		return client.post(`${prefix}/${slug}/categories`, data);
 	}
 
-	// TODO: maybe this should be a patch instead and also connected with update
-	static configureVisibility(slug: string, data: CompetitionVisibility) {
-		return client.post(`/competitions/${slug}/configure-visibility`, data);
-	}
-
-	static createCompetitor(
-		slug: string,
+	export function createCompetitor(
+		_slug: string,
 		data: CreateCompetitor,
 	): Promise<AxiosResponse<Competitor>> {
-		return client.post(`/user/competition/competitor/create`, data);
+		return client.post(`${prefix}/get-private/competitor/create`, data);
 	}
 
-	static updateCompetitionCategory() {
+	export function updateCompetitionCategory() {
 		throw new Error('Method not implemented.');
 	}
-	static deleteCompetitionCategory() {
+	export function deleteCompetitionCategory() {
 		throw new Error('Method not implemented.');
 	}
 }

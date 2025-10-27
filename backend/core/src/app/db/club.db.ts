@@ -1,5 +1,6 @@
 import type { SkipTake } from '@monorepo/utils';
 import { prisma } from '../utils/db';
+import type { SlugOrId } from '../utils/types';
 
 export namespace ClubDb {
 	export function getAdmins(clubId: string) {
@@ -48,10 +49,16 @@ export namespace ClubDb {
 	}
 
 	export function getBySlug(slug: string) {
-		return prisma.club.findFirst({
+		return prisma.club.findFirstOrThrow({
 			where: {
 				slug,
 			},
+		});
+	}
+
+	export function getClubBySlugOrId(where: SlugOrId) {
+		return prisma.club.findFirstOrThrow({
+			where,
 		});
 	}
 

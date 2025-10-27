@@ -1,10 +1,12 @@
 import { slugSchema } from '@monorepo/utils';
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest } from 'fastify';
 import { CompetitionDb } from 'src/app/db/competition.db';
 
 export default function (fastify: FastifyInstance) {
-	fastify.get('/:slug', (request) => {
-		const params = slugSchema.parse(request.params);
-		return CompetitionDb.getCompetitionBySlug(params.slug);
-	});
+	fastify.get('/:slug', handler);
+}
+
+export async function handler(request: FastifyRequest) {
+	const params = slugSchema.parse(request.params);
+	return CompetitionDb.getCompetitionBySlug(params.slug);
 }

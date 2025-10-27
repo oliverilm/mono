@@ -1,11 +1,16 @@
 import Fastify, { FastifyInstance } from 'fastify';
+import { beforeAll, beforeEach, vitest } from "vitest";
 import { app } from '../src/app/app';
-import { UserService, AuthenticationPayload } from '../src/app/services/user';
 import { ClubService } from '../src/app/services/club';
-import { beforeEach, vitest } from "vitest";
+import { AuthenticationPayload, UserService } from '../src/app/services/user';
 import { prisma } from '../src/app/utils/db';
 
 export let testServer: FastifyInstance;
+
+beforeAll(async () => {
+    testServer = Fastify();
+    testServer.register(app);
+})
 
 async function cleanDb() {
     const tables = await prisma.$queryRaw`
