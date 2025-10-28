@@ -1,5 +1,5 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import { beforeAll, beforeEach, vitest } from "vitest";
+import { beforeAll, beforeEach, vi, vitest } from "vitest";
 import { app } from '../src/app/app';
 import { ClubService } from '../src/app/services/club';
 import { AuthenticationPayload, UserService } from '../src/app/services/user';
@@ -54,6 +54,8 @@ beforeEach(async () => {
         
         // Clear all mocks
         vitest.clearAllMocks();
+        vi.clearAllMocks();
+
         
         // Recreate the server for clean state
         testServer = Fastify({

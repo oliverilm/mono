@@ -1,7 +1,3 @@
-import { createManyCompetitionsWithNames } from '../../../utils/competition';
-import { TEST_CLUB_NAME, testServer } from '../../../integration-init';
-import { describe, it, expect } from "vitest"
-import { expectAnyString, expectToBeIsoTimestamp } from '../../../utils/helpers';
 
 describe('Competition related actions', () => {
   it('should retrieve a list of competitions', async () => {

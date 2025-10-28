@@ -12,8 +12,8 @@ export default function (fastify: FastifyInstance) {
 	tf.query(skipTakeSchema).get('/', handler);
 }
 
-export async function handler({
-	query,
-}: RequestWithQuery<z.infer<typeof skipTakeSchema>>) {
-	return ClubService.getClubList(query);
+export async function handler(
+	request: RequestWithQuery<z.infer<typeof skipTakeSchema>>,
+) {
+	return ClubService.getClubList(request.query);
 }

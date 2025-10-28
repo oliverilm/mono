@@ -1,5 +1,6 @@
-import { describe } from 'vitest';
+import { describe, it } from 'vitest';
 
 describe('POST /public/auth/register', () => {
 	// Integration tests for register endpoint
+	it.todo("unimplemented")
 });
