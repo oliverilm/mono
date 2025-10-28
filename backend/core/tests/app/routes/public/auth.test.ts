@@ -1,7 +1,8 @@
 import { registerTestUserAndRetrieveToken, TEST_EMAIL, TEST_PASSWORD, testServer } from '../../../integration-init';
-import { describe, it, expect } from "vitest"
+import { describe, it, expect } from "vitest";
 import { expectAnyString, expectToBeIsoTimestamp } from '../../../utils/helpers';
 import { Sex } from '@prisma/client';
+
 
 describe('Public auth related endpoints', () => {
   it('should respond with error if user is not registered', async () => {
@@ -54,14 +55,15 @@ describe('Public auth related endpoints', () => {
   });
 
   it('should not allow duplicate email user to register', async () => {
-    await registerTestUserAndRetrieveToken()
+    const uniqueEmail = `${new Date().getTime()}@email.com`;
+    await registerTestUserAndRetrieveToken({ email: uniqueEmail })
     const response = await testServer.inject({
       url: '/public/auth/register',
       method: 'POST',
       payload: {
 
         password: TEST_PASSWORD,
-        email: TEST_EMAIL,
+        email: uniqueEmail,
       },
 
     });
@@ -74,12 +76,13 @@ describe('Public auth related endpoints', () => {
   });
 
   it('should be able to log in with a valid user', async () => {
-    await registerTestUserAndRetrieveToken()
+    const uniqueEmail = `${new Date().getTime()}@email.com`;
+    await registerTestUserAndRetrieveToken({ email: uniqueEmail })
     const response = await testServer.inject({
       url: '/public/auth/login',
       method: 'POST',
       payload: {
-        email: TEST_EMAIL,
+        email: uniqueEmail,
         password: TEST_PASSWORD,
       },
     });

@@ -14,7 +14,12 @@ export default defineConfig({
     },
     allowOnly: true,
     globals: true,
-    pool: 'forks',
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true
+      }
+    },
     restoreMocks: false,
     mockReset: true,
     sequence: { hooks: 'stack' },

@@ -64,12 +64,16 @@ export namespace UserService {
 		email,
 		password,
 	}: LoginCredentials): Promise<AuthenticationPayload> {
-		const user = await prisma.user.findFirstOrThrow({
+		const user = await prisma.user.findFirst({
 			where: {
 				email,
 				password: SecurityService.hashPassword(password),
 			},
 		});
+
+		if (!user) {
+			throw new Error('Invalid credentials');
+		}
 
 		console.log({ user });
 

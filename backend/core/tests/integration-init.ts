@@ -7,6 +7,9 @@ import { prisma } from '../src/app/utils/db';
 
 export let testServer: FastifyInstance;
 
+// Mutex to prevent concurrent database operations
+let dbMutex = Promise.resolve();
+
 beforeAll(async () => {
     testServer = Fastify({
         logger: true,
@@ -16,38 +19,53 @@ beforeAll(async () => {
 })
 
 async function cleanDb() {
-
-    const tables = await prisma.$queryRaw`
-        SELECT table_name
-        FROM
-        information_schema.tables
-        WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
-        AND table_type='BASE TABLE'
-    ` as { table_name: string }[]
-
-    const tableNames = tables.reduce((acc, table) => {
-        if (table.table_name.startsWith("_")) return acc
-        return [...acc, table.table_name]
-    }, [] as string[]) 
-
-    return prisma.$executeRawUnsafe(`TRUNCATE ${tableNames.map((name) => `public."${name}"`).join(", ")} CASCADE`)
+    try {
+        // Disable foreign key checks temporarily
+        await prisma.$executeRawUnsafe('SET session_replication_role = replica;');
+        
+        // Delete all data from all tables
+        await prisma.$executeRawUnsafe('DELETE FROM "Session"');
+        await prisma.$executeRawUnsafe('DELETE FROM "Competitor"');
+        await prisma.$executeRawUnsafe('DELETE FROM "Category"');
+        await prisma.$executeRawUnsafe('DELETE FROM "Invitation"');
+        await prisma.$executeRawUnsafe('DELETE FROM "Club"');
+        await prisma.$executeRawUnsafe('DELETE FROM "Competition"');
+        await prisma.$executeRawUnsafe('DELETE FROM "UserProfile"');
+        await prisma.$executeRawUnsafe('DELETE FROM "User"');
+        
+        // Re-enable foreign key checks
+        await prisma.$executeRawUnsafe('SET session_replication_role = DEFAULT;');
+        
+        // Small delay to ensure cleanup is complete
+        await new Promise(resolve => setTimeout(resolve, 10));
+    } catch (error) {
+        console.error('Database cleanup failed:', error);
+        // Re-enable foreign key checks even if cleanup failed
+        await prisma.$executeRawUnsafe('SET session_replication_role = DEFAULT;');
+        throw error;
+    }
 }
 
 beforeEach(async () => {
-    // Clean the database before each test
-    await cleanDb();
-    
-    // Clear all mocks
-    vitest.clearAllMocks();
-    
-    // Recreate the server for clean state
-    testServer = Fastify({
-        logger: false,
+    // Use mutex to prevent concurrent database operations
+    dbMutex = dbMutex.then(async () => {
+        // Clean the database before each test
+        await cleanDb();
+        
+        // Clear all mocks
+        vitest.clearAllMocks();
+        
+        // Recreate the server for clean state
+        testServer = Fastify({
+            logger: false,
+        });
+        testServer.register(app);
+        
+        // Wait for server to be ready
+        await testServer.ready();
     });
-    testServer.register(app);
     
-    // Wait for server to be ready
-    await testServer.ready();
+    await dbMutex;
 });
 
 
@@ -55,12 +73,22 @@ export const TEST_EMAIL = "testing@testing.com"
 export const TEST_PASSWORD = "testPassword"
 export const TEST_CLUB_NAME = "test_club"
 
+// Generate unique email for each test to avoid conflicts
+function generateUniqueEmail(): string {
+    return `testing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}@testing.com`;
+}
+
+// Generate unique club name for each test to avoid conflicts
+function generateUniqueClubName(): string {
+    return `test_club_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
 type AddonFunction = "withClub"
 
 const addonFunctions: Record<AddonFunction, (createdUserResponseWithToken: AuthenticationPayload) => Promise<void>> = {
     withClub: async (createdUserResponseWithToken: AuthenticationPayload) => {
         if (createdUserResponseWithToken.profile.userId) {
-            await ClubService.create({country: "EE", name: TEST_CLUB_NAME, userId: createdUserResponseWithToken.profile.userId})
+            await ClubService.create({country: "EE", name: generateUniqueClubName(), userId: createdUserResponseWithToken.profile.userId})
         }
     }
 }
@@ -74,8 +102,11 @@ export async function registerTestUserAndRetrieveToken(override: Overrides = {})
     return (await createUserWithEmail(override)).token
 }
 
-export async function createUserWithEmail({ email = TEST_EMAIL, addons}: Overrides = {}) {
-    const created = await UserService.createUser({ email, password: TEST_PASSWORD})
+export async function createUserWithEmail({ email, addons}: Overrides = {}) {
+    // Use unique email if none provided
+    const userEmail = email || generateUniqueEmail();
+    
+    const created = await UserService.createUser({ email: userEmail, password: TEST_PASSWORD})
 
     if (!created){ 
         throw new Error("Could not create user")
