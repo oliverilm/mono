@@ -8,11 +8,15 @@ import { prisma } from '../src/app/utils/db';
 export let testServer: FastifyInstance;
 
 beforeAll(async () => {
-    testServer = Fastify();
+    testServer = Fastify({
+        logger: true,
+    });
     testServer.register(app);
+   
 })
 
 async function cleanDb() {
+
     const tables = await prisma.$queryRaw`
         SELECT table_name
         FROM
@@ -30,11 +34,20 @@ async function cleanDb() {
 }
 
 beforeEach(async () => {
-    await cleanDb().then(() => {
-        vitest.clearAllMocks()
-        testServer = Fastify();
-        testServer.register(app);
-    })
+    // Clean the database before each test
+    await cleanDb();
+    
+    // Clear all mocks
+    vitest.clearAllMocks();
+    
+    // Recreate the server for clean state
+    testServer = Fastify({
+        logger: false,
+    });
+    testServer.register(app);
+    
+    // Wait for server to be ready
+    await testServer.ready();
 });
 
 
@@ -68,7 +81,7 @@ export async function createUserWithEmail({ email = TEST_EMAIL, addons}: Overrid
         throw new Error("Could not create user")
     }
 
-    if (Object.entries(addons ?? {}).length > 0) {
+    if (Object.entries(addons ?? {})?.length > 0) {
         for (const [addon, enabled] of Object.entries(addons ?? {})) {
             if (enabled && addonFunctions[addon as keyof typeof addonFunctions]) {
                 await addonFunctions[addon as keyof typeof addonFunctions](created)

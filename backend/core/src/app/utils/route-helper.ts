@@ -3,7 +3,8 @@ import type { z } from 'zod';
 
 type RequestHandler<T> = (
 	request: FastifyRequest & { body: T },
-) => Promise<any>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+) => Promise<unknown>;
 
 export function withBody<T extends z.ZodType>(
 	schema: T,

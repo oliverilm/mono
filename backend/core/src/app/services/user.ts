@@ -27,7 +27,7 @@ export namespace UserService {
 				})) === 0;
 
 			if (!isEmailUnique) {
-				throw new Error('something went wrong');
+				throw new Error('Email already used');
 			}
 
 			const user = await prisma.user.create({
@@ -71,7 +71,7 @@ export namespace UserService {
 			},
 		});
 
-		console.log({user})
+		console.log({ user });
 
 		const profile = await prisma.userProfile.findFirstOrThrow({
 			where: {

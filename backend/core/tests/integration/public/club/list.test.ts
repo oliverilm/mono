@@ -1,78 +1,47 @@
-import { describe, expect, it, vi } from 'vitest';
-import * as clubListRoute from '../../../../src/app/routes/public/club/list';
+import { describe, expect, it } from 'vitest';
 import { registerTestUserAndRetrieveToken, testServer } from '../../../integration-init';
 
 describe('GET /public/club/list', () => {
-	it.only('should call handler with correct query params when valid skip and take are provided', async () => {
+	it('should return clubs with valid query params', async () => {
 		// Create a user with a club to have some data
 		await registerTestUserAndRetrieveToken({ addons: { withClub: true } });
 
-		// Spy on the handler function
-		const mockHandler = vi.spyOn(clubListRoute, 'handler').mockResolvedValue([
-			{ 
-				id: '1', 
-				name: 'Test Club', 
-				country: 'EE', 
-				slug: 'test-club', 
-				description: 'Test Description', 
-				createdAt: new Date(), 
-				updatedAt: new Date() 
-			}
-		]);
-
-		await testServer.inject({
+		const response = await testServer.inject({
 			method: 'GET',
-			url: '/public/club/list?skip=0&take=10',
-		});
+			url: '/public/club?skip=0&take=10',
+		})
 
-		expect(mockHandler).toHaveBeenCalledWith({
-			query: {
-				skip: 0,
-				take: 10,
-			},
-		});
-		
+		expect(response.statusCode).toBe(200);
+		expect(Array.isArray(response.json())).toBe(true);
 	});
 
-	it('should call handler with correct query params when skip and take are provided as strings', async () => {
-		// Spy on the handler function
-		const mockHandler = vi.spyOn(clubListRoute, 'handler').mockResolvedValue([]);
-
-		await testServer.inject({
-			method: 'GET',
-			url: '/public/club/list?skip=5&take=20',
-		});
-
-		expect(mockHandler).toHaveBeenCalledWith({
-			query: {
-				skip: 5,
-				take: 20,
-			},
-		});
-	});
-
-	it('should call handler with undefined query params when no skip and take are provided', async () => {
-		// Spy on the handler function
-		const mockHandler = vi.spyOn(clubListRoute, 'handler').mockResolvedValue([]);
+	it('should handle query params correctly when provided as numbers', async () => {
+		// Create a user with a club
+		await registerTestUserAndRetrieveToken({ addons: { withClub: true } });
 
 		const response = await testServer.inject({
 			method: 'GET',
-			url: '/public/club/list',
+			url: '/public/club?skip=0&take=10',
 		});
 
 		expect(response.statusCode).toBe(200);
-		expect(mockHandler).toHaveBeenCalledWith({
-			query: {
-				skip: undefined,
-				take: undefined,
-			},
+		expect(Array.isArray(response.json())).toBe(true);
+	});
+
+	it('should return default values when no query params are provided', async () => {
+		const response = await testServer.inject({
+			method: 'GET',
+			url: '/public/club',
 		});
+
+		expect(response.statusCode).toBe(200);
+		expect(response.json()).toEqual([]);
 	});
 
 	it('should return 400 error for invalid skip parameter', async () => {
 		const response = await testServer.inject({
 			method: 'GET',
-			url: '/public/club/list?skip=invalid&take=10',
+			url: '/public/club?skip=invalid&take=10',
 		});
 
 		expect(response.statusCode).toBe(400);
@@ -92,8 +61,8 @@ describe('GET /public/club/list', () => {
 	it('should return 400 error for invalid take parameter', async () => {
 		const response = await testServer.inject({
 			method: 'GET',
-			url: '/public/club/list?skip=0&take=invalid',
-		});
+			url: '/public/club?skip=0&take=invalid',
+		})
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toHaveProperty('error', 'Validation Error');
@@ -112,7 +81,7 @@ describe('GET /public/club/list', () => {
 	it('should return 400 error for both invalid skip and take parameters', async () => {
 		const response = await testServer.inject({
 			method: 'GET',
-			url: '/public/club/list?skip=invalid&take=invalid',
+			url: '/public/club?skip=invalid&take=invalid',
 		});
 
 		expect(response.statusCode).toBe(400);

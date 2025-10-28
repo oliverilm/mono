@@ -1,7 +1,7 @@
 import { prisma } from 'src/app/utils/db';
 
-export class ClubRepository {
-	static getClubCompetitions(clubId: string) {
+export namespace ClubRepository {
+	export function getClubCompetitions(clubId: string) {
 		return prisma.competition.findMany({
 			where: {
 				clubId,
@@ -9,7 +9,7 @@ export class ClubRepository {
 		});
 	}
 
-	static getClubBySlug(slug: string) {
+	export function getClubBySlug(slug: string) {
 		return prisma.club.findFirst({
 			where: {
 				slug,
@@ -17,7 +17,7 @@ export class ClubRepository {
 		});
 	}
 
-	static getClubIdBySlug(slug: string) {
+	export function getClubIdBySlug(slug: string) {
 		return prisma.club
 			.findFirst({
 				where: {
@@ -30,7 +30,7 @@ export class ClubRepository {
 			.then((club) => club?.id);
 	}
 
-	static getClubById(id: string) {
+	export function getClubById(id: string) {
 		return prisma.club.findFirst({
 			where: {
 				id,

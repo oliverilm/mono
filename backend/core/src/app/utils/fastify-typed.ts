@@ -150,7 +150,7 @@ function registerTypedRoute<B, P, Q>(
 	const routeHandler = async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			// Validate and transform request data
-			const validatedRequest = validateRequest(
+			const validatedRequest = await validateRequest(
 				request,
 				bodySchema,
 				paramsSchema,
@@ -158,12 +158,14 @@ function registerTypedRoute<B, P, Q>(
 			);
 
 			// Call the handler with validated data
-			return await (
+			const response = await (
 				handler as (
 					request: FastifyRequest,
 					reply: FastifyReply,
 				) => Promise<unknown> | unknown
 			)(validatedRequest, reply);
+
+			return response;
 		} catch (error) {
 			// Handle Zod validation errors
 			if (error instanceof z.ZodError) {
@@ -189,12 +191,12 @@ function registerTypedRoute<B, P, Q>(
 }
 
 // Internal function to validate request data
-function validateRequest(
+async function validateRequest(
 	request: FastifyRequest,
 	bodySchema?: z.ZodType,
 	paramsSchema?: z.ZodType,
 	querySchema?: z.ZodType,
-): RequestWithValidations {
+): Promise<RequestWithValidations> {
 	const validated: RequestWithValidations = {
 		...request,
 		body: request.body,
@@ -204,17 +206,23 @@ function validateRequest(
 
 	// Validate body if schema is provided
 	if (bodySchema) {
-		validated.body = bodySchema.parse(request.body);
+		validated.body = await bodySchema.parseAsync(request.body);
 	}
 
 	// Validate params if schema is provided
 	if (paramsSchema) {
-		validated.params = paramsSchema.parse(request.params);
+		validated.params = await paramsSchema.parseAsync(request.params);
+
+		console.log({
+			validatedParams: validated.params,
+			requestParams: request.params,
+		});
 	}
 
 	// Validate query if schema is provided
 	if (querySchema) {
-		validated.query = querySchema.parse(request.query);
+		// if not validated throw error
+		validated.query = await querySchema.parseAsync(request.query);
 	}
 
 	return validated;

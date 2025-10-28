@@ -15,7 +15,3 @@ describe('GET /user/user-by-email', () => {
 describe('GET /user/user-by-national-id', () => {
 	// Integration tests for search user by national ID endpoint
 });
-
-
-
-

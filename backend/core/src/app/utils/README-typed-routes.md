@@ -188,6 +188,3 @@ The API provides full TypeScript type safety:
 3. **Error Handling** - Consistent error responses for validation failures
 4. **Clean API** - Fluent, readable syntax
 5. **Migration Friendly** - Easy to migrate from existing `withBody`/`withParams`/`withQuery` helpers
-
-
-

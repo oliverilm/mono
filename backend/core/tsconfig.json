@@ -4,11 +4,6 @@
     "baseUrl": ".",
     "rootDir": "./src", /* Skip type checking all .d.ts files. */
     "outDir": "./dist",
-    "plugins": [
-      {
-        "transform": "typia/lib/transform"
-      }
-    ],
     "strictNullChecks": true,
     "strict": true
   },

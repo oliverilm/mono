@@ -1,6 +1,7 @@
 import type { SkipTake } from '@monorepo/utils';
 import { prisma } from '../utils/db';
 import type { SlugOrId } from '../utils/types';
+import { convertSkipTake } from '../utils/object';
 
 export namespace ClubDb {
 	export function getAdmins(clubId: string) {
@@ -70,7 +71,8 @@ export namespace ClubDb {
 		});
 	}
 
-	export function getClubList({ take = 25, skip = 0 }: SkipTake) {
+	export function getClubList(skipTake: SkipTake) {
+		const { take, skip } = convertSkipTake(skipTake);
 		return prisma.club.findMany({
 			take: Number(take),
 			skip: Number(skip),

@@ -9,12 +9,12 @@ export function exclude<T extends Record<string, unknown>, Key extends keyof T>(
 	) as Omit<T, Key>;
 }
 
-export function convertSkipTake({ skip, take }: SkipTake): {
+export function convertSkipTake(skipTake: SkipTake): {
 	skip: number;
 	take: number;
 } {
 	return {
-		skip: Number(skip),
-		take: Number(take),
+		skip: Number(skipTake?.skip ?? 0),
+		take: Number(skipTake?.take ?? 10),
 	};
 }

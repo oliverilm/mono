@@ -15,6 +15,5 @@ export default function (fastify: FastifyInstance) {
 export async function handler({
 	query,
 }: RequestWithQuery<z.infer<typeof skipTakeSchema>>) {
-	console.log('query', query);
 	return ClubService.getClubList(query);
 }

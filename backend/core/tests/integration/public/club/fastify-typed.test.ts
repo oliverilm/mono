@@ -164,7 +164,3 @@ describe('Fastify-Typed Integration Tests', () => {
 		);
 	});
 });
-
-
-
-
