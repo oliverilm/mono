@@ -7,7 +7,7 @@ describe('POST /user/competition/link/create', () => {
 		const response = await testServer.inject({
 			method: 'POST',
 			url: '/user/competition/link/create',
-			headers: {s
+			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 			payload: {
