@@ -1,25 +1,73 @@
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { registerTestUserAndRetrieveToken, testServer } from '../../integration-init';
 
 describe('GET /user/profile', () => {
-	// Integration tests for get user profile endpoint
-	it.todo("unimplemented")
+	it('should receive the get profile request', async () => {
+		const token = await registerTestUserAndRetrieveToken();
+		const response = await testServer.inject({
+			method: 'GET',
+			url: '/user/profile',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 
+		// Validate that the server received the request (not a 500 or 404)
+		expect(response.statusCode).not.toBe(404);
+		expect(response.statusCode).not.toBe(500);
+	});
 });
 
 describe('PATCH /user/profile', () => {
-	// Integration tests for update user profile endpoint
-	it.todo("unimplemented")
+	it('should receive the update profile request', async () => {
+		const token = await registerTestUserAndRetrieveToken();
+		const response = await testServer.inject({
+			method: 'PATCH',
+			url: '/user/profile',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			payload: {
+				firstName: 'Test',
+			},
+		});
 
+		// Validate that the server received the request (not a 500 or 404)
+		expect(response.statusCode).not.toBe(404);
+		expect(response.statusCode).not.toBe(500);
+	});
 });
 
 describe('GET /user/user-by-email', () => {
-	// Integration tests for search user by email endpoint
-	it.todo("unimplemented")
+	it('should receive the search user by email request', async () => {
+		const token = await registerTestUserAndRetrieveToken();
+		const response = await testServer.inject({
+			method: 'GET',
+			url: '/user/user-by-email?search=test@example.com',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 
+		// Validate that the server received the request (not a 500 or 404)
+		expect(response.statusCode).not.toBe(404);
+		expect(response.statusCode).not.toBe(500);
+	});
 });
 
 describe('GET /user/user-by-national-id', () => {
-	// Integration tests for search user by national ID endpoint
-	it.todo("unimplemented")
+	it('should receive the search user by national ID request', async () => {
+		const token = await registerTestUserAndRetrieveToken();
+		const response = await testServer.inject({
+			method: 'GET',
+			url: '/user/user-by-national-id?search=12345678901',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 
+		// Validate that the server received the request (not a 500 or 404)
+		expect(response.statusCode).not.toBe(404);
+		expect(response.statusCode).not.toBe(500);
+	});
 });

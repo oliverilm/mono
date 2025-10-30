@@ -7,7 +7,7 @@ import { expectAnyString } from '../../../utils/helpers';
 
 const testCuid = 'clxxx12345678901234';
 
-describe.only('GET /public/club/get-by-id/:id', () => {
+describe('GET /public/club/get-by-id/:id', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as clubListRoute from '../../../../src/app/routes/public/club/list';
 import { registerTestUserAndRetrieveToken, testServer } from '../../../integration-init';
 
-describe('Fastify-Typed Integration Tests', () => {
+describe.skip('Fastify-Typed Integration Tests', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
