@@ -53,8 +53,8 @@ export function AdminPageModelCreate({ model }: Props) {
 	const generateFormInputsFromTypes = () => {
 		return types?.map((type) => {
 			// TODO: implement password hashing in the backend for this method to work
-			const fieldsToExclude = ['id', 'password', 'createdat', 'updatedat'].map(
-				(field) => field.toLowerCase(),
+			const fieldsToExclude = ['id', 'createdat', 'updatedat'].map((field) =>
+				field.toLowerCase(),
 			);
 
 			if (fieldsToExclude.includes(type.name.toLowerCase())) return null;
