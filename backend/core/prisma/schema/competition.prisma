@@ -30,9 +30,9 @@ model Competition {
     @@unique([id, name, slug])
 
     @@index([isPublished, isArchived, slug])
-    @@index(clubName)
-    @@index(name)
-    @@index(slug)
+    @@index([clubId])
+    @@index([slug])
+    @@index([createdAt])
 }
 
 enum CompetitionRole {
@@ -51,8 +51,12 @@ model CompetitionAdmin {
 
     role CompetitionRole
 
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
     @@unique([competitionId, userId])
     @@index([competitionId, userId])
+    @@index([createdAt])
 }
 
 model Category {
@@ -61,7 +65,12 @@ model Category {
     value   String @unique
 
     competitionCategories CompetitionCategory[]
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
     @@unique([id, value])
+    @@index([createdAt])
 }
 
 enum CompetitionCategorySex {
@@ -89,9 +98,13 @@ model CompetitionCategory {
 
     competitors Competitor[]
 
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime? @updatedAt
+
     @@unique([id, competitionId, competitionName, competitionSlug])
-    @@index(competitionId)
-    @@index(categoryId)
+    @@index([competitionId])
+    @@index([categoryId])
+    @@index([createdAt])
 }
 
 
@@ -122,10 +135,11 @@ model Competitor {
     @@unique([profileId, competitionCategoryId, weight])
 
     // todo: monitor this object requests and possibli make index changes here
-    @@index(competitionId)
-    @@index(weight)
-    @@index(profileId)
-    @@index(clubName)
+    @@index([competitionId])
+    @@index([weight])
+    @@index([profileId])
+    @@index([clubName])
+    @@index([createdAt])
 
 }
 
@@ -139,5 +153,9 @@ model CompetitionLink {
     competition Competition @relation(fields: [competitionId], references: [id])
     competitionId String
 
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime? @updatedAt
+
     @@index([competitionId])
+    @@index([createdAt])
 }

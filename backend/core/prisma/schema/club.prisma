@@ -19,6 +19,8 @@ model Club {
 
 
     @@unique([id, name])
+    @@index([createdAt])
+    @@index([slug])
 }
 
 
@@ -37,6 +39,13 @@ model ClubAdmin {
     userId String @unique
 
     role ClubRole
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([createdAt])
+    @@index([clubId])
+    @@index([userId])
 }
 
 model ClubMetadata {
@@ -47,6 +56,9 @@ model ClubMetadata {
 
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+
+    @@index([createdAt])
+    @@index([clubId])
 }
 
 model Invitation {
@@ -63,6 +75,14 @@ model Invitation {
 
     invitedBy   UserProfile @relation(fields: [invitedById], references: [id], name: "invitedBy")
     invitedById   String
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([createdAt])
+    @@index([clubId])
+    @@index([profileId])
+    @@index([invitedById])
 }
 
 

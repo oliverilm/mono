@@ -39,97 +39,145 @@ type FullHandler<B, P, Q> = (
 	reply: FastifyReply,
 ) => Promise<unknown> | unknown;
 
+// Builder class for chaining validators with type inference
+class TypedFastifyBuilder<
+	B extends z.ZodType | undefined = undefined,
+	P extends z.ZodType | undefined = undefined,
+	Q extends z.ZodType | undefined = undefined,
+> {
+	constructor(
+		private fastify: FastifyInstance,
+		private bodySchema?: B,
+		private paramsSchema?: P,
+		private querySchema?: Q,
+	) {}
+
+	// Chainable validator methods
+	params<T extends z.ZodType>(schema: T): TypedFastifyBuilder<B, T, Q> {
+		return new TypedFastifyBuilder(
+			this.fastify,
+			this.bodySchema,
+			schema,
+			this.querySchema,
+		);
+	}
+
+	query<T extends z.ZodType>(schema: T): TypedFastifyBuilder<B, P, T> {
+		return new TypedFastifyBuilder(
+			this.fastify,
+			this.bodySchema,
+			this.paramsSchema,
+			schema,
+		);
+	}
+
+	body<T extends z.ZodType>(schema: T): TypedFastifyBuilder<T, P, Q> {
+		return new TypedFastifyBuilder(
+			this.fastify,
+			schema,
+			this.paramsSchema,
+			this.querySchema,
+		);
+	}
+
+	// HTTP method handlers with proper type inference
+	get(
+		path: string,
+		handler: FullHandler<
+			B extends z.ZodType ? z.infer<B> : unknown,
+			P extends z.ZodType ? z.infer<P> : unknown,
+			Q extends z.ZodType ? z.infer<Q> : unknown
+		>,
+	): void {
+		this.registerRoute('get', path, handler);
+	}
+
+	post(
+		path: string,
+		handler: FullHandler<
+			B extends z.ZodType ? z.infer<B> : unknown,
+			P extends z.ZodType ? z.infer<P> : unknown,
+			Q extends z.ZodType ? z.infer<Q> : unknown
+		>,
+	): void {
+		this.registerRoute('post', path, handler);
+	}
+
+	put(
+		path: string,
+		handler: FullHandler<
+			B extends z.ZodType ? z.infer<B> : unknown,
+			P extends z.ZodType ? z.infer<P> : unknown,
+			Q extends z.ZodType ? z.infer<Q> : unknown
+		>,
+	): void {
+		this.registerRoute('put', path, handler);
+	}
+
+	patch(
+		path: string,
+		handler: FullHandler<
+			B extends z.ZodType ? z.infer<B> : unknown,
+			P extends z.ZodType ? z.infer<P> : unknown,
+			Q extends z.ZodType ? z.infer<Q> : unknown
+		>,
+	): void {
+		this.registerRoute('patch', path, handler);
+	}
+
+	delete(
+		path: string,
+		handler: FullHandler<
+			B extends z.ZodType ? z.infer<B> : unknown,
+			P extends z.ZodType ? z.infer<P> : unknown,
+			Q extends z.ZodType ? z.infer<Q> : unknown
+		>,
+	): void {
+		this.registerRoute('delete', path, handler);
+	}
+
+	private registerRoute(
+		method: 'get' | 'post' | 'put' | 'patch' | 'delete',
+		path: string,
+		handler: FullHandler<
+			B extends z.ZodType ? z.infer<B> : unknown,
+			P extends z.ZodType ? z.infer<P> : unknown,
+			Q extends z.ZodType ? z.infer<Q> : unknown
+		>,
+	): void {
+		registerTypedRoute(
+			this.fastify,
+			method,
+			path,
+			this.bodySchema,
+			this.paramsSchema,
+			this.querySchema,
+			handler as FullHandler<unknown, unknown, unknown>,
+		);
+	}
+}
+
 // Create a typed fastify instance wrapper
 export function createTypedFastify(fastify: FastifyInstance) {
+	const builder = new TypedFastifyBuilder(fastify);
+
 	return {
-		// Body validation only
-		body: <T extends z.ZodType>(schema: T) => ({
-			post: <B = z.infer<T>>(path: string, handler: BodyHandler<B>) => {
-				registerTypedRoute(
-					fastify,
-					'post',
-					path,
-					schema,
-					undefined,
-					undefined,
-					handler,
-				);
-			},
-			put: <B = z.infer<T>>(path: string, handler: BodyHandler<B>) => {
-				registerTypedRoute(
-					fastify,
-					'put',
-					path,
-					schema,
-					undefined,
-					undefined,
-					handler,
-				);
-			},
-			patch: <B = z.infer<T>>(path: string, handler: BodyHandler<B>) => {
-				registerTypedRoute(
-					fastify,
-					'patch',
-					path,
-					schema,
-					undefined,
-					undefined,
-					handler,
-				);
-			},
-		}),
+		// Start with any validator or chain multiple
+		params: <T extends z.ZodType>(schema: T) => builder.params(schema),
+		query: <T extends z.ZodType>(schema: T) => builder.query(schema),
+		body: <T extends z.ZodType>(schema: T) => builder.body(schema),
 
-		// Params validation only
-		params: <T extends z.ZodType>(schema: T) => ({
-			get: <P = z.infer<T>>(path: string, handler: ParamsHandler<P>) => {
-				registerTypedRoute(
-					fastify,
-					'get',
-					path,
-					undefined,
-					schema,
-					undefined,
-					handler,
-				);
-			},
-			put: <P = z.infer<T>>(path: string, handler: ParamsHandler<P>) => {
-				registerTypedRoute(
-					fastify,
-					'put',
-					path,
-					undefined,
-					schema,
-					undefined,
-					handler,
-				);
-			},
-			delete: <P = z.infer<T>>(path: string, handler: ParamsHandler<P>) => {
-				registerTypedRoute(
-					fastify,
-					'delete',
-					path,
-					undefined,
-					schema,
-					undefined,
-					handler,
-				);
-			},
-		}),
-
-		// Query validation only
-		query: <T extends z.ZodType>(schema: T) => ({
-			get: <Q = z.infer<T>>(path: string, handler: QueryHandler<Q>) => {
-				registerTypedRoute(
-					fastify,
-					'get',
-					path,
-					undefined,
-					undefined,
-					schema,
-					handler,
-				);
-			},
-		}),
+		// Direct HTTP methods without validation (for backwards compatibility if needed)
+		get: (path: string, handler: FullHandler<unknown, unknown, unknown>) =>
+			builder.get(path, handler),
+		post: (path: string, handler: FullHandler<unknown, unknown, unknown>) =>
+			builder.post(path, handler),
+		put: (path: string, handler: FullHandler<unknown, unknown, unknown>) =>
+			builder.put(path, handler),
+		patch: (path: string, handler: FullHandler<unknown, unknown, unknown>) =>
+			builder.patch(path, handler),
+		delete: (path: string, handler: FullHandler<unknown, unknown, unknown>) =>
+			builder.delete(path, handler),
 	};
 }
 

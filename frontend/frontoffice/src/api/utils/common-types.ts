@@ -1,4 +1,4 @@
-import { NationalId } from '@monorepo/utils';
+import type { NationalId } from '@monorepo/utils';
 
 export interface CompetitionListItem {
 	id: string;

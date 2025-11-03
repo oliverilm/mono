@@ -5,7 +5,6 @@ import { ClubService } from '../../../../src/app/services/club';
 import { UserService } from '../../../../src/app/services/user';
 import { expectAnyString } from '../../../utils/helpers';
 
-const testCuid = 'clxxx12345678901234';
 
 describe('GET /public/club/get-by-id/:id', () => {
 	beforeEach(() => {

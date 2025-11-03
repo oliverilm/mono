@@ -8,4 +8,7 @@ model Session {
 
     expiresAt   DateTime
     createdAt   DateTime    @default(now())
+
+    @@index([createdAt])
+    @@index([userId])
 }   

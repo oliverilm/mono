@@ -1,11 +1,11 @@
 import { AppShell, Modal, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-    IconChevronRight,
-    IconCup,
-    IconHome,
-    IconLogout,
-    IconPassword,
+	IconChevronRight,
+	IconCup,
+	IconHome,
+	IconLogout,
+	IconPassword,
 } from '@tabler/icons-react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
@@ -78,6 +78,7 @@ export function LayoutNavbar() {
 				>
 					<NavLink label="Create competition" onClick={toggleCompetitionForm} />
 					<NavLink label="Create club" onClick={toggleClubForm} />
+					<NavLink label="CRUD" onClick={() => navigate('/admin/crud')} />
 				</NavLink>
 
 				<NavLink label="Dev tools">

@@ -1,12 +1,12 @@
 import type { LoginCredentials, UserPatch } from '@monorepo/utils';
 import { type Session, Sex, type UserProfile } from '@prisma/client';
+import { SessionService } from '../session';
 import { prisma } from '../utils/db';
 import { tryHandleKnownErrors } from '../utils/error';
 import { validateNationalIdAndDobOrThrow } from '../utils/national-id';
 import { capitalizeFirstLetter } from '../utils/string';
 import { ClubService } from './club';
 import { SecurityService } from './securify';
-import { SessionService } from './session';
 
 export interface AuthenticationPayload {
 	profile: UserProfile;

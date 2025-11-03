@@ -5,4 +5,11 @@ model Camp {
 
     connectedCompetition Competition? @relation(fields: [connectedCompetitionId], references: [id])
     connectedCompetitionId String? @unique
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([connectedCompetitionId])
+    @@index([slug])
+    @@index([createdAt])
 }

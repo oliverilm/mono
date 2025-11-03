@@ -13,6 +13,9 @@ model User {
     clubAdmin           ClubAdmin?
     userProfile         UserProfile?
     sessions            Session[]
+
+    @@index([createdAt])
+    @@index([email])
 }
 
 enum Sex {
@@ -49,4 +52,7 @@ model UserProfile {
 
     @@unique([id, firstName, lastName])
     
+    @@index([createdAt])
+    @@index([clubId])
+    @@index([userId])
 }

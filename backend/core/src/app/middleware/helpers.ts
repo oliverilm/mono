@@ -2,7 +2,7 @@ import type { Session } from '@prisma/client';
 import dayjs from 'dayjs';
 import type { FastifyRequest } from 'fastify';
 import { LRUCache } from 'lru-cache';
-import { SessionService } from '../services/session';
+import { SessionService } from '../session';
 import { minutes } from '../utils/time';
 
 const sessionCache = new LRUCache<string, Session>({

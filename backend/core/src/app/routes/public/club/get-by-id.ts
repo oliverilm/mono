@@ -16,7 +16,5 @@ export default function (fastify: FastifyInstance) {
 export async function handler(
 	request: RequestWithParams<z.infer<typeof idSchema>>,
 ) {
-	console.log('request.params.id', request.params.id);
-	console.log('request.params', request.params);
 	return ClubService.getClubByIdOrSlug({ id: request.params.id });
 }

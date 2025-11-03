@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react';
+import { useCallback, useLayoutEffect } from 'react';
+import { Api } from '../api';
 import { LS_TOKEN_KEY } from '../constants';
 import { useAuthStore } from '../stores/auth';
-import { Api } from '../api';
 
 export function useSystemAuth() {
 	const authStore = useAuthStore();
 
-	const validateSession = async () => {
+	const validateSession = useCallback(async () => {
 		const tokenFromLocalStorage = localStorage.getItem(LS_TOKEN_KEY);
 
 		if (!tokenFromLocalStorage) {
@@ -20,19 +20,18 @@ export function useSystemAuth() {
 		if (profile) {
 			authStore.setProfile(profile.data);
 			return;
-		} else {
-			return;
 		}
-	};
+	}, [authStore]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
+		if (authStore.isAuthenticated) return;
+
+		validateSession();
+
 		window.addEventListener('storage', validateSession);
+
 		return () => {
 			window.removeEventListener('storage', validateSession);
 		};
-	}, []);
-
-	useEffect(() => {
-		validateSession();
-	}, []);
+	}, [authStore.isAuthenticated, validateSession]);
 }

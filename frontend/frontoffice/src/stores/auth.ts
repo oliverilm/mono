@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { LS_TOKEN_KEY } from '../constants';
 import type { Profile } from '../api/utils/common-types';
+import { LS_TOKEN_KEY } from '../constants';
 
 export type AuthStore = {
 	profile: Profile | null;
@@ -20,6 +20,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 		return set({ profile, isAuthenticated: profile !== null });
 	},
 	isAuthenticated: false,
+	isAdmin: false,
 	login: () => set({ isAuthenticated: true }),
 	logout: () => {
 		localStorage.removeItem(LS_TOKEN_KEY);

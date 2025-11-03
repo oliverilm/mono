@@ -39,7 +39,8 @@ export namespace ClubService {
 	): Promise<boolean> {
 		if (!clubId) return Promise.resolve(false);
 
-		const getter = async () => (await ClubDb.getUserClubAdminStatusCountForClub(userId, clubId)) > 0
+		const getter = async () =>
+			(await ClubDb.getUserClubAdminStatusCountForClub(userId, clubId)) > 0;
 
 		return withAdminCache(`${userId}-${clubId}`, getter);
 	}
@@ -111,7 +112,7 @@ export namespace ClubService {
 			},
 		});
 	}
-	
+
 	export async function create({
 		name,
 		country,

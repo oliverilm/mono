@@ -20,8 +20,7 @@ export default defineConfig({
         singleThread: true
       }
     },
-    restoreMocks: false,
-    mockReset: true,
+   
     sequence: { hooks: 'stack' },
     include: [`tests/**/*.test.ts`],
   },

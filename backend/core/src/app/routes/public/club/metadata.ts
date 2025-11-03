@@ -1,29 +1,13 @@
 import { slugSchema } from '@monorepo/utils';
-import type { FastifyInstance, FastifyRequest } from 'fastify';
-import { ClubService } from 'src/app/services/club';
-import { requestUserId } from 'src/app/utils/request';
+import type { FastifyInstance } from 'fastify';
+import { createTypedFastify } from '../../../utils/fastify-typed';
+import { PublicClubHandlers } from './_handlers';
 
 // PUBLIC ENDPOINTS
 export default async function (fastify: FastifyInstance) {
-	fastify.get('/metadata/:slug', handler);
-}
-
-export async function handler(request: FastifyRequest) {
-	const slug = slugSchema.parse(request.params);
-	const club = await ClubService.getClubByIdOrSlug(slug);
-
-	if (!club) {
-		throw new Error('Club not found');
-	}
-
-	const userId = requestUserId(request);
-
-	const [isAdmin, admins] = await Promise.all([
-		userId ? ClubService.isClubAdmin(userId, club.id) : false,
-		ClubService.getClubAdmins(club.id),
-	]);
-	return {
-		isAdmin,
-		admins,
-	};
+	const tf = createTypedFastify(fastify);
+	tf.params(slugSchema).get(
+		'/metadata/:slug',
+		PublicClubHandlers.getPublicClubMetadata,
+	);
 }
