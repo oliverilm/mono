@@ -1,12 +1,30 @@
-import { Button, Flex, NumberInput, Select, TagsInput } from '@mantine/core';
+import {
+	Button,
+	Group,
+	NumberInput,
+	Select,
+	Stack,
+	TagsInput,
+	Text,
+	Title,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import type { CreateCompetitionCategory } from '@monorepo/utils';
+import {
+	IconCategory,
+	IconGenderBigender,
+	IconNumbers,
+	IconPlus,
+	IconWeight,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
+import { Api } from '../../../api';
 import type { CompetitionListItem } from '../../../api/utils/common-types';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 import { useCommonStore } from '../../../stores/common';
-import { Api } from '../../../api';
+import { ThemePaper } from '../../shared/theme-paper/ThemePaper';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -38,116 +56,195 @@ export function CompetitionCategoryForm({ competition, onDone }: Props) {
 		},
 	});
 
-	const { mutateAsync } = useMutation(
+	const { mutateAsync, isLoading } = useMutation(
 		({ slug, data }: { slug: string; data: CreateCompetitionCategory }) =>
 			Api.user.competition.createCompetitionCategory(slug, data),
 		{
 			onSuccess: () => {
 				form.reset();
+				setTemporaryWeights({ men: [], women: [] });
 			},
 		},
 	);
 
 	const onSubmit = async (values: typeof form.values) => {
-		if (values.sex === 'Male & Female') {
-			const maleCategory: CreateCompetitionCategory = {
-				...form.values,
-				categoryId: Number(form.values.categoryId),
-				sex: 'Male',
-				weights: temporaryWeights.men,
-			};
+		try {
+			if (values.sex === 'Male & Female') {
+				const maleCategory: CreateCompetitionCategory = {
+					...form.values,
+					categoryId: Number(form.values.categoryId),
+					sex: 'Male',
+					weights: temporaryWeights.men,
+				};
 
-			const femaleCategory: CreateCompetitionCategory = {
-				...form.values,
-				categoryId: Number(form.values.categoryId),
-				sex: 'Female',
-				weights: temporaryWeights.women,
-			};
+				const femaleCategory: CreateCompetitionCategory = {
+					...form.values,
+					categoryId: Number(form.values.categoryId),
+					sex: 'Female',
+					weights: temporaryWeights.women,
+				};
 
-			const responses = await Promise.all([
-				mutateAsync({ slug: competition.slug, data: maleCategory }),
-				mutateAsync({ slug: competition.slug, data: femaleCategory }),
-			]);
+				await Promise.all([
+					mutateAsync({ slug: competition.slug, data: maleCategory }),
+					mutateAsync({ slug: competition.slug, data: femaleCategory }),
+				]);
 
-			if (responses) {
-				onDone();
+				notifications.show({
+					title: 'Categories Created',
+					message: 'Male and Female categories have been created successfully',
+					color: 'green',
+				});
+			} else {
+				const category: CreateCompetitionCategory = {
+					...form.values,
+					categoryId: Number(form.values.categoryId),
+				} as CreateCompetitionCategory;
+
+				await mutateAsync({ slug: competition.slug, data: category });
+
+				notifications.show({
+					title: 'Category Created',
+					message: 'Category has been created successfully',
+					color: 'green',
+				});
 			}
 
-			// generate two categories
-		} else {
-			const category: CreateCompetitionCategory = {
-				...form.values,
-				categoryId: Number(form.values.categoryId),
-			} as CreateCompetitionCategory;
+			queryClient.invalidateQueries([
+				StaticQueryKey.CompetitionCategories,
+				competition.slug,
+			]);
 
-			await mutateAsync({ slug: competition.slug, data: category });
+			onDone();
+		} catch (error) {
+			notifications.show({
+				title: 'Creation Failed',
+				message: 'Failed to create category. Please try again.',
+				color: 'red',
+			});
 		}
-
-		queryClient.invalidateQueries([
-			StaticQueryKey.CompetitionCategories,
-			competition.slug,
-		]);
 	};
 
 	return (
 		<form onSubmit={form.onSubmit(onSubmit)}>
-			<Flex gap={'sm'}>
-				<Select
-					w={'30%'}
-					label="Sex"
-					data={['Male & Female', 'Male', 'Female', 'Unisex']}
-					{...form.getInputProps('sex')}
-				/>
-				<Select
-					w={'70%'}
-					label="Category"
-					data={commonStore.categories.map(({ value, id }) => ({
-						label: value,
-						value: id.toString(),
-					}))}
-					{...form.getInputProps('categoryId')}
-				/>
-			</Flex>
+			<Stack gap="lg">
+				{/* Category Selection */}
+				<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+					<Stack gap="md">
+						<Title order={4} size="h5">
+							Category Selection
+						</Title>
+						<Group grow>
+							<Select
+								label="Gender"
+								placeholder="Select gender"
+								leftSection={<IconGenderBigender size={18} />}
+								data={['Male & Female', 'Male', 'Female', 'Unisex']}
+								required
+								{...form.getInputProps('sex')}
+							/>
+							<Select
+								label="Category Type"
+								placeholder="Select category"
+								leftSection={<IconCategory size={18} />}
+								data={commonStore.categories.map(({ value, id }) => ({
+									label: value,
+									value: id.toString(),
+								}))}
+								required
+								searchable
+								{...form.getInputProps('categoryId')}
+							/>
+						</Group>
+					</Stack>
+				</ThemePaper>
 
-			<Flex gap={'sm'}>
-				<NumberInput
-					label="Largest Year Allowed"
-					{...form.getInputProps('largestYearAllowed')}
-				/>
-				<NumberInput
-					label="Smallest year allowed"
-					{...form.getInputProps('smallestYearAllowed')}
-				/>
-			</Flex>
+				{/* Age Range */}
+				<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+					<Stack gap="md">
+						<Title order={4} size="h5">
+							Age Range
+						</Title>
+						<Group grow>
+							<NumberInput
+								label="Smallest Year Allowed"
+								placeholder="Enter minimum year"
+								leftSection={<IconNumbers size={18} />}
+								min={1900}
+								max={new Date().getFullYear()}
+								required
+								{...form.getInputProps('smallestYearAllowed')}
+							/>
+							<NumberInput
+								label="Largest Year Allowed"
+								placeholder="Enter maximum year"
+								leftSection={<IconNumbers size={18} />}
+								min={1900}
+								max={new Date().getFullYear()}
+								required
+								{...form.getInputProps('largestYearAllowed')}
+							/>
+						</Group>
+						<Text size="sm" c="dimmed">
+							Participants must be born between these years to be eligible
+						</Text>
+					</Stack>
+				</ThemePaper>
 
-			{form.values.sex === 'Male & Female' ? (
-				<Flex direction={'column'} gap={'sm'}>
-					<TagsInput
-						description="Press enter to add"
-						label="Male Weights"
-						value={temporaryWeights.men}
-						onChange={(value) =>
-							setTemporaryWeights((prev) => ({ ...prev, men: value }))
-						}
-					/>
-					<TagsInput
-						description="Press enter to add"
-						label="Female Weights"
-						value={temporaryWeights.women}
-						onChange={(value) =>
-							setTemporaryWeights((prev) => ({ ...prev, women: value }))
-						}
-					/>
-				</Flex>
-			) : (
-				<TagsInput
-					description="Press enter to add"
-					label="Weights"
-					{...form.getInputProps('weights')}
-				/>
-			)}
+				{/* Weight Classes */}
+				<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+					<Stack gap="md">
+						<Title order={4} size="h5">
+							Weight Classes
+						</Title>
+						{form.values.sex === 'Male & Female' ? (
+							<Stack gap="sm">
+								<TagsInput
+									label="Male Weight Classes"
+									placeholder="Enter weight and press Enter"
+									description="Press Enter to add each weight class"
+									leftSection={<IconWeight size={18} />}
+									value={temporaryWeights.men}
+									onChange={(value) =>
+										setTemporaryWeights((prev) => ({ ...prev, men: value }))
+									}
+								/>
+								<TagsInput
+									label="Female Weight Classes"
+									placeholder="Enter weight and press Enter"
+									description="Press Enter to add each weight class"
+									leftSection={<IconWeight size={18} />}
+									value={temporaryWeights.women}
+									onChange={(value) =>
+										setTemporaryWeights((prev) => ({ ...prev, women: value }))
+									}
+								/>
+							</Stack>
+						) : (
+							<TagsInput
+								label="Weight Classes"
+								placeholder="Enter weight and press Enter"
+								description="Press Enter to add each weight class"
+								leftSection={<IconWeight size={18} />}
+								{...form.getInputProps('weights')}
+							/>
+						)}
+					</Stack>
+				</ThemePaper>
 
-			<Button type="submit">add category</Button>
+				{/* Submit Button */}
+				<Group justify="flex-end">
+					<Button
+						type="submit"
+						size="md"
+						leftSection={<IconPlus size={18} />}
+						loading={isLoading}
+					>
+						{form.values.sex === 'Male & Female'
+							? 'Add Categories'
+							: 'Add Category'}
+					</Button>
+				</Group>
+			</Stack>
 		</form>
 	);
 }

@@ -1,13 +1,34 @@
-import { Button, Flex, Switch, TextInput } from '@mantine/core';
+import {
+	Button,
+	Group,
+	Paper,
+	Stack,
+	Switch,
+	Text,
+	TextInput,
+	Title,
+} from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
+import '@mantine/dates/styles.css';
 import type { UpdateCompetition } from '@monorepo/utils';
+import {
+	IconCalendar,
+	IconDeviceFloppy,
+	IconEdit,
+	IconMapPin,
+	IconWorld,
+	IconWorldOff,
+} from '@tabler/icons-react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { Api } from '../../../../api';
 import type { CompetitionListItem } from '../../../../api/utils/common-types';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../../stores/auth';
 import { RichText } from '../../../shared/rich-text/RichText';
-import { Api } from '../../../../api';
+import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -34,7 +55,7 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 		},
 	});
 
-	const { mutate } = useMutation({
+	const { mutate, isLoading } = useMutation({
 		mutationFn: Api.user.competition.updateCompetition,
 		onSuccess: (data) => {
 			if (data.data.isPublished !== competition.isPublished) {
@@ -51,7 +72,19 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 					competition.slug,
 				]);
 			}
+			notifications.show({
+				title: 'Competition Updated',
+				message: 'Competition has been updated successfully',
+				color: 'green',
+			});
 			onSubmitSuccess();
+		},
+		onError: () => {
+			notifications.show({
+				title: 'Update Failed',
+				message: 'Failed to update competition. Please try again.',
+				color: 'red',
+			});
 		},
 	});
 
@@ -61,36 +94,140 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 
 	return (
 		<form onSubmit={form.onSubmit(onSubmit)}>
-			<Flex direction={'column'} gap={'sm'}>
-				<TextInput
-					variant="filled"
-					label="name"
-					{...form.getInputProps('name')}
-				/>
-				<RichText
-					onChange={form.getInputProps('description').onChange}
-					value={form.getInputProps('description').value}
-				/>
+			<Stack gap="lg">
+				{/* Basic Information */}
+				<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+					<Stack gap="md">
+						<Title order={4} size="h5">
+							Basic Information
+						</Title>
+						<TextInput
+							label="Competition Name"
+							placeholder="Enter competition name"
+							leftSection={<IconEdit size={18} />}
+							required
+							{...form.getInputProps('name')}
+						/>
+						<RichText
+							onChange={form.getInputProps('description').onChange}
+							value={form.getInputProps('description').value}
+						/>
+					</Stack>
+				</ThemePaper>
 
-				<TextInput label="location" {...form.getInputProps('location')} />
-				<TextInput
-					type="date"
-					label="startingAt"
-					{...form.getInputProps('startingAt')}
-				/>
-				<TextInput
-					type="date"
-					label="Registration End"
-					{...form.getInputProps('registrationEndAt')}
-				/>
+				{/* Location & Dates */}
+				<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+					<Stack gap="md">
+						<Title order={4} size="h5">
+							Location & Dates
+						</Title>
+						<TextInput
+							label="Location"
+							placeholder="Enter competition location"
+							leftSection={<IconMapPin size={18} />}
+							{...form.getInputProps('location')}
+						/>
+						<Group grow>
+							<DateTimePicker
+								label="Start Date & Time"
+								placeholder="Select start date and time"
+								leftSection={<IconCalendar size={18} />}
+								value={
+									form.values.startingAt
+										? new Date(form.values.startingAt)
+										: null
+								}
+								onChange={(value: unknown) => {
+									if (
+										value &&
+										typeof value === 'object' &&
+										value instanceof Date
+									) {
+										form.setFieldValue('startingAt', value.toISOString());
+									} else {
+										form.setFieldValue('startingAt', '');
+									}
+								}}
+							/>
+							<DateTimePicker
+								label="Registration End Date & Time"
+								placeholder="Select registration end date and time"
+								leftSection={<IconCalendar size={18} />}
+								value={
+									form.values.registrationEndAt
+										? new Date(form.values.registrationEndAt)
+										: null
+								}
+								onChange={(value: unknown) => {
+									if (
+										value &&
+										typeof value === 'object' &&
+										value instanceof Date
+									) {
+										form.setFieldValue(
+											'registrationEndAt',
+											value.toISOString(),
+										);
+									} else {
+										form.setFieldValue('registrationEndAt', '');
+									}
+								}}
+							/>
+						</Group>
+					</Stack>
+				</ThemePaper>
 
-				<Switch
-					label="is published"
-					checked={form.values.isPublished}
-					{...form.getInputProps('isPublished')}
-				/>
-				<Button type="submit">submit</Button>
-			</Flex>
+				{/* Publication Settings */}
+				<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+					<Stack gap="md">
+						<Title order={4} size="h5">
+							Publication Settings
+						</Title>
+						<Paper shadow="sm" p="md" radius="md" withBorder>
+							<Group justify="space-between" align="center">
+								<Stack gap={2}>
+									<Group gap="xs">
+										{form.values.isPublished ? (
+											<IconWorld
+												size={20}
+												color="var(--mantine-color-green-6)"
+											/>
+										) : (
+											<IconWorldOff
+												size={20}
+												color="var(--mantine-color-gray-6)"
+											/>
+										)}
+										<Text fw={500}>Published Status</Text>
+									</Group>
+									<Text size="sm" c="dimmed">
+										{form.values.isPublished
+											? 'This competition is visible to the public'
+											: 'This competition is hidden from the public'}
+									</Text>
+								</Stack>
+								<Switch
+									checked={form.values.isPublished}
+									{...form.getInputProps('isPublished')}
+									size="lg"
+								/>
+							</Group>
+						</Paper>
+					</Stack>
+				</ThemePaper>
+
+				{/* Submit Button */}
+				<Group justify="flex-end">
+					<Button
+						type="submit"
+						size="md"
+						leftSection={<IconDeviceFloppy size={18} />}
+						loading={isLoading}
+					>
+						Save Changes
+					</Button>
+				</Group>
+			</Stack>
 		</form>
 	);
 }
