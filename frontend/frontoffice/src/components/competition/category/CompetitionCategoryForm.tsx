@@ -57,8 +57,8 @@ export function CompetitionCategoryForm({ competition, onDone }: Props) {
 	});
 
 	const { mutateAsync, isLoading } = useMutation(
-		({ slug, data }: { slug: string; data: CreateCompetitionCategory }) =>
-			Api.user.competition.createCompetitionCategory(slug, data),
+		({ data }: { data: CreateCompetitionCategory }) =>
+			Api.user.competition.createCompetitionCategory(data),
 		{
 			onSuccess: () => {
 				form.reset();
@@ -85,8 +85,8 @@ export function CompetitionCategoryForm({ competition, onDone }: Props) {
 				};
 
 				await Promise.all([
-					mutateAsync({ slug: competition.slug, data: maleCategory }),
-					mutateAsync({ slug: competition.slug, data: femaleCategory }),
+					mutateAsync({ data: maleCategory }),
+					mutateAsync({ data: femaleCategory }),
 				]);
 
 				notifications.show({
@@ -100,7 +100,7 @@ export function CompetitionCategoryForm({ competition, onDone }: Props) {
 					categoryId: Number(form.values.categoryId),
 				} as CreateCompetitionCategory;
 
-				await mutateAsync({ slug: competition.slug, data: category });
+				await mutateAsync({ data: category });
 
 				notifications.show({
 					title: 'Category Created',

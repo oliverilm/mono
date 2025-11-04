@@ -18,7 +18,7 @@ export function AppTabs({ tabs, TabsProps, TabListProps }: Props) {
 		<Tabs
 			value={selected}
 			onChange={setSelected}
-			w={'inherit'}
+			w={'100%'}
 			defaultValue={tabs[0].value}
 			mx={'auto'}
 			display={'flex'}
@@ -38,7 +38,7 @@ export function AppTabs({ tabs, TabsProps, TabListProps }: Props) {
 			{tabs
 				.filter(({ value }) => selected === value)
 				.map(({ value, element }) => (
-					<Tabs.Panel mt={'lg'} w={'inherit'} key={value} value={value}>
+					<Tabs.Panel mt={'lg'} w={'100%'} key={value} value={value}>
 						{element as React.ReactNode}
 					</Tabs.Panel>
 				))}

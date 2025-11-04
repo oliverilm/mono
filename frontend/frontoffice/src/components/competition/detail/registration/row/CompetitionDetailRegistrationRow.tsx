@@ -1,15 +1,20 @@
-import { ActionIcon, Select, Table } from '@mantine/core';
+import { ActionIcon, Badge, Select, Table, Text, Tooltip } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { CreateCompetitor } from '@monorepo/utils';
-import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
+import {
+	IconDeviceFloppy,
+	IconTrash,
+	IconTrophy,
+	IconWeight,
+} from '@tabler/icons-react';
 import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from 'react-query';
+import { Api } from '../../../../../api';
 import type {
 	CompetitionCategory,
 	PrivateCompetitor,
 } from '../../../../../api/utils/common-types';
-import { Api } from '../../../../../api';
 
 interface Props {
 	category: CompetitionCategory;
@@ -51,10 +56,30 @@ export function CompetitionDetailRegistrationRow({
 	return (
 		<Table.Tr key={competitor.firstName}>
 			<Table.Td>
-				{competitor.firstName} {competitor.lastName}
+				<Text fw={500}>
+					{competitor.firstName} {competitor.lastName}
+				</Text>
 			</Table.Td>
-			<Table.Td>{competitor.sex}</Table.Td>
-			<Table.Td>{dayjs(competitor.dateOfBirth).year()}</Table.Td>
+			<Table.Td>
+				<Badge
+					color={
+						competitor.sex === 'Male'
+							? 'blue'
+							: competitor.sex === 'Female'
+								? 'pink'
+								: 'gray'
+					}
+					variant="light"
+					size="sm"
+				>
+					{competitor.sex}
+				</Badge>
+			</Table.Td>
+			<Table.Td>
+				<Text size="sm" c="dimmed">
+					{dayjs(competitor.dateOfBirth).year()}
+				</Text>
+			</Table.Td>
 
 			{!currentCategoryParticipation ? (
 				<ParticipationFormForCategory
@@ -63,17 +88,37 @@ export function CompetitionDetailRegistrationRow({
 				/>
 			) : (
 				<>
-					<Table.Td>{currentCategoryParticipation.seed}</Table.Td>
-					<Table.Td>{currentCategoryParticipation.weight}</Table.Td>
-					<Table.Td align="right">
-						<ActionIcon
-							mx="md"
-							variant="transparent"
-							c={'orange'}
-							onClick={() => mutate(currentCategoryParticipation.id)}
+					<Table.Td>
+						<Badge
+							variant="light"
+							color="yellow"
+							size="sm"
+							leftSection={<IconTrophy size={12} />}
 						>
-							<IconTrash />
-						</ActionIcon>
+							{currentCategoryParticipation.seed || 'N/A'}
+						</Badge>
+					</Table.Td>
+					<Table.Td>
+						<Badge
+							variant="light"
+							color="blue"
+							size="sm"
+							leftSection={<IconWeight size={12} />}
+						>
+							{currentCategoryParticipation.weight} kg
+						</Badge>
+					</Table.Td>
+					<Table.Td align="right">
+						<Tooltip label="Remove from category" withArrow>
+							<ActionIcon
+								variant="light"
+								color="red"
+								size="lg"
+								onClick={() => mutate(currentCategoryParticipation.id)}
+							>
+								<IconTrash size={18} />
+							</ActionIcon>
+						</Tooltip>
 					</Table.Td>
 				</>
 			)}
@@ -148,6 +193,8 @@ export function ParticipationFormForCategory({
 				<Select
 					data={Array.from({ length: 11 }, (_, i) => String(i))}
 					w={'6rem'}
+					placeholder="Seed"
+					leftSection={<IconTrophy size={14} />}
 					{...form.getInputProps('seed')}
 				/>
 			</Table.Td>
@@ -156,18 +203,22 @@ export function ParticipationFormForCategory({
 					variant="filled"
 					w={'6rem'}
 					data={category.weights}
+					placeholder="Weight"
+					leftSection={<IconWeight size={14} />}
 					{...form.getInputProps('weight')}
 				/>
 			</Table.Td>
 			<Table.Td align="right">
-				<ActionIcon
-					mx="md"
-					variant="transparent"
-					c={'green'}
-					onClick={onSubmit}
-				>
-					<IconDeviceFloppy />
-				</ActionIcon>
+				<Tooltip label="Register competitor" withArrow>
+					<ActionIcon
+						variant="light"
+						color="green"
+						size="lg"
+						onClick={onSubmit}
+					>
+						<IconDeviceFloppy size={18} />
+					</ActionIcon>
+				</Tooltip>
 			</Table.Td>
 		</>
 	);

@@ -6,7 +6,7 @@ import type {
 	CreateCompetitionLink,
 	CreateCompetitor,
 	DeleteCompetitor,
-	UpdateCompetition
+	UpdateCompetition,
 } from '@monorepo/utils';
 import type { AxiosResponse } from 'axios';
 import { client } from '../../client';
@@ -18,7 +18,7 @@ import type {
 } from '../../utils/common-types';
 
 export namespace UserCompetition {
-	const prefix = "/user/competition"
+	const prefix = '/user/competition';
 
 	// GET /user/competition/competitor/get-personal/:slug
 	export function getPersonalCompetitors(
@@ -44,7 +44,10 @@ export namespace UserCompetition {
 	export function getCompetitorExport(slug: string) {
 		return client.post(`${prefix}/export/${slug}`);
 	}
-	export function createCompetitionAdmin(slug: string, data: CreateCompetitionAdmin) {
+	export function createCompetitionAdmin(
+		slug: string,
+		data: CreateCompetitionAdmin,
+	) {
 		return client.post(`${prefix}/${slug}/admins`, data);
 	}
 	export function createCompetitionLink(data: CreateCompetitionLink) {
@@ -60,17 +63,16 @@ export namespace UserCompetition {
 	}
 
 	export function createCompetitionCategory(
-		slug: string,
 		data: CreateCompetitionCategory,
 	): Promise<AxiosResponse<CompetitionCategory>> {
-		return client.post(`${prefix}/${slug}/categories`, data);
+		return client.post(`${prefix}/category/create`, data);
 	}
 
 	export function createCompetitor(
 		_slug: string,
 		data: CreateCompetitor,
 	): Promise<AxiosResponse<Competitor>> {
-		return client.post(`${prefix}/get-private/competitor/create`, data);
+		return client.post(`${prefix}/competitor/create`, data);
 	}
 
 	export function updateCompetitionCategory() {

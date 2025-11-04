@@ -1,4 +1,14 @@
-import { Box, Flex, Text } from '@mantine/core';
+import {
+	Badge,
+	Box,
+	Container,
+	Group,
+	Loader,
+	Stack,
+	Text,
+	Title,
+} from '@mantine/core';
+import { IconFileOff, IconTrophy } from '@tabler/icons-react';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { Api } from '../../api';
@@ -10,6 +20,7 @@ import { CompetitionDetailRegistration } from '../../components/competition/deta
 import { CompetitionImageOverlay } from '../../components/competition/image-overlay/CompetitionImageOverlay';
 import { ImageWithOverlay } from '../../components/shared/image-with-text/ImageWithText';
 import { AppTabs } from '../../components/shared/tabs/AppTabs';
+import { ThemePaper } from '../../components/shared/theme-paper/ThemePaper';
 import { HEADER_HEIGHT, getRandomTestCompetitionImage } from '../../constants';
 import { StaticQueryKey } from '../../providers/query-provider/keys';
 import { useAuthStore } from '../../stores/auth';
@@ -20,9 +31,9 @@ export function CompetitionPage() {
 	const authStore = useAuthStore();
 
 	const [
-		{ data: competition },
-		{ data: competitionMetadata },
-		{ data: competitionCategories },
+		{ data: competition, isLoading: isLoadingCompetition },
+		{ data: competitionMetadata, isLoading: isLoadingMetadata },
+		{ data: competitionCategories, isLoading: isLoadingCategories },
 	] = useQueries([
 		{
 			queryKey: [StaticQueryKey.CompetitionDetail, slug],
@@ -49,39 +60,90 @@ export function CompetitionPage() {
 		},
 	]);
 
+	const isLoading =
+		isLoadingCompetition || isLoadingMetadata || isLoadingCategories;
+
+	if (isLoading) {
+		return (
+			<Container size="lg" py="xl">
+				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
+					<Stack align="center" py="xl">
+						<Loader size="lg" />
+						<Text c="dimmed">Loading competition details...</Text>
+					</Stack>
+				</ThemePaper>
+			</Container>
+		);
+	}
+
 	if (!slug || !competition?.data) {
-		return <div>Competition not found</div>;
+		return (
+			<Container size="lg" py="xl">
+				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
+					<Stack align="center" py="xl" gap="md">
+						<IconFileOff size={64} style={{ opacity: 0.3 }} />
+						<Title order={2} size="h2">
+							Competition Not Found
+						</Title>
+						<Text c="dimmed" ta="center" maw={400}>
+							The competition you're looking for doesn't exist or has been
+							removed.
+						</Text>
+					</Stack>
+				</ThemePaper>
+			</Container>
+		);
 	}
 
 	const { text, bg } = getCompetitionBannerColorAndStatus(competition.data);
+	const statusColor = competition.data.isPublished ? 'green' : 'gray';
+
 	return (
-		<LayoutPage width="full" pos={'relative'}>
+		<LayoutPage width="full" pos="relative">
+			{/* Status Banner */}
 			<Box
 				bg={bg}
 				pos="sticky"
 				top={HEADER_HEIGHT}
-				w={'100%'}
-				p={'5px'}
+				w="100%"
+				p="xs"
 				style={{ zIndex: 2 }}
 			>
-				<Text c={'white'} fw={'bold'}>
-					{text}
-				</Text>
+				<Container size="lg">
+					<Stack gap={4} align="center">
+						<Group gap="xs" align="center">
+							<IconTrophy size={18} color="white" />
+							<Text c="white" fw={600} size="sm">
+								{text}
+							</Text>
+							<Badge color={statusColor} variant="filled" size="sm" radius="md">
+								{competition.data.isPublished ? 'Published' : 'Draft'}
+							</Badge>
+						</Group>
+					</Stack>
+				</Container>
 			</Box>
-			<Flex direction={'column'} p={0} w={'100%'}>
+
+			{/* Hero Image */}
+			<Box pos="relative" w="100%">
 				<ImageWithOverlay
 					src={getRandomTestCompetitionImage()}
 					imageHeight={500}
-					imageWidth={'100%'}
+					imageWidth="100%"
 					overlay={<CompetitionImageOverlay competition={competition.data} />}
 				/>
+			</Box>
 
-				<LayoutPage width="default">
+			{/* Content */}
+			<LayoutPage width="default">
+				<Stack gap="xl">
+					{/* Admin Panel */}
 					<CompetitionDetailAdmin
 						competition={competition.data}
 						metadata={competitionMetadata?.data}
 					/>
 
+					{/* Tabs */}
 					<AppTabs
 						TabListProps={{
 							pos: 'sticky',
@@ -116,7 +178,6 @@ export function CompetitionPage() {
 									/>
 								),
 							},
-
 							{
 								value: 'Competitors',
 								label: 'Competitors',
@@ -131,8 +192,8 @@ export function CompetitionPage() {
 							authStore.isAuthenticated ? true : el.value !== 'Registration',
 						)}
 					/>
-				</LayoutPage>
-			</Flex>
+				</Stack>
+			</LayoutPage>
 		</LayoutPage>
 	);
 }

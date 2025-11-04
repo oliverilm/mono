@@ -137,14 +137,13 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 										? new Date(form.values.startingAt)
 										: null
 								}
-								onChange={(value: unknown) => {
-									if (
-										value &&
-										typeof value === 'object' &&
-										value instanceof Date
-									) {
-										form.setFieldValue('startingAt', value.toISOString());
-									} else {
+								onChange={(value: string | null) => {
+									if (value && typeof value === 'string') {
+										const date = new Date(value);
+										if (!Number.isNaN(date.getTime())) {
+											form.setFieldValue('startingAt', date.toISOString());
+										}
+									} else if (value === null) {
 										form.setFieldValue('startingAt', '');
 									}
 								}}
@@ -158,17 +157,16 @@ export function CompetitionUpdateForm({ competition, onSubmitSuccess }: Props) {
 										? new Date(form.values.registrationEndAt)
 										: null
 								}
-								onChange={(value: unknown) => {
-									if (
-										value &&
-										typeof value === 'object' &&
-										value instanceof Date
-									) {
-										form.setFieldValue(
-											'registrationEndAt',
-											value.toISOString(),
-										);
-									} else {
+								onChange={(value: string | null) => {
+									if (value && typeof value === 'string') {
+										const date = new Date(value);
+										if (!Number.isNaN(date.getTime())) {
+											form.setFieldValue(
+												'registrationEndAt',
+												date.toISOString(),
+											);
+										}
+									} else if (value === null) {
 										form.setFieldValue('registrationEndAt', '');
 									}
 								}}

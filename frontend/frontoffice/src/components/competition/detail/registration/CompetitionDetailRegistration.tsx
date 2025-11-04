@@ -1,13 +1,26 @@
-import { Flex, Table, Text, TextInput, Title } from '@mantine/core';
+import {
+	Badge,
+	Divider,
+	Group,
+	Loader,
+	Paper,
+	Stack,
+	Table,
+	Text,
+	TextInput,
+	Title,
+} from '@mantine/core';
+import { IconCategory, IconSearch, IconUsers } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
+import { Api } from '../../../../api';
 import type {
 	CompetitionCategory,
 	CompetitionListItem,
 } from '../../../../api/utils/common-types';
+import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 import { CompetitionDetailRegistrationRow } from './row/CompetitionDetailRegistrationRow';
-import { Api } from '../../../../api';
 
 interface Props {
 	competition: CompetitionListItem;
@@ -64,13 +77,70 @@ export function CompetitionDetailRegistration({
 			));
 	};
 
+	const hasResults = competitionCategories.some((category) => {
+		const rows = getRowsForCompetitionCategory(category);
+		return rows && rows.length > 0;
+	});
+
 	return (
-		<Flex direction={'column'} gap={'lg'}>
-			<TextInput
-				value={search}
-				onChange={(e) => setSearch(e.currentTarget.value)}
-				placeholder="Search for competitor"
-			/>
+		<Stack gap="lg">
+			{/* Search Section */}
+			<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+				<Stack gap="md">
+					<Group gap="xs" align="center">
+						<IconSearch size={24} color="var(--mantine-color-blue-6)" />
+						<Title order={3} size="h4">
+							Search Competitors
+						</Title>
+					</Group>
+					<Divider />
+					<TextInput
+						value={search}
+						onChange={(e) => setSearch(e.currentTarget.value)}
+						placeholder="Search by name..."
+						leftSection={<IconSearch size={18} />}
+						size="md"
+					/>
+					{search && (
+						<Text size="sm" c="dimmed">
+							{hasResults
+								? `Showing results for "${search}"`
+								: `No results found for "${search}"`}
+						</Text>
+					)}
+				</Stack>
+			</ThemePaper>
+
+			{/* Loading State */}
+			{!competitors && (
+				<Paper shadow="sm" p="xl" radius="md" withBorder>
+					<Group justify="center">
+						<Loader size="md" />
+						<Text size="sm" c="dimmed">
+							Loading competitors...
+						</Text>
+					</Group>
+				</Paper>
+			)}
+
+			{/* Empty State */}
+			{competitors && !hasResults && (
+				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
+					<Stack gap="md" align="center">
+						<IconUsers size={48} color="var(--mantine-color-gray-5)" />
+						<Text size="lg" fw={500} c="dimmed">
+							No competitors found
+						</Text>
+						<Text size="sm" c="dimmed" ta="center">
+							{search
+								? 'Try adjusting your search criteria'
+								: 'No competitors are registered for this competition yet'}
+						</Text>
+					</Stack>
+				</ThemePaper>
+			)}
+
+			{/* Category Tables */}
 			{competitionCategories.map((category) => {
 				const rows = getRowsForCompetitionCategory(category);
 				if (!rows?.length) return null;
@@ -79,20 +149,88 @@ export function CompetitionDetailRegistration({
 					Number(category.smallestYearAllowed),
 					Number(category.largestYearAllowed),
 				].sort();
+
 				return (
-					<Flex direction={'column'} gap={'md'} key={category.categoryId}>
-						<Flex gap={'md'} align={'baseline'}>
-							<Title>{category.categoryName.toUpperCase()}</Title>
-							<Text>
-								{smallest} - {largest}
-							</Text>
-						</Flex>
-						<Table stickyHeader stickyHeaderOffset={60}>
+					<ThemePaper
+						key={category.categoryId}
+						light="gray.1"
+						dark="gray.8"
+						p={0}
+						radius="md"
+						withBorder
+					>
+						{/* Category Header */}
+						<Paper
+							shadow="sm"
+							p="md"
+							radius="md"
+							style={{
+								borderRadius:
+									'var(--mantine-radius-md) var(--mantine-radius-md) 0 0',
+								background:
+									'linear-gradient(135deg, var(--mantine-color-blue-6) 0%, var(--mantine-color-blue-8) 100%)',
+							}}
+						>
+							<Stack gap="xs">
+								<Group justify="space-between" align="center">
+									<Group gap="xs" align="center">
+										<IconCategory size={20} color="white" />
+										<Title order={4} size="h5" c="white">
+											{category.categoryName.toUpperCase()}
+										</Title>
+									</Group>
+									<Badge variant="light" color="white" size="lg">
+										{rows.length}{' '}
+										{rows.length === 1 ? 'competitor' : 'competitors'}
+									</Badge>
+								</Group>
+								<Group gap="xs">
+									<Badge variant="filled" color="white" size="sm" c="blue">
+										Age: {smallest} - {largest}
+									</Badge>
+									{category.sex && (
+										<Badge
+											variant="filled"
+											color="white"
+											size="sm"
+											c={
+												category.sex === 'Male'
+													? 'blue'
+													: category.sex === 'Female'
+														? 'pink'
+														: 'gray'
+											}
+										>
+											{category.sex}
+										</Badge>
+									)}
+								</Group>
+							</Stack>
+						</Paper>
+
+						{/* Table */}
+						<Table
+							stickyHeader
+							stickyHeaderOffset={60}
+							highlightOnHover
+							withTableBorder
+							withColumnBorders
+						>
+							<Table.Thead>
+								<Table.Tr>
+									<Table.Th>Name</Table.Th>
+									<Table.Th>Gender</Table.Th>
+									<Table.Th>Birth Year</Table.Th>
+									<Table.Th>Seed</Table.Th>
+									<Table.Th>Weight</Table.Th>
+									<Table.Th style={{ textAlign: 'right' }}>Actions</Table.Th>
+								</Table.Tr>
+							</Table.Thead>
 							<Table.Tbody>{rows}</Table.Tbody>
 						</Table>
-					</Flex>
+					</ThemePaper>
 				);
 			})}
-		</Flex>
+		</Stack>
 	);
 }
