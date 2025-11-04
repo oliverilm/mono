@@ -14,7 +14,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import type { LoginCredentials } from '@monorepo/utils';
+import { type LoginCredentials, omit } from '@monorepo/utils';
 import {
 	IconEye,
 	IconEyeOff,
@@ -73,9 +73,7 @@ export function RegisterPage() {
 	});
 
 	const onSubmit = async (data: typeof form.values) => {
-		// Only send email and password to the API, not confirmPassword
-		const { confirmPassword, ...submitData } = data;
-		mutate(submitData);
+		mutate(omit(data, ['confirmPassword']));
 	};
 
 	return (
