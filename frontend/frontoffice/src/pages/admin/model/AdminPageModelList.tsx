@@ -2,7 +2,6 @@ import {
 	Badge,
 	Container,
 	Group,
-	Loader,
 	Pagination,
 	Paper,
 	Select,
@@ -13,12 +12,14 @@ import {
 	Tooltip,
 	useMantineColorScheme,
 } from '@mantine/core';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconDatabase, IconX } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Api } from '../../../api';
+import { EmptyState } from '../../../components/shared/empty-state/EmptyState';
+import { LoadingState } from '../../../components/shared/loading-state/LoadingState';
 import { ThemePaper } from '../../../components/shared/theme-paper/ThemePaper';
 import { AdminPageModelCreate } from './create/AdminPageModelCreate';
 
@@ -184,31 +185,24 @@ export function AdminPageModelList() {
 
 	if (isLoading) {
 		return (
-			<Container size="lg" py="xl">
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack gap="md" align="center">
-						<Loader size="lg" />
-						<Text c="dimmed">Loading {model}...</Text>
-					</Stack>
-				</ThemePaper>
-			</Container>
+			<LoadingState
+				message={`Loading ${model}...`}
+				size="lg"
+				useThemePaper
+				withContainer
+			/>
 		);
 	}
 
 	if (!rows || rows.length === 0) {
 		return (
 			<Container size="lg" py="xl">
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack gap="md" align="center">
-						<Text size="xl" c="dimmed" fw={500}>
-							No {model} items found
-						</Text>
-						<Text size="sm" c="dimmed">
-							Create your first {model} item to get started
-						</Text>
-						{model && <AdminPageModelCreate model={model} />}
-					</Stack>
-				</ThemePaper>
+				<EmptyState
+					title={`No ${model} items found`}
+					description={`Create your first ${model} item to get started`}
+					icon={IconDatabase}
+					action={model ? <AdminPageModelCreate model={model} /> : undefined}
+				/>
 			</Container>
 		);
 	}

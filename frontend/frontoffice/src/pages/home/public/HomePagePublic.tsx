@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { Api } from '../../../api';
+import cover from '../../../assets/cover.webp';
 import { ClubList } from '../../../components/club/list/ClubList';
 import { CompetitionCarousel } from '../../../components/competition/carousel/CompetitionCarousel';
 import { StatCard } from '../../../components/shared/stat-card/StatCard';
@@ -85,9 +86,9 @@ export function HomePagePublic() {
 	return (
 		<>
 			{/* Hero Section */}
-			<ThemeBox variant="hero">
+			<ThemeBox variant="hero" style={{ backgroundImage: `url(${cover})` }}>
 				<Container size="lg">
-					<Stack gap="xl" align="center" ta="center">
+					<Stack gap="xl" align="center" ta="center" bg={'red'} p={'xl'}>
 						<Title order={1} size="3rem" fw={800} c={theme.textOnGradient}>
 							Welcome to the Competition Platform
 						</Title>

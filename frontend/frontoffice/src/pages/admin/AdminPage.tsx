@@ -3,7 +3,6 @@ import {
 	Button,
 	Container,
 	Group,
-	Loader,
 	SimpleGrid,
 	Stack,
 	Text,
@@ -13,6 +12,8 @@ import { IconDatabase, IconSettings } from '@tabler/icons-react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Api } from '../../api';
+import { EmptyState } from '../../components/shared/empty-state/EmptyState';
+import { LoadingState } from '../../components/shared/loading-state/LoadingState';
 import { ThemePaper } from '../../components/shared/theme-paper/ThemePaper';
 import { useHoverEffect } from '../../hooks/useHoverEffect';
 
@@ -37,28 +38,19 @@ export function AdminPage() {
 
 	if (isLoading) {
 		return (
-			<Container size="lg" py="xl">
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack align="center" py="xl">
-						<Loader size="lg" />
-						<Text c="dimmed">Loading admin models...</Text>
-					</Stack>
-				</ThemePaper>
-			</Container>
+			<LoadingState
+				message="Loading admin models..."
+				size="lg"
+				useThemePaper
+				withContainer
+			/>
 		);
 	}
 
 	if (!models || models.length === 0) {
 		return (
 			<Container size="lg" py="xl">
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack align="center" py="xl">
-						<IconDatabase size={48} style={{ opacity: 0.3 }} />
-						<Text c="dimmed" ta="center">
-							No admin models available
-						</Text>
-					</Stack>
-				</ThemePaper>
+				<EmptyState title="No admin models available" icon={IconDatabase} />
 			</Container>
 		);
 	}

@@ -1,13 +1,4 @@
-import {
-	Badge,
-	Box,
-	Container,
-	Group,
-	Loader,
-	Stack,
-	Text,
-	Title,
-} from '@mantine/core';
+import { Badge, Box, Container, Group, Stack, Text } from '@mantine/core';
 import { IconFileOff, IconTrophy } from '@tabler/icons-react';
 import { useQueries } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -18,9 +9,10 @@ import { CompetitionDetailCompetitors } from '../../components/competition/detai
 import { CompetitionDetailInfo } from '../../components/competition/detail/info/CompetitionDetailInfo';
 import { CompetitionDetailRegistration } from '../../components/competition/detail/registration/CompetitionDetailRegistration';
 import { CompetitionImageOverlay } from '../../components/competition/image-overlay/CompetitionImageOverlay';
+import { EmptyState } from '../../components/shared/empty-state/EmptyState';
 import { ImageWithOverlay } from '../../components/shared/image-with-text/ImageWithText';
+import { LoadingState } from '../../components/shared/loading-state/LoadingState';
 import { AppTabs } from '../../components/shared/tabs/AppTabs';
-import { ThemePaper } from '../../components/shared/theme-paper/ThemePaper';
 import { HEADER_HEIGHT, getRandomTestCompetitionImage } from '../../constants';
 import { StaticQueryKey } from '../../providers/query-provider/keys';
 import { useAuthStore } from '../../stores/auth';
@@ -65,32 +57,24 @@ export function CompetitionPage() {
 
 	if (isLoading) {
 		return (
-			<Container size="lg" py="xl">
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack align="center" py="xl">
-						<Loader size="lg" />
-						<Text c="dimmed">Loading competition details...</Text>
-					</Stack>
-				</ThemePaper>
-			</Container>
+			<LoadingState
+				message="Loading competition details..."
+				size="lg"
+				useThemePaper
+				withContainer
+			/>
 		);
 	}
 
 	if (!slug || !competition?.data) {
 		return (
 			<Container size="lg" py="xl">
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack align="center" py="xl" gap="md">
-						<IconFileOff size={64} style={{ opacity: 0.3 }} />
-						<Title order={2} size="h2">
-							Competition Not Found
-						</Title>
-						<Text c="dimmed" ta="center" maw={400}>
-							The competition you're looking for doesn't exist or has been
-							removed.
-						</Text>
-					</Stack>
-				</ThemePaper>
+				<EmptyState
+					title="Competition Not Found"
+					description="The competition you're looking for doesn't exist or has been removed."
+					icon={IconFileOff}
+					iconSize={64}
+				/>
 			</Container>
 		);
 	}

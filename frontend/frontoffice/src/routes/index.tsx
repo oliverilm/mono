@@ -5,6 +5,7 @@ import { AdminPageModelList } from '../pages/admin/model/AdminPageModelList';
 import { AdminPageModelDetail } from '../pages/admin/model/detail/AdminPageModelDetail';
 import { ClubPage } from '../pages/club/ClubPage';
 import { CompetitionPage } from '../pages/competition/CompetitionPage';
+import { CompetitionsPage } from '../pages/competitions/CompetitionsPage';
 import { HomePage } from '../pages/home/HomePage';
 import { Layout } from '../pages/layout/Layout';
 import { LoginPage } from '../pages/login/LoginPage';
@@ -27,6 +28,10 @@ const routes = createBrowserRouter([
 			{
 				path: '/register',
 				element: <RegisterPage />,
+			},
+			{
+				path: '/competitions',
+				element: <CompetitionsPage />,
 			},
 			{
 				path: '/competitions/:slug',

@@ -6,7 +6,6 @@ import {
 	Button,
 	Container,
 	Group,
-	Loader,
 	Paper,
 	Stack,
 	Text,
@@ -14,6 +13,8 @@ import {
 } from '@mantine/core';
 import { IconDeviceFloppy, IconFileOff } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
+import { EmptyState } from '../../../../components/shared/empty-state/EmptyState';
+import { LoadingState } from '../../../../components/shared/loading-state/LoadingState';
 import { ThemePaper } from '../../../../components/shared/theme-paper/ThemePaper';
 import { useAdminPageModelDetail } from './AdminPageModelDetail.hook';
 
@@ -24,30 +25,22 @@ export function AdminPageModelDetail() {
 
 	if (isLoading) {
 		return (
-			<Container size="lg" py="xl">
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack align="center" py="xl">
-						<Loader size="lg" />
-						<Text c="dimmed">
-							Loading {formatColumnName(model || 'item')} details...
-						</Text>
-					</Stack>
-				</ThemePaper>
-			</Container>
+			<LoadingState
+				message={`Loading ${formatColumnName(model || 'item')} details...`}
+				size="lg"
+				useThemePaper
+				withContainer
+			/>
 		);
 	}
 
 	if (!item) {
 		return (
 			<Container size="lg" py="xl">
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack align="center" py="xl">
-						<IconFileOff size={48} style={{ opacity: 0.3 }} />
-						<Text c="dimmed" ta="center">
-							{formatColumnName(model || 'Item')} not found
-						</Text>
-					</Stack>
-				</ThemePaper>
+				<EmptyState
+					title={`${formatColumnName(model || 'Item')} not found`}
+					icon={IconFileOff}
+				/>
 			</Container>
 		);
 	}

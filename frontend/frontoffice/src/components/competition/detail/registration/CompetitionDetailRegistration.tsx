@@ -2,7 +2,6 @@ import {
 	Badge,
 	Divider,
 	Group,
-	Loader,
 	Paper,
 	Stack,
 	Table,
@@ -19,6 +18,8 @@ import type {
 	CompetitionCategory,
 	CompetitionListItem,
 } from '../../../../api/utils/common-types';
+import { EmptyState } from '../../../shared/empty-state/EmptyState';
+import { LoadingState } from '../../../shared/loading-state/LoadingState';
 import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 import { CompetitionDetailRegistrationRow } from './row/CompetitionDetailRegistrationRow';
 
@@ -112,32 +113,19 @@ export function CompetitionDetailRegistration({
 			</ThemePaper>
 
 			{/* Loading State */}
-			{!competitors && (
-				<Paper shadow="sm" p="xl" radius="md" withBorder>
-					<Group justify="center">
-						<Loader size="md" />
-						<Text size="sm" c="dimmed">
-							Loading competitors...
-						</Text>
-					</Group>
-				</Paper>
-			)}
+			{!competitors && <LoadingState message="Loading competitors..." />}
 
 			{/* Empty State */}
 			{competitors && !hasResults && (
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack gap="md" align="center">
-						<IconUsers size={48} color="var(--mantine-color-gray-5)" />
-						<Text size="lg" fw={500} c="dimmed">
-							No competitors found
-						</Text>
-						<Text size="sm" c="dimmed" ta="center">
-							{search
-								? 'Try adjusting your search criteria'
-								: 'No competitors are registered for this competition yet'}
-						</Text>
-					</Stack>
-				</ThemePaper>
+				<EmptyState
+					title="No competitors found"
+					description={
+						search
+							? 'Try adjusting your search criteria'
+							: 'No competitors are registered for this competition yet'
+					}
+					icon={IconUsers}
+				/>
 			)}
 
 			{/* Category Tables */}

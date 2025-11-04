@@ -6,6 +6,7 @@ import {
 	IconHome,
 	IconLogout,
 	IconPassword,
+	IconTrophy,
 } from '@tabler/icons-react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
@@ -45,6 +46,13 @@ export function LayoutNavbar() {
 	return (
 		<AppShell.Navbar>
 			<AppShell.Section grow>
+				<NavLink
+					label="All Competitions"
+					leftSection={<IconTrophy {...iconProps} />}
+					rightSection={<Chevron />}
+					component={Link}
+					to="/competitions"
+				/>
 				{userClubData && (
 					<NavLink
 						label="My club"
@@ -88,7 +96,7 @@ export function LayoutNavbar() {
 				<Modal
 					opened={competitionFormOpened}
 					onClose={toggleCompetitionForm}
-					title={'Create competition'}
+					withCloseButton={false}
 				>
 					<CompetitionFrom onSubmit={toggleCompetitionForm} />
 				</Modal>

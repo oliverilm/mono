@@ -20,6 +20,7 @@ import { getRandomTestClubImage } from '../../../constants';
 import { useHoverEffect } from '../../../hooks/useHoverEffect';
 import { useThemeStyles } from '../../../hooks/useThemeStyles';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
+import { EmptyState } from '../../shared/empty-state/EmptyState';
 
 const span = {
 	xl: 4,
@@ -173,9 +174,11 @@ export function ClubList() {
 
 	if (!clubs?.data || clubs.data.length === 0) {
 		return (
-			<Box ta="center" py="xl">
-				<Text c="dimmed">No clubs available at the moment.</Text>
-			</Box>
+			<EmptyState
+				title="No clubs available"
+				description="No clubs are available at the moment."
+				icon={IconUsers}
+			/>
 		);
 	}
 

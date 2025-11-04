@@ -1,9 +1,7 @@
 import {
 	Badge,
 	Group,
-	Loader,
 	Pagination,
-	Paper,
 	Stack,
 	Table,
 	Text,
@@ -23,6 +21,8 @@ import type {
 	CompetitionCategory,
 	CompetitionListItem,
 } from '../../../../api/utils/common-types';
+import { EmptyState } from '../../../shared/empty-state/EmptyState';
+import { LoadingState } from '../../../shared/loading-state/LoadingState';
 import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 
 interface Props {
@@ -156,31 +156,15 @@ export function CompetitionDetailCompetitors({
 			</ThemePaper>
 
 			{/* Loading State */}
-			{isLoading && (
-				<Paper shadow="sm" p="xl" radius="md" withBorder>
-					<Group justify="center">
-						<Loader size="md" />
-						<Text size="sm" c="dimmed">
-							Loading competitors...
-						</Text>
-					</Group>
-				</Paper>
-			)}
+			{isLoading && <LoadingState message="Loading competitors..." />}
 
 			{/* Empty State */}
 			{!isLoading && (!data || totalCompetitors === 0) && (
-				<ThemePaper light="gray.1" dark="gray.8" p="xl" radius="md">
-					<Stack gap="md" align="center">
-						<IconUsers size={48} color="var(--mantine-color-gray-5)" />
-						<Text size="lg" fw={500} c="dimmed">
-							No competitors registered yet
-						</Text>
-						<Text size="sm" c="dimmed" ta="center">
-							Competitors will appear here once they register for this
-							competition.
-						</Text>
-					</Stack>
-				</ThemePaper>
+				<EmptyState
+					title="No competitors registered yet"
+					description="Competitors will appear here once they register for this competition."
+					icon={IconUsers}
+				/>
 			)}
 
 			{/* Table */}
