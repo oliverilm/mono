@@ -16,9 +16,14 @@ export namespace UserClub {
 		return client.get(`/user/club/${slug}/members`);
 	}
 
+	export function getClubCompetitions(slug?: string) {
+		if (!slug) return Promise.resolve(null);
+		return client.get(`/user/club/${slug}/competitions`);
+	}
+
 	export function createMember(data: CreateMember, slug?: string) {
 		if (!slug) return Promise.resolve(null);
-		return client.post(`/user/club/${slug}/members`, data);
+		return client.post(`/user/club/members/${slug}`, data);
 	}
 
 	export function updateClub() {

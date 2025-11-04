@@ -27,7 +27,11 @@ export namespace UserAuth {
 		email: string,
 	): Promise<AxiosResponse<UserSearchResult>> {
 		return client.get(
-			addSkipTakeSearch('/user/user-by-email', { search: email }),
+			addSkipTakeSearch('/user/user-by-email', {
+				skip: 0,
+				take: 10,
+				search: email,
+			}),
 		);
 	}
 

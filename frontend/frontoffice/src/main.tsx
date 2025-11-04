@@ -9,7 +9,7 @@ import { SystemAuth } from './system/SystemAuth.tsx';
 
 import '@mantine/carousel/styles.css';
 import '@mantine/tiptap/styles.css';
-import { QueryProvider } from './providers/query-provider/QueryProvider.js';
+import { QueryProvider } from './providers/query-provider/QueryProvider';
 
 const element = document.getElementById('root');
 

@@ -101,6 +101,10 @@ export interface Club {
 	id: string;
 	name: string;
 	slug: string;
+	description: string;
+	country: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 export interface ClubMetadataAdmin {

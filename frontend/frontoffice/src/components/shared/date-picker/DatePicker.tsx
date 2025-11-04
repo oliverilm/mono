@@ -31,7 +31,10 @@ interface DatePickerFormValues {
 	minute: number;
 }
 
-export function DatePicker({ isWithTime = false, onChange }: DatePickerProps) {
+export function DatePicker({
+	isWithTime: _isWithTime = false,
+	onChange,
+}: DatePickerProps) {
 	const form = useForm<DatePickerFormValues>({
 		initialValues: {
 			month: 'January',

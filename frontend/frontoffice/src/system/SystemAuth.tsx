@@ -1,8 +1,8 @@
 import { useSystemAuth } from '../hooks/useSystemAuth';
 
+import { Modal } from '@mantine/core';
 import { UserProfileForm } from '../components/user/profile/form/UserProfileForm';
 import { useAuthStore } from '../stores/auth';
-import { Modal } from '@mantine/core';
 
 export function SystemAuth() {
 	useSystemAuth();
@@ -14,7 +14,7 @@ export function SystemAuth() {
 
 		if (
 			!(
-				profile.lastName &&
+				profile.firstName &&
 				profile.lastName &&
 				profile.nationalId &&
 				profile.nationalIdType &&

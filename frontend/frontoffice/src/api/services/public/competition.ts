@@ -10,7 +10,7 @@ import type {
 } from '../../utils/common-types';
 
 export namespace PublicCompetition {
-	const PREFIX = "/public/competition"
+	const PREFIX = '/public/competition';
 	// GET  /public/competition/
 	export function getPublicCompetitions(
 		skipTake: SkipTake & Search,
@@ -48,7 +48,7 @@ export namespace PublicCompetition {
 		return client.get(
 			addSkipTakeSearch(
 				`${PREFIX}/get-competitors/${slug}`,
-				skipTake,
+				skipTake ?? { skip: 0, take: 10 },
 			),
 		);
 	}

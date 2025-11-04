@@ -2,7 +2,6 @@ import type { Search, SkipTake } from '@monorepo/utils';
 import axios from 'axios';
 import { LS_TOKEN_KEY } from '../constants';
 
-
 export const client = axios.create({
 	baseURL: 'http://localhost:3000',
 });
@@ -25,7 +24,10 @@ client.interceptors.response.use(
 	},
 );
 
-export function addSkipTakeSearch(url: string, query: SkipTake & Search) {
+export function addSkipTakeSearch(
+	url: string,
+	query: Partial<SkipTake> & Partial<Search>,
+) {
 	const { skip, take, search } = query;
 	const parts = [];
 	if (skip !== undefined) parts.push(`skip=${skip}`);
