@@ -74,7 +74,7 @@ function buildCrudRoutes(fastify: FastifyInstance) {
 		throw new Error('Invalid lookup parameters');
 	};
 
-	fastify.get('/', async (request) => {
+	fastify.get('/', async () => {
 		return {
 			models: Object.keys(dbPathToModel),
 		};

@@ -3,7 +3,14 @@ import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { useClipboard } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconCopy } from '@tabler/icons-react';
+import {
+	IconCalendar,
+	IconCopy,
+	IconHash,
+	IconId,
+	IconPassword,
+	IconToggleLeft,
+} from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -84,29 +91,97 @@ export function useAdminPageModelDetail() {
 		await updateItem(data);
 	};
 
+	// Format column name from camelCase to Title Case
+	const formatColumnName = (column: string) => {
+		return column
+			.replace(/([A-Z])/g, ' $1')
+			.replace(/^./, (str) => str.toUpperCase())
+			.trim();
+	};
+
 	const getInputByType = (column: string) => {
 		const type = types?.find((type) => type.name === column)?.type;
 
-		const disabled = ['id', 'password', 'createdat', 'updatedat']
-			.map((column) => column.toLowerCase())
+		const disabledFields = ['id', 'password', 'createdat', 'updatedat'];
+		const isDisabled = disabledFields
+			.map((field) => field.toLowerCase())
 			.includes(column.toLowerCase());
+
+		const isPassword = column.toLowerCase().includes('password');
+		const isId = column.toLowerCase() === 'id';
+		const isForeignKey =
+			column.endsWith('Id') && !column.startsWith('national');
+
+		// Get icon based on field type
+		const getIcon = () => {
+			if (isPassword) return <IconPassword size={18} />;
+			if (isId) return <IconId size={18} />;
+			if (isForeignKey) return <IconHash size={18} />;
+			switch (type) {
+				case 'Number':
+					return <IconHash size={18} />;
+				case 'Boolean':
+					return <IconToggleLeft size={18} />;
+				case 'DateTime':
+					return <IconCalendar size={18} />;
+				default:
+					return null;
+			}
+		};
+
+		const fieldValue = form.getInputProps(column).value;
+		const hasValue =
+			fieldValue !== null && fieldValue !== undefined && fieldValue !== '';
 
 		const commonProps = {
 			key: column,
-			label: column,
+			label: formatColumnName(column),
 			...form.getInputProps(column),
-			disabled,
-			rightSection: (
-				<ActionIcon
-					variant="transparent"
-					onClick={() => {
-						copy(form.getInputProps(column).value as string);
-					}}
-				>
-					<IconCopy />
-				</ActionIcon>
-			),
+			disabled: isDisabled,
+			leftSection: getIcon(),
+			rightSection:
+				hasValue && !isPassword ? (
+					<ActionIcon
+						variant="transparent"
+						onClick={() => {
+							copy(String(fieldValue));
+						}}
+						aria-label="Copy to clipboard"
+					>
+						<IconCopy size={18} />
+					</ActionIcon>
+				) : null,
+			description: isDisabled
+				? 'This field cannot be edited'
+				: isPassword
+					? 'Password is hidden for security'
+					: undefined,
 		};
+
+		// Handle password fields specially
+		if (isPassword) {
+			return (
+				<TextInput
+					{...commonProps}
+					type="password"
+					value="••••••••"
+					readOnly
+					rightSection={
+						hasValue ? (
+							<ActionIcon
+								variant="transparent"
+								onClick={() => {
+									copy('Password field value copied');
+								}}
+								aria-label="Copy password indicator"
+							>
+								<IconCopy size={18} />
+							</ActionIcon>
+						) : null
+					}
+				/>
+			);
+		}
 
 		switch (type) {
 			case 'String':
@@ -114,9 +189,17 @@ export function useAdminPageModelDetail() {
 			case 'Number':
 				return <NumberInput {...commonProps} />;
 			case 'Boolean':
-				return <Switch {...commonProps} checked={commonProps.value} />;
+				return (
+					<Switch
+						{...commonProps}
+						checked={Boolean(commonProps.value)}
+						label={formatColumnName(column)}
+					/>
+				);
 			case 'DateTime':
 				return <DateTimePicker {...commonProps} />;
+			default:
+				return <TextInput {...commonProps} />;
 		}
 	};
 
@@ -127,5 +210,7 @@ export function useAdminPageModelDetail() {
 		item,
 		isLoading,
 		types,
+		formatColumnName,
+		model,
 	};
 }
