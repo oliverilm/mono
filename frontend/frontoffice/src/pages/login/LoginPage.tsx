@@ -1,6 +1,5 @@
 import {
 	Anchor,
-	Box,
 	Button,
 	Container,
 	Divider,
@@ -9,7 +8,6 @@ import {
 	Text,
 	TextInput,
 	Title,
-	useMantineColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -18,6 +16,7 @@ import { IconLock, IconMail, IconTrophy } from '@tabler/icons-react';
 import { useMutation } from 'react-query';
 import { Link } from 'react-router-dom';
 import { Api } from '../../api';
+import { ThemeBox } from '../../components/shared/theme-box/ThemeBox';
 import { ThemePaper } from '../../components/shared/theme-paper/ThemePaper';
 import { LS_TOKEN_KEY } from '../../constants';
 import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedirectToHome';
@@ -25,7 +24,6 @@ import { useAuthStore } from '../../stores/auth';
 
 export function LoginPage() {
 	useAuthenticatedRedirectToHome();
-	const { colorScheme } = useMantineColorScheme();
 	const authStore = useAuthStore();
 	const form = useForm<LoginCredentials>({
 		initialValues: {
@@ -60,41 +58,15 @@ export function LoginPage() {
 	};
 
 	return (
-		<Box
-			style={{
-				minHeight: 'calc(100vh - var(--header-height, 60px))',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				background:
-					colorScheme === 'dark'
-						? 'linear-gradient(135deg, var(--mantine-color-blue-9) 0%, var(--mantine-color-blue-8) 100%)'
-						: 'linear-gradient(135deg, var(--mantine-color-blue-2) 0%, var(--mantine-color-blue-1) 100%)',
-				padding: '2rem 1rem',
-			}}
-		>
+		<ThemeBox variant="fullPage">
 			<Container size="xs" w="100%">
 				<ThemePaper light="white" dark="gray.9" p="xl" radius="md" shadow="lg">
 					<Stack gap="xl">
 						{/* Header Section */}
 						<Stack gap="sm" align="center" ta="center">
-							<Box
-								style={{
-									width: 64,
-									height: 64,
-									borderRadius: '50%',
-									background:
-										colorScheme === 'dark'
-											? 'var(--mantine-color-blue-9)'
-											: 'var(--mantine-color-blue-1)',
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									margin: '0 auto',
-								}}
-							>
+							<ThemeBox variant="iconCircleBlue" style={{ margin: '0 auto' }}>
 								<IconTrophy size={32} color="var(--mantine-color-blue-6)" />
-							</Box>
+							</ThemeBox>
 							<Title order={1} size="h2" fw={700}>
 								Welcome Back
 							</Title>
@@ -167,6 +139,6 @@ export function LoginPage() {
 					</Stack>
 				</ThemePaper>
 			</Container>
-		</Box>
+		</ThemeBox>
 	);
 }

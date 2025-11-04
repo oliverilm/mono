@@ -16,6 +16,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconExternalLink, IconPlus, IconTrophy } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import { useHoverEffect } from '../../../../../hooks/useHoverEffect';
 import { ThemePaper } from '../../../../shared/theme-paper/ThemePaper';
 
 interface Competition {
@@ -37,6 +38,7 @@ export function ClubDetailAdminCompetitions({ competitions = [] }: Props) {
 	const { colorScheme } = useMantineColorScheme();
 	const navigate = useNavigate();
 	const [opened, { toggle }] = useDisclosure();
+	const slideSimpleHover = useHoverEffect({ type: 'slide-simple' });
 
 	const activeCompetitions = competitions.filter((comp) => !comp.isArchived);
 	const publishedCompetitions = activeCompetitions.filter(
@@ -93,12 +95,7 @@ export function ClubDetailAdminCompetitions({ competitions = [] }: Props) {
 										onClick={() =>
 											navigate(`/competitions/${competition.slug}`)
 										}
-										onMouseEnter={(e) => {
-											e.currentTarget.style.transform = 'translateX(4px)';
-										}}
-										onMouseLeave={(e) => {
-											e.currentTarget.style.transform = 'translateX(0)';
-										}}
+										{...slideSimpleHover}
 									>
 										<Flex justify="space-between" align="center">
 											<Stack gap={4} style={{ flex: 1 }}>
@@ -167,12 +164,7 @@ export function ClubDetailAdminCompetitions({ competitions = [] }: Props) {
 										onClick={() =>
 											navigate(`/competitions/${competition.slug}`)
 										}
-										onMouseEnter={(e) => {
-											e.currentTarget.style.transform = 'translateX(4px)';
-										}}
-										onMouseLeave={(e) => {
-											e.currentTarget.style.transform = 'translateX(0)';
-										}}
+										{...slideSimpleHover}
 									>
 										<Flex justify="space-between" align="center">
 											<Stack gap={4} style={{ flex: 1 }}>

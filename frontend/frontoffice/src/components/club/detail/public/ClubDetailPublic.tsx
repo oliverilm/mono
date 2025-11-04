@@ -10,7 +10,6 @@ import {
 	Stack,
 	Text,
 	Title,
-	useMantineColorScheme,
 } from '@mantine/core';
 import { COUNTRIES } from '@monorepo/utils';
 import { IconMapPin, IconTrophy, IconUsers } from '@tabler/icons-react';
@@ -19,14 +18,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Api } from '../../../../api';
 import type { CompetitionListItem } from '../../../../api/utils/common-types';
 import { getRandomTestClubImage } from '../../../../constants';
+import { useHoverEffect } from '../../../../hooks/useHoverEffect';
+import { useThemeStyles } from '../../../../hooks/useThemeStyles';
 import { StaticQueryKey } from '../../../../providers/query-provider/keys';
 import { RichTextRenderer } from '../../../competition/update/form/CompetitionUpdateForm';
 import { ThemePaper } from '../../../shared/theme-paper/ThemePaper';
 
 export function ClubDetailPublic() {
 	const { slug } = useParams<'slug'>();
-	const { colorScheme } = useMantineColorScheme();
+	const theme = useThemeStyles();
 	const navigate = useNavigate();
+	const slideSimpleHover = useHoverEffect({ type: 'slide-simple' });
 
 	const [{ data: clubDetails }, { data: clubMetadata }] = useQueries([
 		{
@@ -96,10 +98,10 @@ export function ClubDetailPublic() {
 						position: 'relative',
 						borderRadius: 'var(--mantine-radius-md)',
 						overflow: 'hidden',
-						background:
-							colorScheme === 'dark'
-								? 'linear-gradient(135deg, var(--mantine-color-gray-9) 0%, var(--mantine-color-gray-8) 100%)'
-								: 'linear-gradient(135deg, var(--mantine-color-blue-1) 0%, var(--mantine-color-gray-0) 100%)',
+						background: theme.getColor(
+							'linear-gradient(135deg, var(--mantine-color-blue-1) 0%, var(--mantine-color-gray-0) 100%)',
+							'linear-gradient(135deg, var(--mantine-color-gray-9) 0%, var(--mantine-color-gray-8) 100%)',
+						),
 					}}
 					p="xl"
 				>
@@ -113,11 +115,10 @@ export function ClubDetailPublic() {
 							size={120}
 							radius="md"
 							style={{
-								border: `3px solid ${
-									colorScheme === 'dark'
-										? 'var(--mantine-color-blue-6)'
-										: 'var(--mantine-color-blue-4)'
-								}`,
+								border: `3px solid ${theme.getColor(
+									'var(--mantine-color-blue-4)',
+									'var(--mantine-color-blue-6)',
+								)}`,
 							}}
 						/>
 						<Stack gap="xs" style={{ flex: 1 }}>
@@ -170,10 +171,10 @@ export function ClubDetailPublic() {
 											key={admin.userId}
 											p="sm"
 											style={{
-												backgroundColor:
-													colorScheme === 'dark'
-														? 'var(--mantine-color-gray-7)'
-														: 'var(--mantine-color-gray-2)',
+												backgroundColor: theme.getColor(
+													'var(--mantine-color-gray-2)',
+													'var(--mantine-color-gray-7)',
+												),
 												borderRadius: 'var(--mantine-radius-sm)',
 											}}
 										>
@@ -233,10 +234,10 @@ export function ClubDetailPublic() {
 												key={competition.id}
 												p="sm"
 												style={{
-													backgroundColor:
-														colorScheme === 'dark'
-															? 'var(--mantine-color-gray-7)'
-															: 'var(--mantine-color-gray-2)',
+													backgroundColor: theme.getColor(
+														'var(--mantine-color-gray-2)',
+														'var(--mantine-color-gray-7)',
+													),
 													borderRadius: 'var(--mantine-radius-sm)',
 													cursor: 'pointer',
 													transition: 'transform 0.2s',
@@ -244,12 +245,7 @@ export function ClubDetailPublic() {
 												onClick={() => {
 													navigate(`/competitions/${competition.slug}`);
 												}}
-												onMouseEnter={(e) => {
-													e.currentTarget.style.transform = 'translateX(4px)';
-												}}
-												onMouseLeave={(e) => {
-													e.currentTarget.style.transform = 'translateX(0)';
-												}}
+												{...slideSimpleHover}
 											>
 												<Stack gap={4}>
 													<Text fw={500}>{competition.name}</Text>

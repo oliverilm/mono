@@ -14,6 +14,7 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Api } from '../../api';
 import { ThemePaper } from '../../components/shared/theme-paper/ThemePaper';
+import { useHoverEffect } from '../../hooks/useHoverEffect';
 
 // Format column name from camelCase to Title Case
 const formatColumnName = (column: string) => {
@@ -25,6 +26,7 @@ const formatColumnName = (column: string) => {
 
 export function AdminPage() {
 	const navigate = useNavigate();
+	const liftHover = useHoverEffect({ type: 'lift' });
 
 	const { data: models, isLoading } = useQuery({
 		queryKey: ['Admin models'],
@@ -88,14 +90,7 @@ export function AdminPage() {
 								cursor: 'pointer',
 								transition: 'transform 0.2s, box-shadow 0.2s',
 							}}
-							onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
-								e.currentTarget.style.transform = 'translateY(-4px)';
-								e.currentTarget.style.boxShadow = 'var(--mantine-shadow-md)';
-							}}
-							onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
-								e.currentTarget.style.transform = 'translateY(0)';
-								e.currentTarget.style.boxShadow = 'none';
-							}}
+							{...liftHover}
 							onClick={() => navigate(`/admin/crud/${model}/list`)}
 						>
 							<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">

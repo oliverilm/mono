@@ -1,13 +1,13 @@
 import {
-	Box,
+	Badge,
 	Button,
 	Container,
+	Divider,
 	Group,
 	SimpleGrid,
 	Stack,
 	Text,
 	Title,
-	useMantineColorScheme,
 } from '@mantine/core';
 import {
 	IconCalendar,
@@ -22,11 +22,15 @@ import { Api } from '../../../api';
 import { ClubList } from '../../../components/club/list/ClubList';
 import { CompetitionCarousel } from '../../../components/competition/carousel/CompetitionCarousel';
 import { StatCard } from '../../../components/shared/stat-card/StatCard';
+import { ThemeBox } from '../../../components/shared/theme-box/ThemeBox';
 import { ThemePaper } from '../../../components/shared/theme-paper/ThemePaper';
+import { useHoverEffect } from '../../../hooks/useHoverEffect';
+import { useThemeStyles } from '../../../hooks/useThemeStyles';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 
 export function HomePagePublic() {
-	const { colorScheme } = useMantineColorScheme();
+	const theme = useThemeStyles();
+	const slideHover = useHoverEffect({ type: 'slide' });
 
 	const { data: competitions } = useQuery({
 		queryKey: [StaticQueryKey.HomeCompetitions],
@@ -39,49 +43,55 @@ export function HomePagePublic() {
 		queryFn: () => Api.publicApi.club.getPublicClubs({ skip: 0, take: 25 }),
 	});
 
-	// Calculate upcoming competitions
-	const upcomingCompetitions =
+	// Calculate upcoming and ongoing competitions
+	const now = dayjs();
+	const upcomingAndOngoingCompetitions =
 		competitions?.data?.filter(
 			(comp) =>
 				!comp.isArchived &&
 				comp.isPublished &&
-				dayjs(comp.startingAt).isAfter(dayjs()),
+				(dayjs(comp.startingAt).isBefore(now.add(7, 'days')) ||
+					dayjs(comp.startingAt).isSame(now.add(7, 'days'))),
 		) || [];
+
+	// Separate upcoming and ongoing
+	const upcomingCompetitions = upcomingAndOngoingCompetitions.filter((comp) =>
+		dayjs(comp.startingAt).isAfter(now),
+	);
+	const ongoingCompetitions = upcomingAndOngoingCompetitions.filter(
+		(comp) =>
+			(dayjs(comp.startingAt).isBefore(now) ||
+				dayjs(comp.startingAt).isSame(now)) &&
+			dayjs(comp.startingAt).isAfter(now.subtract(30, 'days')),
+	);
 
 	// Sort by starting date (soonest first)
 	const sortedCompetitions = [...upcomingCompetitions].sort((a, b) =>
 		dayjs(a.startingAt).diff(dayjs(b.startingAt)),
 	);
+	const sortedOngoingCompetitions = [...ongoingCompetitions].sort((a, b) =>
+		dayjs(a.startingAt).diff(dayjs(b.startingAt)),
+	);
+
+	// Combine for the list (ongoing first, then upcoming)
+	const combinedCompetitions = [
+		...sortedOngoingCompetitions.map((comp) => ({
+			...comp,
+			status: 'ongoing',
+		})),
+		...sortedCompetitions.map((comp) => ({ ...comp, status: 'upcoming' })),
+	].slice(0, 5); // Limit to 5 items
 
 	return (
 		<>
 			{/* Hero Section */}
-			<Box
-				style={{
-					position: 'relative',
-					background:
-						colorScheme === 'dark'
-							? 'linear-gradient(135deg, var(--mantine-color-blue-9) 0%, var(--mantine-color-blue-8) 100%)'
-							: 'linear-gradient(135deg, var(--mantine-color-blue-2) 0%, var(--mantine-color-blue-1) 100%)',
-					paddingTop: '80px',
-					paddingBottom: '80px',
-				}}
-			>
+			<ThemeBox variant="hero">
 				<Container size="lg">
 					<Stack gap="xl" align="center" ta="center">
-						<Title
-							order={1}
-							size="3rem"
-							fw={800}
-							c={colorScheme === 'dark' ? 'white' : 'dark.9'}
-						>
+						<Title order={1} size="3rem" fw={800} c={theme.textOnGradient}>
 							Welcome to the Competition Platform
 						</Title>
-						<Text
-							size="xl"
-							c={colorScheme === 'dark' ? 'gray.2' : 'dark.7'}
-							maw={600}
-						>
+						<Text size="xl" c={theme.textSecondary} maw={600}>
 							Discover upcoming competitions, connect with clubs, and manage
 							your martial arts journey all in one place.
 						</Text>
@@ -101,14 +111,8 @@ export function HomePagePublic() {
 								size="lg"
 								variant="outline"
 								style={{
-									borderColor:
-										colorScheme === 'dark'
-											? 'white'
-											: 'var(--mantine-color-blue-9)',
-									color:
-										colorScheme === 'dark'
-											? 'white'
-											: 'var(--mantine-color-blue-9)',
+									borderColor: theme.borderOutline,
+									color: theme.borderOutline,
 								}}
 							>
 								Sign In
@@ -116,7 +120,7 @@ export function HomePagePublic() {
 						</Group>
 					</Stack>
 				</Container>
-			</Box>
+			</ThemeBox>
 
 			<Container size="lg" py="xl">
 				<Stack gap="xl">
@@ -151,6 +155,83 @@ export function HomePagePublic() {
 							color="yellow"
 						/>
 					</SimpleGrid>
+
+					{/* Quick List: Upcoming & Ongoing Competitions */}
+					{combinedCompetitions.length > 0 && (
+						<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+							<Stack gap="md">
+								<Group justify="space-between" align="center">
+									<Group gap="sm">
+										<IconTrophy size={24} />
+										<Title order={3} size="h4">
+											Upcoming & Ongoing Competitions
+										</Title>
+									</Group>
+									<Button
+										component={Link}
+										to="/competitions"
+										variant="light"
+										size="xs"
+									>
+										View All
+									</Button>
+								</Group>
+								<Divider />
+								<Stack gap="sm">
+									{combinedCompetitions.map((competition) => (
+										<ThemeBox
+											key={competition.id}
+											variant="clickableListItem"
+											to={`/competitions/${competition.slug}`}
+											p="sm"
+											style={{ textDecoration: 'none' }}
+											{...slideHover}
+										>
+											<Group justify="space-between" align="start">
+												<Stack gap={4} style={{ flex: 1 }}>
+													<Group gap="xs" align="center">
+														<Text fw={600} size="sm">
+															{competition.name}
+														</Text>
+														{competition.status === 'ongoing' && (
+															<Badge color="green" variant="light" size="xs">
+																Ongoing
+															</Badge>
+														)}
+														{competition.status === 'upcoming' && (
+															<Badge color="blue" variant="light" size="xs">
+																Upcoming
+															</Badge>
+														)}
+													</Group>
+													<Group gap="md">
+														{competition.startingAt && (
+															<Group gap="xs">
+																<IconCalendar size={14} />
+																<Text size="xs" c="dimmed">
+																	{dayjs(competition.startingAt).format(
+																		'MMM D, YYYY',
+																	)}
+																</Text>
+															</Group>
+														)}
+														{competition.location && (
+															<Group gap="xs">
+																<IconMapPin size={14} />
+																<Text size="xs" c="dimmed">
+																	{competition.location}
+																</Text>
+															</Group>
+														)}
+													</Group>
+												</Stack>
+											</Group>
+										</ThemeBox>
+									))}
+								</Stack>
+							</Stack>
+						</ThemePaper>
+					)}
 
 					{/* Upcoming Competitions Section */}
 					{sortedCompetitions.length > 0 && (
@@ -206,22 +287,9 @@ export function HomePagePublic() {
 							</Stack>
 							<SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
 								<Stack gap="sm" align="center" ta="center">
-									<Box
-										style={{
-											width: 64,
-											height: 64,
-											borderRadius: '50%',
-											background:
-												colorScheme === 'dark'
-													? 'var(--mantine-color-blue-9)'
-													: 'var(--mantine-color-blue-1)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-										}}
-									>
+									<ThemeBox variant="iconCircleBlue">
 										<IconTrophy size={32} color="var(--mantine-color-blue-6)" />
-									</Box>
+									</ThemeBox>
 									<Title order={4} size="h5">
 										Competition Management
 									</Title>
@@ -231,22 +299,9 @@ export function HomePagePublic() {
 									</Text>
 								</Stack>
 								<Stack gap="sm" align="center" ta="center">
-									<Box
-										style={{
-											width: 64,
-											height: 64,
-											borderRadius: '50%',
-											background:
-												colorScheme === 'dark'
-													? 'var(--mantine-color-green-9)'
-													: 'var(--mantine-color-green-1)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-										}}
-									>
+									<ThemeBox variant="iconCircleGreen">
 										<IconUsers size={32} color="var(--mantine-color-green-6)" />
-									</Box>
+									</ThemeBox>
 									<Title order={4} size="h5">
 										Club Networking
 									</Title>
@@ -256,25 +311,12 @@ export function HomePagePublic() {
 									</Text>
 								</Stack>
 								<Stack gap="sm" align="center" ta="center">
-									<Box
-										style={{
-											width: 64,
-											height: 64,
-											borderRadius: '50%',
-											background:
-												colorScheme === 'dark'
-													? 'var(--mantine-color-orange-9)'
-													: 'var(--mantine-color-orange-1)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-										}}
-									>
+									<ThemeBox variant="iconCircleOrange">
 										<IconCalendar
 											size={32}
 											color="var(--mantine-color-orange-6)"
 										/>
-									</Box>
+									</ThemeBox>
 									<Title order={4} size="h5">
 										Easy Registration
 									</Title>
@@ -294,25 +336,14 @@ export function HomePagePublic() {
 						p="xl"
 						radius="md"
 						style={{
-							background:
-								colorScheme === 'dark'
-									? 'linear-gradient(135deg, var(--mantine-color-blue-9) 0%, var(--mantine-color-blue-8) 100%)'
-									: 'linear-gradient(135deg, var(--mantine-color-blue-2) 0%, var(--mantine-color-blue-1) 100%)',
+							background: theme.gradientBlue,
 						}}
 					>
 						<Stack gap="md" align="center" ta="center">
-							<Title
-								order={2}
-								size="h2"
-								c={colorScheme === 'dark' ? 'white' : 'dark.9'}
-							>
+							<Title order={2} size="h2" c={theme.textOnGradient}>
 								Ready to Get Started?
 							</Title>
-							<Text
-								size="lg"
-								c={colorScheme === 'dark' ? 'gray.2' : 'dark.7'}
-								maw={600}
-							>
+							<Text size="lg" c={theme.textSecondary} maw={600}>
 								Join thousands of martial artists and clubs already using our
 								platform to manage competitions and connect with the community.
 							</Text>
@@ -324,14 +355,14 @@ export function HomePagePublic() {
 									variant="filled"
 									leftSection={<IconUsers size={20} />}
 									style={{
-										backgroundColor:
-											colorScheme === 'dark'
-												? 'white'
-												: 'var(--mantine-color-blue-9)',
-										color:
-											colorScheme === 'dark'
-												? 'var(--mantine-color-blue-9)'
-												: 'white',
+										backgroundColor: theme.getColor(
+											'var(--mantine-color-blue-9)',
+											'white',
+										),
+										color: theme.getColor(
+											'white',
+											'var(--mantine-color-blue-9)',
+										),
 									}}
 								>
 									Create Account
@@ -342,14 +373,8 @@ export function HomePagePublic() {
 									size="lg"
 									variant="outline"
 									style={{
-										borderColor:
-											colorScheme === 'dark'
-												? 'white'
-												: 'var(--mantine-color-blue-9)',
-										color:
-											colorScheme === 'dark'
-												? 'white'
-												: 'var(--mantine-color-blue-9)',
+										borderColor: theme.borderOutline,
+										color: theme.borderOutline,
 									}}
 								>
 									Sign In

@@ -9,7 +9,6 @@ import {
 	Stack,
 	Text,
 	Title,
-	useMantineColorScheme,
 } from '@mantine/core';
 import { COUNTRIES } from '@monorepo/utils';
 import { IconMapPin, IconUsers } from '@tabler/icons-react';
@@ -18,6 +17,8 @@ import { Link } from 'react-router-dom';
 import { Api } from '../../../api';
 import type { Club } from '../../../api/utils/common-types';
 import { getRandomTestClubImage } from '../../../constants';
+import { useHoverEffect } from '../../../hooks/useHoverEffect';
+import { useThemeStyles } from '../../../hooks/useThemeStyles';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 
 const span = {
@@ -33,8 +34,9 @@ interface ClubCardProps {
 }
 
 function ClubCard({ club }: ClubCardProps) {
-	const { colorScheme } = useMantineColorScheme();
+	const theme = useThemeStyles();
 	const clubImage = getRandomTestClubImage();
+	const liftHover = useHoverEffect({ type: 'lift' });
 
 	// Get country name from country code
 	const countryName = club?.country
@@ -61,17 +63,7 @@ function ClubCard({ club }: ClubCardProps) {
 					cursor: 'pointer',
 					transition: 'transform 0.2s ease, box-shadow 0.2s ease',
 				}}
-				onMouseEnter={(e) => {
-					e.currentTarget.style.transform = 'translateY(-4px)';
-					e.currentTarget.style.boxShadow =
-						colorScheme === 'dark'
-							? 'var(--mantine-shadow-md)'
-							: 'var(--mantine-shadow-lg)';
-				}}
-				onMouseLeave={(e) => {
-					e.currentTarget.style.transform = 'translateY(0)';
-					e.currentTarget.style.boxShadow = 'none';
-				}}
+				{...liftHover}
 			>
 				<Stack gap="md">
 					{/* Club Image/Avatar Section */}
@@ -82,10 +74,10 @@ function ClubCard({ club }: ClubCardProps) {
 							height: 180,
 							borderRadius: 'var(--mantine-radius-md)',
 							overflow: 'hidden',
-							background:
-								colorScheme === 'dark'
-									? 'var(--mantine-color-gray-8)'
-									: 'var(--mantine-color-gray-2)',
+							background: theme.getColor(
+								'var(--mantine-color-gray-2)',
+								'var(--mantine-color-gray-8)',
+							),
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',

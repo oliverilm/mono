@@ -10,7 +10,6 @@ import {
 	Text,
 	TextInput,
 	Title,
-	useMantineColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -29,6 +28,7 @@ import { Api } from '../../api';
 import { ThemePaper } from '../../components/shared/theme-paper/ThemePaper';
 import { LS_TOKEN_KEY } from '../../constants';
 import { useAuthenticatedRedirectToHome } from '../../hooks/useAuthenticatedRedirectToHome';
+import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useAuthStore } from '../../stores/auth';
 
 interface RegisterFormValues extends LoginCredentials {
@@ -37,7 +37,7 @@ interface RegisterFormValues extends LoginCredentials {
 
 export function RegisterPage() {
 	useAuthenticatedRedirectToHome();
-	const { colorScheme } = useMantineColorScheme();
+	const theme = useThemeStyles();
 	const authStore = useAuthStore();
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -83,10 +83,7 @@ export function RegisterPage() {
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
-				background:
-					colorScheme === 'dark'
-						? 'linear-gradient(135deg, var(--mantine-color-blue-9) 0%, var(--mantine-color-blue-8) 100%)'
-						: 'linear-gradient(135deg, var(--mantine-color-blue-2) 0%, var(--mantine-color-blue-1) 100%)',
+				background: theme.gradientBlue,
 				padding: '2rem 1rem',
 			}}
 		>
@@ -100,10 +97,7 @@ export function RegisterPage() {
 									width: 64,
 									height: 64,
 									borderRadius: '50%',
-									background:
-										colorScheme === 'dark'
-											? 'var(--mantine-color-blue-9)'
-											: 'var(--mantine-color-blue-1)',
+									background: theme.iconBgBlue,
 									display: 'flex',
 									alignItems: 'center',
 									justifyContent: 'center',

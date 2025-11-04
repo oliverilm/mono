@@ -10,11 +10,11 @@ import {
 	Stack,
 	Text,
 	Title,
-	useMantineColorScheme,
 } from '@mantine/core';
 import {
 	IconCalendar,
 	IconMail,
+	IconMapPin,
 	IconTrophy,
 	IconUsers,
 } from '@tabler/icons-react';
@@ -23,13 +23,17 @@ import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { Api } from '../../../api';
 import { StatCard } from '../../../components/shared/stat-card/StatCard';
+import { ThemeBox } from '../../../components/shared/theme-box/ThemeBox';
 import { ThemePaper } from '../../../components/shared/theme-paper/ThemePaper';
+import { useHoverEffect } from '../../../hooks/useHoverEffect';
+import { useThemeStyles } from '../../../hooks/useThemeStyles';
 import { StaticQueryKey } from '../../../providers/query-provider/keys';
 import { useAuthStore } from '../../../stores/auth';
 
 export function HomePageAuthenticated() {
-	const { colorScheme } = useMantineColorScheme();
+	const theme = useThemeStyles();
 	const authStore = useAuthStore();
+	const slideHover = useHoverEffect({ type: 'slide' });
 
 	// Get user's club data
 	const { data: userClubData } = useQuery({
@@ -66,18 +70,46 @@ export function HomePageAuthenticated() {
 			Api.publicApi.competition.getPublicCompetitions({ skip: 0, take: 10 }),
 	});
 
-	// Calculate upcoming competitions
-	const upcomingPublicCompetitions =
+	// Calculate upcoming and ongoing competitions
+	const now = dayjs();
+	const upcomingAndOngoingCompetitions =
 		publicCompetitions?.data?.filter(
 			(comp) =>
 				!comp.isArchived &&
 				comp.isPublished &&
-				dayjs(comp.startingAt).isAfter(dayjs()),
+				(dayjs(comp.startingAt).isBefore(now.add(7, 'days')) ||
+					dayjs(comp.startingAt).isSame(now.add(7, 'days'))),
 		) || [];
+
+	// Separate upcoming and ongoing
+	const upcomingPublicCompetitions = upcomingAndOngoingCompetitions.filter(
+		(comp) => dayjs(comp.startingAt).isAfter(now),
+	);
+	const ongoingPublicCompetitions = upcomingAndOngoingCompetitions.filter(
+		(comp) =>
+			(dayjs(comp.startingAt).isBefore(now) ||
+				dayjs(comp.startingAt).isSame(now)) &&
+			dayjs(comp.startingAt).isAfter(now.subtract(30, 'days')),
+	);
 
 	const sortedPublicCompetitions = [...upcomingPublicCompetitions].sort(
 		(a, b) => dayjs(a.startingAt).diff(dayjs(b.startingAt)),
 	);
+	const sortedOngoingCompetitions = [...ongoingPublicCompetitions].sort(
+		(a, b) => dayjs(a.startingAt).diff(dayjs(b.startingAt)),
+	);
+
+	// Combine for the list (ongoing first, then upcoming)
+	const combinedCompetitions = [
+		...sortedOngoingCompetitions.map((comp) => ({
+			...comp,
+			status: 'ongoing',
+		})),
+		...sortedPublicCompetitions.map((comp) => ({
+			...comp,
+			status: 'upcoming',
+		})),
+	].slice(0, 5); // Limit to 5 items
 
 	const pendingInvitations =
 		invitations?.data?.filter((inv) => inv.isAccepted === null) || [];
@@ -93,10 +125,7 @@ export function HomePageAuthenticated() {
 							size={64}
 							radius="md"
 							style={{
-								background:
-									colorScheme === 'dark'
-										? 'var(--mantine-color-blue-9)'
-										: 'var(--mantine-color-blue-2)',
+								background: theme.iconBgBlue,
 							}}
 						>
 							{authStore.profile?.firstName?.[0] ||
@@ -145,6 +174,83 @@ export function HomePageAuthenticated() {
 						color="yellow"
 					/>
 				</SimpleGrid>
+
+				{/* Quick List: Upcoming & Ongoing Competitions */}
+				{combinedCompetitions.length > 0 && (
+					<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+						<Stack gap="md">
+							<Group justify="space-between" align="center">
+								<Group gap="sm">
+									<IconTrophy size={24} />
+									<Title order={3} size="h4">
+										Upcoming & Ongoing Competitions
+									</Title>
+								</Group>
+								<Button
+									component={Link}
+									to="/competitions"
+									variant="light"
+									size="xs"
+								>
+									View All
+								</Button>
+							</Group>
+							<Divider />
+							<Stack gap="sm">
+								{combinedCompetitions.map((competition) => (
+									<ThemeBox
+										key={competition.id}
+										variant="clickableListItem"
+										to={`/competitions/${competition.slug}`}
+										p="sm"
+										style={{ textDecoration: 'none' }}
+										{...slideHover}
+									>
+										<Group justify="space-between" align="start">
+											<Stack gap={4} style={{ flex: 1 }}>
+												<Group gap="xs" align="center">
+													<Text fw={600} size="sm">
+														{competition.name}
+													</Text>
+													{competition.status === 'ongoing' && (
+														<Badge color="green" variant="light" size="xs">
+															Ongoing
+														</Badge>
+													)}
+													{competition.status === 'upcoming' && (
+														<Badge color="blue" variant="light" size="xs">
+															Upcoming
+														</Badge>
+													)}
+												</Group>
+												<Group gap="md">
+													{competition.startingAt && (
+														<Group gap="xs">
+															<IconCalendar size={14} />
+															<Text size="xs" c="dimmed">
+																{dayjs(competition.startingAt).format(
+																	'MMM D, YYYY',
+																)}
+															</Text>
+														</Group>
+													)}
+													{competition.location && (
+														<Group gap="xs">
+															<IconMapPin size={14} />
+															<Text size="xs" c="dimmed">
+																{competition.location}
+															</Text>
+														</Group>
+													)}
+												</Group>
+											</Stack>
+										</Group>
+									</ThemeBox>
+								))}
+							</Stack>
+						</Stack>
+					</ThemePaper>
+				)}
 
 				{/* Quick Overview Grid */}
 				<Grid>
