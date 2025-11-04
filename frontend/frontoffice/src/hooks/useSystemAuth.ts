@@ -23,7 +23,7 @@ export function useSystemAuth() {
 		}
 	};
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to validate the session only when the user is authenticated
 	useEffect(() => {
 		if (authStore.isAuthenticated) return;
 

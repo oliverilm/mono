@@ -1,12 +1,13 @@
-import { ClubList } from '../../components/club/list/ClubList';
-import { CompetitionCarousel } from '../../components/competition/carousel/CompetitionCarousel';
-import { LayoutPage } from '../layout/page/LayoutPage';
+import { useAuthStore } from '../../stores/auth';
+import { HomePagePublic } from './public/HomePagePublic';
+import { HomePageAuthenticated } from './user/HomePageAuthenticated';
 
 export function HomePage() {
-	return (
-		<LayoutPage>
-			<CompetitionCarousel />
-			<ClubList />
-		</LayoutPage>
-	);
+	const authStore = useAuthStore();
+
+	if (authStore.isAuthenticated) {
+		return <HomePageAuthenticated />;
+	}
+
+	return <HomePagePublic />;
 }
