@@ -35,6 +35,7 @@ export function HomePageAuthenticated() {
 	const authStore = useAuthStore();
 	const slideHover = useHoverEffect({ type: 'slide' });
 
+	// TODO: this might be slowing things down, one request too many,
 	// Get user's club data
 	const { data: userClubData } = useQuery({
 		queryKey: ['user-club', authStore.profile?.clubId],
@@ -60,6 +61,11 @@ export function HomePageAuthenticated() {
 	const { data: invitations } = useQuery({
 		queryKey: ['invitations-to'],
 		queryFn: () => Api.user.invitation.getMyInvitations(),
+		enabled: authStore.isAuthenticated,
+	});
+	const { data: userMetadata } = useQuery({
+		queryKey: ['user-metadata', authStore.isAuthenticated],
+		queryFn: () => Api.user.getUserMetadata(),
 		enabled: authStore.isAuthenticated,
 	});
 
@@ -150,7 +156,7 @@ export function HomePageAuthenticated() {
 				{/* Stats Section */}
 				<SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
 					<StatCard
-						value={privateCompetitions?.data?.length || 0}
+						value={userMetadata?.data.competitionCount ?? 0}
 						label="My Competitions"
 						icon={<IconTrophy size={24} />}
 						color="blue"
@@ -162,8 +168,8 @@ export function HomePageAuthenticated() {
 						color="green"
 					/>
 					<StatCard
-						value={sortedPublicCompetitions.length}
-						label="Upcoming Public"
+						value={userMetadata?.data.upcomingCompetitionCount ?? 0}
+						label="Upcoming Competitions"
 						icon={<IconCalendar size={24} />}
 						color="orange"
 					/>

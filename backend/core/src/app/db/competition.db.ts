@@ -14,6 +14,26 @@ import { prisma } from '../utils/db';
 import { slugifyString } from '../utils/string';
 
 export namespace CompetitionDb {
+	export async function getCountOfUserUpcomingCompetitions(profileId: string) {
+		return prisma.competitor.count({
+			where: {
+				competition: {
+					startingAt: {
+						gt: new Date(),
+					},
+				},
+				profileId,
+			},
+		});
+	}
+	export async function getCountOfUserCompetitions(profileId: string) {
+		return prisma.competitor.count({
+			where: {
+				profileId,
+			},
+		});
+	}
+
 	export async function queryActiveParticipations({
 		competition,
 		categories,

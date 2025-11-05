@@ -2,15 +2,18 @@ import {
 	invitatationCreateSchema,
 	invitationDecideSchema,
 	invitationQueryParamSchema,
+	slugSchema,
 } from '@monorepo/utils';
 import type { FastifyInstance } from 'fastify';
 import { ClubService } from 'src/app/services/club';
 import { prisma } from 'src/app/utils/db';
 import { UserService } from '../../services/user';
 import { requestUserId } from '../../utils/request';
+import { createTypedFastify } from '../../utils/fastify-typed';
 
 // PRIVATE ENDPOINTS
 export default async function (fastify: FastifyInstance) {
+	const tf = createTypedFastify(fastify)
 	fastify.get('/invitation/to', async (request) => {
 		const profile = await UserService.getUserProfileByUserId(
 			requestUserId(request),
@@ -121,4 +124,12 @@ export default async function (fastify: FastifyInstance) {
 
 		return { isAccepted: invitation.isAccepted };
 	});
+
+	tf.query(slugSchema).post('/join/:slug', async (request) => {
+		const slug = request.query.slug;
+		const userId = requestUserId(request);
+
+		
+
+	})
 }

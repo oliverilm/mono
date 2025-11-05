@@ -25,7 +25,7 @@ model Competition {
     categories CompetitionCategory[]
     competitionAdmins CompetitionAdmin[]
     competitionLinks CompetitionLink[]
-
+    Competitor Competitor[]
     
     @@unique([id, name, slug])
 
@@ -122,6 +122,8 @@ model Competitor {
 
     competitionCategory CompetitionCategory @relation(fields: [competitionCategoryId, competitionId, competitionName, competitionSlug], references: [id, competitionId, competitionName, competitionSlug])
     competitionCategoryId Int
+    
+    competition Competition? @relation(fields: [competitionId], references: [id])
     competitionId String 
     competitionName String
     competitionSlug String

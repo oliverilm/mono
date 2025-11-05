@@ -1,14 +1,25 @@
+import type { AxiosResponse } from 'axios';
+import { client } from '../../client';
 import { UserAuth } from './auth';
 import { UserClub } from './club';
 import { UserCompetition } from './competition';
 import { UserInvitation } from './invitation';
 
-export class User {
-	public static auth = UserAuth;
-	public static club = UserClub;
-	public static invitation = UserInvitation;
-	public static competition = UserCompetition;
+export namespace User {
+	export const auth = UserAuth;
+	export const club = UserClub;
+	export const invitation = UserInvitation;
+	export const competition = UserCompetition;
+
+	export function getUserMetadata(): Promise<AxiosResponse<UserMetadata>> {
+		return client.get('/user/metadata');
+	}
 }
+
+type UserMetadata = {
+	competitionCount: number;
+	upcomingCompetitionCount: number;
+};
 
 /* 
 ╔═══════════╤═══════════════════════════════════════════╗
