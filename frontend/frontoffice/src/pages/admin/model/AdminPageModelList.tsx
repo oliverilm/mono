@@ -111,6 +111,9 @@ export function AdminPageModelList() {
 		if (column.toLowerCase() === 'id') {
 			return (
 				<Badge
+					styles={{
+						root: { cursor: 'pointer', textDecoration: 'none', zIndex: 2 },
+					}}
 					component={Link}
 					to={`/admin/crud/${model}/${value}`}
 					variant="light"
@@ -134,7 +137,7 @@ export function AdminPageModelList() {
 							to={`/admin/crud/${column.slice(0, -2)}/${value}`}
 							variant="light"
 							color="orange"
-							style={{ cursor: 'pointer', textDecoration: 'none' }}
+							style={{ cursor: 'pointer', textDecoration: 'none', zIndex: 2 }}
 						>
 							{String(value).slice(0, 8)}...
 						</Badge>
@@ -294,9 +297,6 @@ export function AdminPageModelList() {
 										key={String(row.id)}
 										style={{
 											cursor: 'pointer',
-										}}
-										onClick={() => {
-											navigate(`/admin/crud/${model}/${row.id}`);
 										}}
 									>
 										{visibleColumns.map((column) => (

@@ -40,9 +40,10 @@ function buildCrudRoutes(fastify: FastifyInstance) {
 	};
 
 	const getWhere = (request: FastifyRequest) => {
-		const { path } = getRouteProps(request);
-		const cuidWhere = idSchema.safeParse(request.params);
+		const params = request.params as Record<string, string>;
 
+		// Try to parse as CUID (string ID)
+		const cuidWhere = idSchema.safeParse(params);
 		if (cuidWhere.success) {
 			return {
 				where: {
@@ -50,7 +51,9 @@ function buildCrudRoutes(fastify: FastifyInstance) {
 				},
 			};
 		}
-		const slugWhere = slugSchema.safeParse(request.params);
+
+		// Try to parse as slug
+		const slugWhere = slugSchema.safeParse(params);
 		if (slugWhere.success) {
 			return {
 				where: {
@@ -59,9 +62,18 @@ function buildCrudRoutes(fastify: FastifyInstance) {
 			};
 		}
 
+		// Try to parse as numeric ID
 		const numberIdWhere = z
-			.object({ id: z.number() })
-			.safeParse(request.params);
+			.object({
+				id: z.string().transform((val) => {
+					const num = Number(val);
+					if (Number.isNaN(num)) {
+						throw new Error('Invalid number');
+					}
+					return num;
+				}),
+			})
+			.safeParse(params);
 
 		if (numberIdWhere.success) {
 			return {

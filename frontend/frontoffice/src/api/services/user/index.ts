@@ -11,6 +11,11 @@ export namespace User {
 	export const invitation = UserInvitation;
 	export const competition = UserCompetition;
 
+	/**
+	 * Get user metadata including competition counts
+	 * @returns Promise resolving to user metadata
+	 * @route GET /user/metadata
+	 */
 	export function getUserMetadata(): Promise<AxiosResponse<UserMetadata>> {
 		return client.get('/user/metadata');
 	}
