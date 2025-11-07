@@ -5,6 +5,7 @@ export default async function (fastify: FastifyInstance) {
 	fastify.register(import('./autohooks'));
 	fastify.register(import('./user'));
 	fastify.register(import('./invitation'));
+	fastify.register(import('./metadata'));
 
 	fastify.register(import('./club/_router'), { prefix: '/club' });
 	fastify.register(import('./competition/_router'), { prefix: '/competition' });

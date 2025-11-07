@@ -61,7 +61,13 @@ export function Layout() {
 
 			<AppShell.Main>
 				<Outlet />
-				<Notifications />
+				<Notifications
+					position="top-right"
+					zIndex={1000}
+					containerWidth={420}
+					limit={5}
+					autoClose={5000}
+				/>
 			</AppShell.Main>
 		</AppShell>
 	);

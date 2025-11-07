@@ -20,16 +20,32 @@ export function StatCard({
 	iconSize = 24,
 }: StatCardProps) {
 	return (
-		<ThemePaper light="gray.1" dark="gray.8" p="lg" radius="md">
+		<ThemePaper
+			light="gray.1"
+			dark="gray.8"
+			p="lg"
+			radius="md"
+			style={{
+				transition: 'all 0.2s ease',
+				cursor: 'default',
+			}}
+		>
 			<Group gap="md">
-				<Avatar color={color} size={avatarSize} radius="md">
+				<Avatar
+					color={color}
+					size={avatarSize}
+					radius="md"
+					style={{
+						transition: 'transform 0.2s ease',
+					}}
+				>
 					{icon}
 				</Avatar>
-				<Stack gap={0}>
-					<Text size="xl" fw={700}>
+				<Stack gap={2}>
+					<Text size="xl" fw={700} lh={1.2}>
 						{value}
 					</Text>
-					<Text size="sm" c="dimmed">
+					<Text size="sm" c="dimmed" fw={500}>
 						{label}
 					</Text>
 				</Stack>

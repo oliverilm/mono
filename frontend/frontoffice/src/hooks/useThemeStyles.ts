@@ -67,16 +67,25 @@ export function useThemeStyles(): ThemeStyles {
 			'var(--mantine-color-yellow-9)',
 		),
 
-		// Text colors
-		textPrimary: getColor('var(--mantine-color-dark-9)', 'white'),
+		// Text colors - softer for dark mode to reduce eye strain
+		textPrimary: getColor(
+			'var(--mantine-color-dark-9)',
+			'var(--mantine-color-dark-0)', // Softer off-white instead of pure white
+		),
 		textSecondary: getColor(
 			'var(--mantine-color-dark-7)',
-			'var(--mantine-color-gray-2)',
+			'var(--mantine-color-dark-2)', // Softer gray for secondary text
 		),
-		textOnGradient: getColor('var(--mantine-color-dark-9)', 'white'),
+		textOnGradient: getColor(
+			'var(--mantine-color-dark-9)',
+			'var(--mantine-color-dark-0)', // Softer off-white
+		),
 
-		// Border colors
-		borderOutline: getColor('var(--mantine-color-blue-9)', 'white'),
+		// Border colors - softer for dark mode
+		borderOutline: getColor(
+			'var(--mantine-color-blue-9)',
+			'var(--mantine-color-dark-3)', // Softer border color in dark mode
+		),
 
 		// Icon backgrounds
 		iconBgBlue: getColor(

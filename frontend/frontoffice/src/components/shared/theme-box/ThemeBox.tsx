@@ -65,23 +65,6 @@ export function ThemeBox({
 				};
 			}
 
-			case 'clickable':
-				return {
-					cursor: 'pointer',
-					transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-				};
-
-			case 'clickableListItem':
-				return {
-					backgroundColor: theme.getColor(
-						'var(--mantine-color-gray-2)',
-						'var(--mantine-color-gray-7)',
-					),
-					borderRadius: 'var(--mantine-radius-sm)',
-					cursor: 'pointer',
-					transition: 'transform 0.2s, background-color 0.2s',
-				};
-
 			case 'hero':
 				return {
 					position: 'relative',
@@ -105,11 +88,56 @@ export function ThemeBox({
 		}
 	};
 
+	const getSxStyles = () => {
+		switch (variant) {
+			case 'clickable':
+				return {
+					cursor: 'pointer',
+					transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+					'&:hover': {
+						transform: 'translateY(-2px)',
+						boxShadow: 'var(--mantine-shadow-md)',
+					},
+				};
+
+			case 'clickableListItem':
+				return {
+					backgroundColor: theme.getColor(
+						'var(--mantine-color-gray-1)',
+						'var(--mantine-color-dark-6)',
+					),
+					borderRadius: 'var(--mantine-radius-md)',
+					cursor: 'pointer',
+					transition: 'all 0.2s ease',
+					border: `1px solid ${theme.getColor(
+						'var(--mantine-color-gray-3)',
+						'var(--mantine-color-dark-5)',
+					)}`,
+					'&:hover': {
+						backgroundColor: theme.getColor(
+							'var(--mantine-color-gray-2)',
+							'var(--mantine-color-dark-5)',
+						),
+						transform: 'translateX(4px)',
+						borderColor: theme.getColor(
+							'var(--mantine-color-blue-3)',
+							'var(--mantine-color-blue-7)',
+						),
+						boxShadow: 'var(--mantine-shadow-sm)',
+					},
+				};
+
+			default:
+				return undefined;
+		}
+	};
+
 	const styleProps = {
 		style: {
 			...getVariantStyles(),
 			...style,
 		},
+		sx: getSxStyles(),
 	};
 
 	if (to) {

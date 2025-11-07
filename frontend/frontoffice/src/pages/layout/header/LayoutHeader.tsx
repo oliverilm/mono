@@ -8,6 +8,7 @@ import {
 import { IconMenu2, IconX } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { JudoLogo } from '../../../components/shared/logo/JudoLogo';
 import { ThemeToggle } from '../../../components/theme-toggle/ThemeToggle';
 import { useAuthStore } from '../../../stores/auth';
 import { header } from './LayoutHeader.css';
@@ -49,8 +50,27 @@ export function LayoutHeader({ onNavbarToggle, isNavMenuOpen }: Props) {
 					</ActionIcon>
 				)}
 
-				<Button variant="transparent" color="gray" onClick={to('/')}>
-					Logo
+				<Button
+					variant="transparent"
+					color="gray"
+					onClick={to('/')}
+					style={{
+						height: 'auto',
+						padding: '6px 10px',
+						display: 'flex',
+						alignItems: 'center',
+						gap: '0',
+						transition: 'opacity 0.2s ease',
+						borderRadius: 'var(--mantine-radius-md)',
+					}}
+					onMouseEnter={(e) => {
+						e.currentTarget.style.opacity = '0.85';
+					}}
+					onMouseLeave={(e) => {
+						e.currentTarget.style.opacity = '1';
+					}}
+				>
+					<JudoLogo size={140} />
 				</Button>
 			</Flex>
 
