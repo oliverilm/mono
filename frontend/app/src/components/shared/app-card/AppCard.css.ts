@@ -1,23 +1,48 @@
 import { style } from '@vanilla-extract/css';
+import { vars } from '../../../styles/theme/vars.css';
+
+const cardBase = {
+	borderRadius: '1rem',
+	border: `1px solid ${vars.color.border.default}`,
+	background: vars.gradient.glassCard,
+	color: 'inherit',
+	textDecoration: 'none',
+	boxShadow: vars.shadow.md,
+	backdropFilter: 'blur(8px)',
+	transition:
+		'transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease',
+};
 
 export const card = style({
+	...cardBase,
 	display: 'flex',
 	alignItems: 'center',
 	gap: '1rem',
 	padding: '1rem 1.125rem',
-	borderRadius: '1rem',
-	border: '1px solid #e2e8f0',
-	backgroundColor: '#ffffff',
-	color: 'inherit',
-	textDecoration: 'none',
-	boxShadow: '0 4px 16px rgba(15, 23, 42, 0.06)',
-	transition:
-		'transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease',
 	selectors: {
 		'&:hover': {
 			transform: 'translateY(-2px)',
-			borderColor: '#bfdbfe',
-			boxShadow: '0 12px 28px rgba(37, 99, 235, 0.14)',
+			borderColor: vars.color.border.hover,
+			boxShadow: vars.shadow.accent,
+			background: vars.gradient.glassCardHover,
+		},
+	},
+});
+
+export const tile = style({
+	...cardBase,
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'flex-start',
+	gap: '1rem',
+	height: '100%',
+	padding: '1.25rem',
+	selectors: {
+		'&:hover': {
+			transform: 'translateY(-2px)',
+			borderColor: vars.color.border.hover,
+			boxShadow: vars.shadow.accent,
+			background: vars.gradient.glassCardHover,
 		},
 	},
 });
@@ -30,30 +55,33 @@ export const iconWrap = style({
 	width: '3rem',
 	height: '3rem',
 	borderRadius: '0.875rem',
-	backgroundColor: '#eff6ff',
+	backgroundColor: vars.color.background.iconAccent,
+	border: `1px solid ${vars.color.border.accent}`,
 });
 
 export const content = style({
 	display: 'flex',
 	flexDirection: 'column',
-	gap: '0.25rem',
+	gap: '0.375rem',
 	flex: 1,
 	minWidth: 0,
+	width: '100%',
 });
 
 export const name = style({
 	fontSize: '1rem',
 	fontWeight: 700,
-	color: '#0f172a',
+	color: vars.color.text.primary,
 	letterSpacing: '-0.02em',
 });
 
 export const description = style({
 	fontSize: '0.8125rem',
-	color: '#64748b',
+	color: vars.color.text.secondary,
 	lineHeight: 1.45,
 });
 
 export const chevron = style({
 	flexShrink: 0,
+	alignSelf: 'flex-end',
 });

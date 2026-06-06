@@ -2,14 +2,7 @@ import type { IconName } from '@monorepo/icons';
 
 export const TOKEN_KEY = 'ippon-token';
 
-export type TournamentApp = {
-	slug: string;
-	name: string;
-	description: string;
-	icon: IconName;
-};
-
-export const TOURNAMENT_APPS: TournamentApp[] = [
+export const TOURNAMENT_APPS = [
 	{
 		slug: 'weigh-in',
 		name: 'Weigh In',
@@ -36,4 +29,13 @@ export const TOURNAMENT_APPS: TournamentApp[] = [
 		description: 'Manage brackets, categories, and competition settings.',
 		icon: 'settings',
 	},
-];
+] as const satisfies readonly {
+	slug: string;
+	name: string;
+	description: string;
+	icon: IconName;
+}[];
+
+export type TournamentApp = (typeof TOURNAMENT_APPS)[number];
+
+export type AppSlug = TournamentApp['slug'];

@@ -1,37 +1,34 @@
 import { style } from '@vanilla-extract/css';
+import { vars } from '../../../styles/theme/vars.css';
 
 export const root = style({
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-	gap: '1rem',
+	gap: '0.75rem',
 });
 
 export const logo = style({
-	display: 'block',
-	flexShrink: 0,
+	borderRadius: '50%',
 	objectFit: 'contain',
-	filter: 'drop-shadow(0 12px 24px rgba(15, 23, 42, 0.18))',
+	filter: vars.shadow.logoDrop,
 });
 
 export const wordmark = style({
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-	gap: '0.25rem',
+	gap: '0.125rem',
 });
 
 export const brand = style({
-	fontSize: '1.75rem',
+	fontSize: '1.25rem',
 	fontWeight: 700,
-	letterSpacing: '-0.04em',
-	color: '#0f172a',
+	color: vars.color.text.inverse,
+	letterSpacing: '-0.03em',
 });
 
 export const tagline = style({
 	fontSize: '0.875rem',
-	fontWeight: 500,
-	color: '#64748b',
-	letterSpacing: '0.08em',
-	textTransform: 'uppercase',
+	color: vars.color.text.subtle,
 });

@@ -13,8 +13,8 @@ export type AuthStore = {
 
 export const useAuthStore = create<AuthStore>((set) => ({
 	profile: null,
-	isAuthenticated: false,
-	isReady: false,
+	isAuthenticated: true,
+	isReady: true,
 	setProfile: (profile) => set({ profile, isAuthenticated: profile !== null }),
 	setReady: (ready) => set({ isReady: ready }),
 	logout: () => {

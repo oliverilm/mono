@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css';
+import { vars } from '../../../styles/theme/vars.css';
 
 export const field = style({
 	display: 'flex',
@@ -9,41 +10,42 @@ export const field = style({
 export const label = style({
 	fontSize: '0.875rem',
 	fontWeight: 600,
-	color: '#334155',
+	color: vars.color.text.label,
 });
 
 export const inputWrapper = style({
 	position: 'relative',
+	display: 'flex',
+	alignItems: 'center',
 });
 
 export const inputIcon = style({
 	position: 'absolute',
-	top: '50%',
 	left: '0.875rem',
-	transform: 'translateY(-50%)',
 	display: 'flex',
+	alignItems: 'center',
 	pointerEvents: 'none',
 });
 
 export const input = style({
 	width: '100%',
 	padding: '0.875rem 0.875rem 0.875rem 2.75rem',
-	border: '1px solid #e2e8f0',
+	border: `1px solid ${vars.color.border.light}`,
 	borderRadius: '0.875rem',
-	backgroundColor: '#f8fafc',
-	color: '#0f172a',
+	backgroundColor: vars.color.background.input,
+	color: vars.color.text.inverse,
 	fontSize: '0.95rem',
 	outline: 'none',
 	transition:
-		'border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease',
+		'border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease',
 	selectors: {
 		'&:focus': {
-			borderColor: '#3b82f6',
-			backgroundColor: '#ffffff',
-			boxShadow: '0 0 0 4px rgba(59, 130, 246, 0.15)',
+			borderColor: vars.color.border.focus,
+			backgroundColor: vars.color.background.inputFocus,
+			boxShadow: vars.shadow.focus,
 		},
 		'&::placeholder': {
-			color: '#94a3b8',
+			color: vars.color.text.muted,
 		},
 	},
 });
@@ -51,14 +53,6 @@ export const input = style({
 export const numberInput = style([
 	input,
 	{
-		selectors: {
-			'&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-				WebkitAppearance: 'none',
-				margin: 0,
-			},
-			'&[type=number]': {
-				MozAppearance: 'textfield',
-			},
-		},
+		paddingLeft: '2.75rem',
 	},
 ]);
