@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@monorepo/icons": "workspace:*",
     "@vanilla-extract/css": "^1.16.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.0.2",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
