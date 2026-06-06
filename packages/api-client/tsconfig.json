@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist/esm",
+    "declarationDir": "./dist/types/esm",
+    "composite": true,
+    "lib": ["ES2022", "DOM"]
+  },
+  "include": ["./src/**/*.ts"],
+  "references": [{ "path": "../utils" }]
+}

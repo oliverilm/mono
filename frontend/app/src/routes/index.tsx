@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { ElementPage } from '../pages/element/ElementPage';
+import { AppPage } from '../pages/app/AppPage';
 import { HomePage } from '../pages/home/HomePage';
 
 const routes = createBrowserRouter([
@@ -8,8 +8,8 @@ const routes = createBrowserRouter([
 		element: <HomePage />,
 	},
 	{
-		path: '/:elementName',
-		element: <ElementPage />,
+		path: '/apps/:appSlug',
+		element: <AppPage />,
 	},
 ]);
 

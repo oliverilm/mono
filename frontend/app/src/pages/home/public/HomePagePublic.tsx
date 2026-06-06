@@ -1,5 +1,7 @@
-import { Icon } from '@monorepo/icons';
+import { getErrorMessage } from '@monorepo/api-client';
 import { type FormEvent, useState } from 'react';
+import { api } from '../../../api/client';
+import { Input } from '../../../components/shared/input/Input';
 import { AppLogo } from '../../../components/shared/logo/AppLogo';
 import { useAuthStore } from '../../../stores/auth';
 import * as styles from './HomePagePublic.css';
@@ -8,10 +10,29 @@ export function HomePagePublic() {
 	const authStore = useAuthStore();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
-	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		authStore.login();
+		setIsLoading(true);
+		setError(null);
+
+		try {
+			const { data } = await api.public.auth.login({ email, password });
+
+			if (!data) {
+				setError('Login failed. Please try again.');
+				return;
+			}
+
+			api.http.getTokenStorage().setToken(data.token);
+			authStore.setProfile(data.profile);
+		} catch (err) {
+			setError(getErrorMessage(err) ?? 'Invalid email or password');
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -31,50 +52,44 @@ export function HomePagePublic() {
 				</header>
 
 				<form className={styles.form} onSubmit={onSubmit}>
-					<div className={styles.field}>
-						<label className={styles.label} htmlFor="email">
-							Email
-						</label>
-						<div className={styles.inputWrapper}>
-							<span className={styles.inputIcon}>
-								<Icon name="mail" size="s" color="#94a3b8" />
-							</span>
-							<input
-								id="email"
-								className={styles.input}
-								type="email"
-								value={email}
-								onChange={(event) => setEmail(event.target.value)}
-								placeholder="you@dojo.com"
-								autoComplete="email"
-								required
-							/>
-						</div>
-					</div>
+					<Input
+						id="email"
+						label="Email"
+						icon="mail"
+						type="email"
+						value={email}
+						onChange={(event) => setEmail(event.target.value)}
+						placeholder="you@dojo.com"
+						autoComplete="email"
+						required
+						disabled={isLoading}
+					/>
 
-					<div className={styles.field}>
-						<label className={styles.label} htmlFor="password">
-							Password
-						</label>
-						<div className={styles.inputWrapper}>
-							<span className={styles.inputIcon}>
-								<Icon name="lock" size="s" color="#94a3b8" />
-							</span>
-							<input
-								id="password"
-								className={styles.input}
-								type="password"
-								value={password}
-								onChange={(event) => setPassword(event.target.value)}
-								placeholder="Enter your password"
-								autoComplete="current-password"
-								required
-							/>
-						</div>
-					</div>
+					<Input
+						id="password"
+						label="Password"
+						icon="lock"
+						type="password"
+						value={password}
+						onChange={(event) => setPassword(event.target.value)}
+						placeholder="Enter your password"
+						autoComplete="current-password"
+						required
+						disabled={isLoading}
+					/>
 
-					<button className={styles.submitButton} type="submit">
-						Sign in
+					{error ? (
+						<p className={styles.error} role="alert">
+							{error}
+						</p>
+					) : null}
+
+					<button
+						className={styles.submitButton}
+						type="submit"
+						disabled={isLoading}
+					>
+						{isLoading ? 'Signing in…' : 'Sign in'}
 					</button>
 				</form>
 

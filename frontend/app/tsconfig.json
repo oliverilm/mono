@@ -12,6 +12,7 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" },
-    { "path": "../../packages/icons" }
+    { "path": "../../packages/icons" },
+    { "path": "../../packages/api-client" }
   ]
 }
