@@ -12,7 +12,7 @@ type DashboardShellProps = {
 
 export function DashboardShell({
 	title = 'Ippon',
-	subtitle = 'Tournament workspace',
+	subtitle,
 	children,
 }: DashboardShellProps) {
 	const authStore = useAuthStore();
@@ -27,16 +27,18 @@ export function DashboardShell({
 		<div className={styles.page}>
 			<header className={styles.topBar}>
 				<div className={styles.brand}>
-					<AppLogo size={48} />
-					<div>
-						<p className={styles.brandLabel}>{title}</p>
-						<p className={styles.brandSubtitle}>{subtitle}</p>
-					</div>
+					<AppLogo variant="mark" size={28} />
+					<p className={styles.brandText}>
+						<span className={styles.brandLabel}>{title}</span>
+						{subtitle ? (
+							<span className={styles.brandSubtitle}>{subtitle}</span>
+						) : null}
+					</p>
 				</div>
 
 				<div className={styles.topBarActions}>
 					{displayName ? (
-						<p className={styles.userGreeting}>Welcome, {displayName}</p>
+						<p className={styles.userGreeting}>{displayName}</p>
 					) : null}
 					<button
 						className={styles.logoutButton}

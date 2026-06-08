@@ -3,9 +3,23 @@ import * as styles from './AppLogo.css';
 
 type AppLogoProps = {
 	size?: number;
+	/** Full logo with wordmark for marketing surfaces; mark is icon-only for compact headers. */
+	variant?: 'full' | 'mark';
 };
 
-export function AppLogo({ size = 88 }: AppLogoProps) {
+export function AppLogo({ size = 88, variant = 'full' }: AppLogoProps) {
+	if (variant === 'mark') {
+		return (
+			<img
+				className={styles.mark}
+				src={logo}
+				alt="Ippon"
+				width={size}
+				height={size}
+			/>
+		);
+	}
+
 	return (
 		<div className={styles.root}>
 			<img

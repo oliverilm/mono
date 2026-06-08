@@ -14,6 +14,14 @@ export const logo = style({
 	filter: vars.shadow.logoDrop,
 });
 
+export const mark = style([
+	logo,
+	{
+		display: 'block',
+		flexShrink: 0,
+	},
+]);
+
 export const wordmark = style({
 	display: 'flex',
 	flexDirection: 'column',

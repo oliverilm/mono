@@ -14,10 +14,11 @@ export const topBar = style({
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'space-between',
-	gap: '1rem',
-	flexWrap: 'wrap',
+	gap: '0.75rem',
+	flexWrap: 'nowrap',
 	width: '100%',
-	padding: '1rem clamp(1rem, 3vw, 2.5rem)',
+	minHeight: '3rem',
+	padding: '0.5rem clamp(0.75rem, 2vw, 1.25rem)',
 	borderBottom: `1px solid ${vars.color.border.subtle}`,
 	backgroundColor: vars.color.background.topBar,
 	backdropFilter: 'blur(12px)',
@@ -26,22 +27,42 @@ export const topBar = style({
 export const brand = style({
 	display: 'flex',
 	alignItems: 'center',
-	gap: '0.875rem',
+	gap: '0.625rem',
 	minWidth: 0,
+	flex: 1,
+});
+
+export const brandText = style({
+	display: 'flex',
+	alignItems: 'baseline',
+	gap: '0.5rem',
+	margin: 0,
+	minWidth: 0,
+	flexWrap: 'wrap',
 });
 
 export const brandLabel = style({
-	margin: 0,
-	fontSize: '1.125rem',
+	fontSize: '0.9375rem',
 	fontWeight: 700,
 	color: vars.color.text.primary,
-	letterSpacing: '-0.03em',
+	letterSpacing: '-0.02em',
+	whiteSpace: 'nowrap',
 });
 
 export const brandSubtitle = style({
-	margin: 0,
 	fontSize: '0.8125rem',
+	fontWeight: 500,
 	color: vars.color.text.muted,
+	overflow: 'hidden',
+	textOverflow: 'ellipsis',
+	whiteSpace: 'nowrap',
+	selectors: {
+		'&::before': {
+			content: '"·"',
+			marginRight: '0.5rem',
+			color: vars.color.text.muted,
+		},
+	},
 });
 
 export const topBarActions = style({
@@ -54,19 +75,29 @@ export const topBarActions = style({
 
 export const userGreeting = style({
 	margin: 0,
-	fontSize: '0.875rem',
-	color: vars.color.text.secondary,
+	fontSize: '0.8125rem',
+	color: vars.color.text.muted,
+	whiteSpace: 'nowrap',
+	overflow: 'hidden',
+	textOverflow: 'ellipsis',
+	maxWidth: '12rem',
+	'@media': {
+		'screen and (max-width: 480px)': {
+			display: 'none',
+		},
+	},
 });
 
 export const logoutButton = style({
-	padding: '0.55rem 0.9rem',
+	padding: '0.375rem 0.625rem',
 	border: `1px solid ${vars.color.border.strong}`,
-	borderRadius: '0.75rem',
+	borderRadius: '0.5rem',
 	backgroundColor: vars.color.background.glass,
 	color: vars.color.text.secondary,
-	fontSize: '0.8125rem',
+	fontSize: '0.75rem',
 	fontWeight: 600,
 	cursor: 'pointer',
+	flexShrink: 0,
 	transition:
 		'border-color 160ms ease, color 160ms ease, background-color 160ms ease',
 	selectors: {
