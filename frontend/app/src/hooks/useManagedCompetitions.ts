@@ -1,4 +1,4 @@
-import { MOCK_MANAGED_COMPETITIONS } from '../mocks/managedCompetitions';
+import { MOCK_MANAGED_COMPETITIONS } from '@mocks/managedCompetitions';
 
 /** Placeholder until the managed-competitions API query exists. */
 export function useManagedCompetitions() {

@@ -1,5 +1,5 @@
 import { keyframes, style } from '@vanilla-extract/css';
-import { vars } from '../../../styles/theme/vars.css';
+import { vars } from '@styles/theme/vars.css';
 
 const overlayIn = keyframes({
 	from: { opacity: 0 },

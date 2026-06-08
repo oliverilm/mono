@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut';
-import { BackLink } from '../shared/back-link/BackLink';
-import { CompetitorPanel } from './CompetitorPanel';
+import { useKeyboardShortcut } from '@hooks/useKeyboardShortcut';
+import { BackLink } from '@components/shared/back-link/BackLink';
+import { CompetitorPanel } from '../competitor-panel/CompetitorPanel';
+import { KeyboardShortcutsModal } from '../keyboard-shortcuts-modal/KeyboardShortcutsModal';
+import { OsaekomiPanel } from '../osaekomi-panel/OsaekomiPanel';
+import { TatamiSetup } from '../tatami-setup/TatamiSetup';
+import { WinnerAnnouncement } from '../winner-announcement/WinnerAnnouncement';
+import { useJudoTimer } from '../hooks/useJudoTimer';
+import { useWinnerAnnouncement } from '../hooks/useWinnerAnnouncement';
+import type { TatamiConfig } from '../types';
+import { formatTime } from '../utils/formatTime';
+import { hasIpponOnBoard } from '../utils/scoreLimits';
 import * as styles from './JudoTimerBoard.css';
-import { KeyboardShortcutsModal } from './KeyboardShortcutsModal';
-import { OsaekomiPanel } from './OsaekomiPanel';
-import { TatamiSetup } from './TatamiSetup';
-import { WinnerAnnouncement } from './WinnerAnnouncement';
-import { useJudoTimer } from './hooks/useJudoTimer';
-import { useWinnerAnnouncement } from './hooks/useWinnerAnnouncement';
-import type { TatamiConfig } from './types';
-import { formatTime } from './utils/formatTime';
-import { hasIpponOnBoard } from './utils/scoreLimits';
 
 type JudoTimerBoardProps = {
 	initialConfig: TatamiConfig | null;

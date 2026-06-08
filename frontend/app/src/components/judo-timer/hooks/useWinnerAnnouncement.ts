@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useKeyboardShortcut } from '../../../hooks/useKeyboardShortcut';
+import { useKeyboardShortcut } from '@hooks/useKeyboardShortcut';
 import type { JudoTimerState } from '../types';
 import { type MatchResult, determineMatchResult } from '../utils/matchResult';
 

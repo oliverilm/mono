@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css';
-import { vars } from '../../styles/theme/vars.css';
-import { font, panelPadding, radius, space } from './judoTimer.tokens';
+import { vars } from '@styles/theme/vars.css';
+import { font, panelPadding, radius, space } from '../judoTimer.tokens';
 
 const SCORE_CELL_MIN = 'clamp(4.25rem, 9vw, 5.75rem)';
 const SCORE_COLUMN_COUNT = 5;

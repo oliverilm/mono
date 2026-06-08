@@ -1,5 +1,5 @@
 import { createApiClient } from '@monorepo/api-client';
-import { TOKEN_KEY } from '../constants';
+import { TOKEN_KEY } from '@/constants';
 
 export const api = createApiClient({
 	baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000',

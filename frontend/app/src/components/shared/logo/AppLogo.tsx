@@ -1,4 +1,4 @@
-import logo from '../../../assets/ippon-logo.png';
+import logo from '@/assets/ippon-logo.png';
 import * as styles from './AppLogo.css';
 
 type AppLogoProps = {

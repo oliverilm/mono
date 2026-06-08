@@ -1,7 +1,7 @@
-import { AppCard } from '../shared/app-card/AppCard';
-import { PageSection } from '../shared/page-section/PageSection';
-import { TOURNAMENT_APPS } from '../../constants';
-import * as styles from '../../components/layout/DashboardShell.css';
+import { TOURNAMENT_APPS } from '@/constants';
+import { AppCard } from '@components/shared/app-card/AppCard';
+import { PageSection } from '@components/shared/page-section/PageSection';
+import * as styles from '@components/layout/dashboard-shell/DashboardShell.css';
 
 type TournamentToolsSectionProps = {
 	competitionSlug: string;

@@ -5,7 +5,7 @@ import {
 	useEffect,
 	useRef,
 } from 'react';
-import { useKeyboardShortcut } from '../../../hooks/useKeyboardShortcut';
+import { useKeyboardShortcut } from '@hooks/useKeyboardShortcut';
 import * as styles from './Modal.css';
 
 type ModalAlign = 'center' | 'top';

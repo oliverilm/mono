@@ -1,9 +1,9 @@
-import { COUNTRY_OPTIONS } from './constants';
-import { Modal } from '../shared/modal/Modal';
-import type { CompetitorScore, CompetitorSide } from './types';
-import { formatFighterName } from './types';
-import { matchResultLabel, type MatchResult } from './utils/matchResult';
-import { countryCodeToFlag, getCountryLabel } from './utils/countryFlag';
+import { Modal } from '@components/shared/modal/Modal';
+import { COUNTRY_OPTIONS } from '../constants';
+import type { CompetitorScore, CompetitorSide } from '../types';
+import { formatFighterName } from '../types';
+import { countryCodeToFlag, getCountryLabel } from '../utils/countryFlag';
+import { matchResultLabel, type MatchResult } from '../utils/matchResult';
 import * as styles from './WinnerAnnouncement.css';
 
 type WinnerAnnouncementProps = {

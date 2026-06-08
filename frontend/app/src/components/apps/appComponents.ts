@@ -1,5 +1,5 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
-import type { AppSlug } from '../../constants';
+import type { AppSlug } from '@/constants';
 
 const loaders: Record<
 	AppSlug,

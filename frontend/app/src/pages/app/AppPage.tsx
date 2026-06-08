@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
-import { appComponents, isAppSlug } from '../../components/apps/appComponents';
-import { StatusPage } from '../../components/shared/status-page/StatusPage';
-import { useManagedCompetition } from '../../hooks/useManagedCompetitions';
-import { TOURNAMENT_APPS } from '../../constants';
+import { appComponents, isAppSlug } from '@components/apps/appComponents';
+import { StatusPage } from '@components/shared/status-page/StatusPage';
+import { useManagedCompetition } from '@hooks/useManagedCompetitions';
+import { TOURNAMENT_APPS } from '@/constants';
 
 export function AppPage() {
 	const { competitionSlug, appSlug } = useParams<{

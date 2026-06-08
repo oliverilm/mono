@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
-import { CompetitionDetails } from '../../components/competition/CompetitionDetails';
-import { TournamentToolsSection } from '../../components/competition/TournamentToolsSection';
-import { DashboardShell } from '../../components/layout/DashboardShell';
-import { BackLink } from '../../components/shared/back-link/BackLink';
-import { PageSection } from '../../components/shared/page-section/PageSection';
-import { useManagedCompetition } from '../../hooks/useManagedCompetitions';
+import { CompetitionDetails } from '@components/competition/competition-details/CompetitionDetails';
+import { TournamentToolsSection } from '@components/competition/tournament-tools-section/TournamentToolsSection';
+import { DashboardShell } from '@components/layout/dashboard-shell/DashboardShell';
+import { BackLink } from '@components/shared/back-link/BackLink';
+import { PageSection } from '@components/shared/page-section/PageSection';
+import { useManagedCompetition } from '@hooks/useManagedCompetitions';
 
 export function CompetitionPage() {
 	const { competitionSlug } = useParams<{ competitionSlug: string }>();

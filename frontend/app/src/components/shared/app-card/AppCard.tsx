@@ -1,6 +1,6 @@
 import { Icon, type IconName } from '@monorepo/icons';
 import { Link } from 'react-router-dom';
-import { theme } from '../../../styles/theme';
+import { theme } from '@styles/theme';
 import * as styles from './AppCard.css';
 
 type AppCardProps = {

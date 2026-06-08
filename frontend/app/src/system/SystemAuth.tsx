@@ -1,4 +1,4 @@
-import { useSystemAuth } from '../hooks/useSystemAuth';
+import { useSystemAuth } from '@hooks/useSystemAuth';
 
 export function SystemAuth() {
 	useSystemAuth();

@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css';
-import { vars } from '../../../styles/theme/vars.css';
+import { vars } from '@styles/theme/vars.css';
 
 export const panel = style({
 	borderRadius: '1rem',

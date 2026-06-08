@@ -1,9 +1,9 @@
-import { CompetitionCard } from '../../../components/shared/competition-card/CompetitionCard';
-import { DashboardShell } from '../../../components/layout/DashboardShell';
-import { EmptyState } from '../../../components/shared/empty-state/EmptyState';
-import { PageSection } from '../../../components/shared/page-section/PageSection';
-import { useManagedCompetitions } from '../../../hooks/useManagedCompetitions';
-import * as styles from '../../../components/layout/DashboardShell.css';
+import { CompetitionCard } from '@components/shared/competition-card/CompetitionCard';
+import { DashboardShell } from '@components/layout/dashboard-shell/DashboardShell';
+import { EmptyState } from '@components/shared/empty-state/EmptyState';
+import { PageSection } from '@components/shared/page-section/PageSection';
+import { useManagedCompetitions } from '@hooks/useManagedCompetitions';
+import * as styles from '@components/layout/dashboard-shell/DashboardShell.css';
 
 export function HomePageAuthenticated() {
 	const { competitions } = useManagedCompetitions();

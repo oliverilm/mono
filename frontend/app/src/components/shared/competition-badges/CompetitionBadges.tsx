@@ -1,5 +1,5 @@
-import type { ManagedCompetition } from '../../../mocks/managedCompetitions';
-import { formatCompetitionRole } from '../../../utils/format';
+import type { ManagedCompetition } from '@mocks/managedCompetitions';
+import { formatCompetitionRole } from '@utils/format';
 import { Badge, BadgeGroup } from '../badge/Badge';
 
 type CompetitionBadgesProps = {

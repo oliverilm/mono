@@ -1,4 +1,4 @@
-import { AppShell } from '../shared/app-shell/AppShell';
+import { AppShell } from '@components/shared/app-shell/AppShell';
 
 export default function WeighInApp() {
 	return (

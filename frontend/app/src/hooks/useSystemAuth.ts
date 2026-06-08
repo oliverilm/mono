@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
-import { api } from '../api/client';
-import { TOKEN_KEY } from '../constants';
-import { useAuthStore } from '../stores/auth';
+import { api } from '@api/client';
+import { TOKEN_KEY } from '@/constants';
+import { useAuthStore } from '@stores/auth';
 
 export function useSystemAuth() {
 	const authStore = useAuthStore();

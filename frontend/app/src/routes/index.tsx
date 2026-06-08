@@ -1,7 +1,7 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { AppPage } from '../pages/app/AppPage';
-import { CompetitionPage } from '../pages/competition/CompetitionPage';
-import { HomePage } from '../pages/home/HomePage';
+import { AppPage } from '@pages/app/AppPage';
+import { CompetitionPage } from '@pages/competition/CompetitionPage';
+import { HomePage } from '@pages/home/HomePage';
 
 const routes = createBrowserRouter([
 	{

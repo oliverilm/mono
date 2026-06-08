@@ -1,9 +1,9 @@
 import { getErrorMessage } from '@monorepo/api-client';
 import { type FormEvent, useState } from 'react';
-import { api } from '../../../api/client';
-import { Input } from '../../../components/shared/input/Input';
-import { AppLogo } from '../../../components/shared/logo/AppLogo';
-import { useAuthStore } from '../../../stores/auth';
+import { api } from '@api/client';
+import { Input } from '@components/shared/input/Input';
+import { AppLogo } from '@components/shared/logo/AppLogo';
+import { useAuthStore } from '@stores/auth';
 import * as styles from './HomePagePublic.css';
 
 export function HomePagePublic() {

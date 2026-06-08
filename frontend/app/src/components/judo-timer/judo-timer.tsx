@@ -4,7 +4,7 @@ import {
 	DEFAULT_WHITE_FIGHTER,
 	getTimerStorageKey,
 } from './constants';
-import { JudoTimerBoard } from './JudoTimerBoard';
+import { JudoTimerBoard } from './judo-timer-board/JudoTimerBoard';
 import type { FighterConfig, TatamiConfig } from './types';
 
 type LegacyStoredConfig = {

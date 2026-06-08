@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css';
-import { vars } from '../../styles/theme/vars.css';
-import { font, radius, space } from './judoTimer.tokens';
+import { vars } from '@styles/theme/vars.css';
+import { font, radius, space } from '../judoTimer.tokens';
 
 export const title = style({
 	margin: 0,

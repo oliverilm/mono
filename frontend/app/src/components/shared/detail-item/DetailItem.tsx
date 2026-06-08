@@ -1,5 +1,5 @@
 import { Icon, type IconName } from '@monorepo/icons';
-import { theme } from '../../../styles/theme';
+import { theme } from '@styles/theme';
 import * as styles from './DetailItem.css';
 
 type DetailItemProps = {

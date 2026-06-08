@@ -1,4 +1,4 @@
-import { Modal } from '../shared/modal/Modal';
+import { Modal } from '@components/shared/modal/Modal';
 import * as styles from './KeyboardShortcutsModal.css';
 
 type ShortcutEntry = {

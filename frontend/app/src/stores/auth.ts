@@ -1,6 +1,6 @@
 import type { UserProfile } from '@monorepo/api-client';
 import { create } from 'zustand';
-import { TOKEN_KEY } from '../constants';
+import { TOKEN_KEY } from '@/constants';
 
 export type AuthStore = {
 	profile: UserProfile | null;

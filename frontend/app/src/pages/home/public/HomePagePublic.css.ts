@@ -1,5 +1,5 @@
 import { style, keyframes } from '@vanilla-extract/css';
-import { vars } from '../../../styles/theme/vars.css';
+import { vars } from '@styles/theme/vars.css';
 
 const fadeUp = keyframes({
 	from: {

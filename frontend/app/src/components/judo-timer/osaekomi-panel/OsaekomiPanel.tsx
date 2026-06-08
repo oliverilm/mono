@@ -1,9 +1,9 @@
 import {
 	OSAEKOMI_IPPON_AT,
 	OSAEKOMI_WAZA_ARI_AT,
-} from './constants';
-import type { CompetitorSide } from './types';
-import { formatOsaekomi } from './utils/formatTime';
+} from '../constants';
+import type { CompetitorSide } from '../types';
+import { formatOsaekomi } from '../utils/formatTime';
 import * as styles from './OsaekomiPanel.css';
 
 type OsaekomiPanelProps = {

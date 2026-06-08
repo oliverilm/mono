@@ -1,4 +1,4 @@
-import { useAuthStore } from '../../stores/auth';
+import { useAuthStore } from '@stores/auth';
 import { HomePagePublic } from './public/HomePagePublic';
 import { HomePageAuthenticated } from './user/HomePageAuthenticated';
 import * as styles from './HomePage.css';

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { AppLogo } from '../shared/logo/AppLogo';
-import { formatDisplayName } from '../../utils/format';
-import { useAuthStore } from '../../stores/auth';
+import { useAuthStore } from '@stores/auth';
+import { formatDisplayName } from '@utils/format';
+import { AppLogo } from '@components/shared/logo/AppLogo';
 import * as styles from './DashboardShell.css';
 
 type DashboardShellProps = {

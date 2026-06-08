@@ -1,8 +1,8 @@
-import type { ManagedCompetition } from '../../mocks/managedCompetitions';
-import { formatDate } from '../../utils/format';
-import { CompetitionBadges } from '../shared/competition-badges/CompetitionBadges';
-import { DetailItem } from '../shared/detail-item/DetailItem';
-import { panel } from '../shared/content-panel/ContentPanel.css';
+import type { ManagedCompetition } from '@mocks/managedCompetitions';
+import { formatDate } from '@utils/format';
+import { CompetitionBadges } from '@components/shared/competition-badges/CompetitionBadges';
+import { panel } from '@components/shared/content-panel/ContentPanel.css';
+import { DetailItem } from '@components/shared/detail-item/DetailItem';
 import * as styles from './CompetitionDetails.css';
 
 type CompetitionDetailsProps = {

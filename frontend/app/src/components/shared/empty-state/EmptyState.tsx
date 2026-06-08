@@ -1,4 +1,4 @@
-import * as styles from '../../../components/layout/DashboardShell.css';
+import * as styles from '@components/layout/dashboard-shell/DashboardShell.css';
 
 type EmptyStateProps = {
 	title: string;

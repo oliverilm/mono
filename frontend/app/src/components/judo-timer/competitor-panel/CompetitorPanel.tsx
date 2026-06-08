@@ -1,10 +1,10 @@
 import type { MouseEvent } from 'react';
-import { COUNTRY_OPTIONS, SHIDO_HANSOKU_MAKE } from './constants';
-import type { CompetitorScore, CompetitorSide } from './types';
-import { ScoreType } from './types';
-import { formatFighterName } from './types';
-import { countryCodeToFlag, getCountryLabel } from './utils/countryFlag';
-import { canAwardScore, hasIpponOnBoard, isScoreAtLimit } from './utils/scoreLimits';
+import { COUNTRY_OPTIONS, SHIDO_HANSOKU_MAKE } from '../constants';
+import type { CompetitorScore, CompetitorSide } from '../types';
+import { ScoreType } from '../types';
+import { formatFighterName } from '../types';
+import { countryCodeToFlag, getCountryLabel } from '../utils/countryFlag';
+import { canAwardScore, hasIpponOnBoard, isScoreAtLimit } from '../utils/scoreLimits';
 import * as styles from './CompetitorPanel.css';
 
 const SCORE_COLUMNS: { type: Exclude<ScoreType, ScoreType.Shido>; label: string }[] = [

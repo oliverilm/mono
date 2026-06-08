@@ -1,6 +1,6 @@
 import { keyframes, style } from '@vanilla-extract/css';
-import { vars } from '../../styles/theme/vars.css';
-import { font, radius, space, winnerFont, winnerSpace } from './winner.tokens';
+import { vars } from '@styles/theme/vars.css';
+import { font, radius, space, winnerFont, winnerSpace } from '../winner.tokens';
 
 const cardIn = keyframes({
 	from: { opacity: 0, transform: 'scale(0.92) translateY(12px)' },

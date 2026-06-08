@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { formatDate } from '../../../utils/format';
-import type { ManagedCompetition } from '../../../mocks/managedCompetitions';
+import { formatDate } from '@utils/format';
+import type { ManagedCompetition } from '@mocks/managedCompetitions';
 import { CompetitionBadges } from '../competition-badges/CompetitionBadges';
 import { interactivePanel } from '../content-panel/ContentPanel.css';
 import { MetaRow } from '../meta-row/MetaRow';

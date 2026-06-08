@@ -1,14 +1,14 @@
-import { Modal } from '../shared/modal/Modal';
-import { useForm } from '../../hooks/useForm';
+import { useForm } from '@hooks/useForm';
+import { Modal } from '@components/shared/modal/Modal';
 import {
 	COUNTRY_OPTIONS,
 	DEFAULT_BLUE_FIGHTER,
 	DEFAULT_WHITE_FIGHTER,
 	MATCH_DURATION_OPTIONS,
 	TATAMI_OPTIONS,
-} from './constants';
-import type { TatamiConfig } from './types';
-import { countryCodeToFlag } from './utils/countryFlag';
+} from '../constants';
+import type { TatamiConfig } from '../types';
+import { countryCodeToFlag } from '../utils/countryFlag';
 import * as styles from './TatamiSetup.css';
 
 type TatamiSetupFormValues = {
