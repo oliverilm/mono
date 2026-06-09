@@ -337,4 +337,16 @@ export namespace CompetitionDb {
 			})) > 0
 		);
 	}
+
+	export async function getUserCompetitionAdmins(userId: string) {
+		// TODO: add pagination later
+		return prisma.competitionAdmin.findMany({
+			where: {
+				userId,
+			},
+			select: {
+				competition: true, role: true,
+			}
+		});
+	}
 }

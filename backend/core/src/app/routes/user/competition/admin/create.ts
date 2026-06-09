@@ -7,9 +7,8 @@ import { withBody } from 'src/app/utils/route-helper';
 export default function (fastify: FastifyInstance) {
 	fastify.post(
 		'/',
-		withBody(createCompetitionAdminSchema, (request) => {
-			const userId = requestUserId(request);
-			return CompetitionService.createCompetitionAdmin(request.body, userId);
-		}),
+		withBody(createCompetitionAdminSchema, (request) =>  CompetitionService.createCompetitionAdmin(request.body, requestUserId(request))),
 	);
 }
+
+

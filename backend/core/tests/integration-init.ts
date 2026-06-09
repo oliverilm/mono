@@ -1,9 +1,12 @@
-import Fastify, { FastifyInstance } from 'fastify';
+import Fastify, { FastifyInstance, InjectOptions } from 'fastify';
 import { afterEach, beforeAll, beforeEach, vi, vitest } from "vitest";
 import { app } from '../src/app/app';
 import { ClubService } from '../src/app/services/club';
 import { AuthenticationPayload, UserService } from '../src/app/services/user';
 import { prisma } from '../src/app/utils/db';
+import { populate } from './fixtures';
+import { SessionService } from '../src/app/session';
+import { Users } from './fixtures/users';
 
 export let testServer: FastifyInstance;
 
@@ -26,6 +29,7 @@ async function cleanDb() {
         // Delete all data from all tables
         await prisma.$executeRawUnsafe('DELETE FROM "Session"');
         await prisma.$executeRawUnsafe('DELETE FROM "Competitor"');
+        await prisma.$executeRawUnsafe('DELETE FROM "CompetitionAdmin"');
         await prisma.$executeRawUnsafe('DELETE FROM "Category"');
         await prisma.$executeRawUnsafe('DELETE FROM "Invitation"');
         await prisma.$executeRawUnsafe('DELETE FROM "Club"');
@@ -69,6 +73,7 @@ beforeEach(async () => {
     });
     
     await dbMutex;
+    await populate();
 });
 
 afterEach(() => {
@@ -113,6 +118,7 @@ export async function registerTestUserAndRetrieveToken(override: Overrides = {})
 export async function createUserWithEmail({ email, addons}: Overrides = {}) {
     // Use unique email if none provided
     const userEmail = email || generateUniqueEmail();
+
     
     const created = await UserService.createUser({ email: userEmail, password: TEST_PASSWORD})
 
@@ -131,3 +137,31 @@ export async function createUserWithEmail({ email, addons}: Overrides = {}) {
     return created
 }
 
+export const TEST_USER_ID = "test-user-id"
+
+// request handlers
+export async function userRequest(testUser: typeof Users[keyof typeof Users], content: InjectOptions) {
+    const session = await SessionService.createSession(testUser.id)
+    return testServer.inject({
+        ...content,
+        headers: {
+            Authorization: `Bearer ${session.token}`,
+        },
+    })
+}
+
+export async function adminRequest(content: InjectOptions) {
+    const session = await SessionService.createSession(Users.Oliver.id)
+    return testServer.inject({
+        ...content,
+        headers: {
+            Authorization: `Bearer ${session.token}`,
+        },
+    })
+}
+
+export async function publicRequest(content: InjectOptions) {
+    return testServer.inject({
+        ...content,
+    })
+}
